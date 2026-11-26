@@ -871,6 +871,7 @@
         <p class="hint">Your doctors, your medicines, your appointments, rides, and the way to your hospital.</p>
         <h3 class="lochead">MY DOCTORS</h3>
         <div id="doctorsBody"></div>
+        <h3 class="lochead">MY HOSPITAL &amp; PHARMACY</h3>
         <div id="healthBody"></div>
         <h3 class="lochead">MY MEDICINES</h3>
         <div id="medsBody"></div>
@@ -893,7 +894,7 @@
       <section class="panel" id="panel-password" aria-label="I forgot my password">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>I Forgot My Password</h2>
-        <p class="hint">Do not worry — this happens to everyone. Follow these three steps:</p>
+        <p class="hint">Do not worry — this happens to everyone. Follow these steps:</p>
         <div class="card">
           <ol class="steps">
             <li><b>1</b> Tap the button for the place below.</li>
@@ -961,7 +962,7 @@
       <section class="panel" id="panel-location" aria-label="Send my location">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Send My Location</h2>
-        <p class="hint">Tap each name, one by one. Each tap opens WhatsApp — tap the green Send arrow. Then all three will know.</p>
+        <p class="hint">Tap each name below, one by one, to tell everyone listed here.</p>
         <h3 class="lochead">SEND MY LOCATION</h3>
         <div id="locHelpers"></div>
         <h3 class="lochead">I AM GOING OUT</h3>
@@ -991,8 +992,6 @@
           <div class="setup-grid">
             <div><label class="flabel" for="sHospName">Hospital name</label><input type="text" id="sHospName" /></div>
             <div><label class="flabel" for="sHospAddr">Hospital address</label><input type="text" id="sHospAddr" /></div>
-            <div><label class="flabel" for="sDocName">Doctor's name</label><input type="text" id="sDocName" /></div>
-            <div><label class="flabel" for="sDocPhone">Doctor's phone</label><input type="tel" id="sDocPhone" dir="ltr" /></div>
             <div><label class="flabel" for="sPharmName">Pharmacy name</label><input type="text" id="sPharmName" /></div>
             <div><label class="flabel" for="sPharmPhone">Pharmacy phone</label><input type="tel" id="sPharmPhone" dir="ltr" /></div>
           </div>
@@ -1042,7 +1041,7 @@
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
         </a>
-        <p class="stuck-instruction">Tap each name, one by one. Each tap opens WhatsApp — tap the green Send arrow. All three will get your message.</p>
+        <p class="stuck-instruction">Tap each name below, one by one. When you have tapped everyone, your family helpers will all have the message ready in WhatsApp.</p>
         <div id="stuckSendBtns"></div>
         <div class="note" id="stuckNote"></div>
       </section>
@@ -1153,9 +1152,27 @@
 
       function saveSetup(){ try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){} }
       function digits(p){ return (p||"").replace(/[^0-9]/g,""); }
+      /* ONE phone normalization for every tel: and WhatsApp number in
+         the app (helpers, doctors, pharmacy, hospital — all of them):
+         strip to digits, remembering an explicit leading +.
+         10 digits → prepend "1" (Canada/US). 11 digits starting with
+         "1" → keep. An explicitly supplied full international number
+         (leading + with more digits) → keep exactly as supplied. */
+      function normalizePhone(p){
+        var raw = (p || "").toString().trim();
+        var hasPlus = raw.charAt(0) === "+";
+        var d = digits(raw);
+        if(!d) return "";
+        if(hasPlus && d.length > 11) return d;
+        if(d.length === 10) return "1" + d;
+        if(d.length === 11 && d.charAt(0) === "1") return d;
+        if(hasPlus) return d;
+        return d;
+      }
       function fmtPhone(p){
-        var d = digits(p);
+        var d = normalizePhone(p);
         if(d.length===11 && d.charAt(0)==="1") return "+1 ("+d.slice(1,4)+") "+d.slice(4,7)+"-"+d.slice(7);
+        if(d) return "+" + d;
         return p||"";
       }
       function openExternal(url){
@@ -1170,8 +1187,28 @@
         document.body.appendChild(a); a.click();
         setTimeout(function(){ if(a.parentNode) a.parentNode.removeChild(a); }, 1500);
       }
-      function waLinkTo(phone, text){ return "https://wa.me/"+digits(phone)+"?text="+encodeURIComponent(text); }
+      function waLinkTo(phone, text){ return "https://wa.me/"+normalizePhone(phone)+"?text="+encodeURIComponent(text); }
       function waLink(text){ return waLinkTo(firstHelper().phone, text); }
+
+      /* One-time migration: the old single "Doctor's name / Doctor's
+         phone" setup fields move into the doctors list, which is now
+         the ONLY doctor source. Runs once; afterwards the legacy
+         values are cleared so the doctor can never appear twice. */
+      (function migrateLegacyDoctor(){
+        if(setup.legacyDoctorMigrated) return;
+        var ln = (setup.docName || "").trim(), lp = (setup.docPhone || "").trim();
+        if(ln || lp){
+          var np = normalizePhone(lp);
+          var exists = (setup.doctors || []).some(function(d){
+            if(!d) return false;
+            if(np && normalizePhone(d.phone) === np) return true;
+            return !np && ln && (d.name || "").trim().toLowerCase() === ln.toLowerCase();
+          });
+          if(!exists) setup.doctors.push({name: ln || "Doctor", whatfor:"", phone: lp, address:""});
+        }
+        setup.docName = ""; setup.docPhone = ""; setup.legacyDoctorMigrated = true;
+        saveSetup();
+      })();
 
       /* ---------------- Panels ---------------- */
       var homeEl = $("home");
@@ -1456,7 +1493,7 @@
       $("msgWhats").addEventListener("click", function(e){
         var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
         if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
+        if(!normalizePhone(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
         note.textContent = "WhatsApp will open. Tap the green Send arrow to send this. The answer will come on WhatsApp — you can listen to it there, and reply with your voice.";
         note.classList.add("show");
         $("msgWhats").href = waLinkTo(t.phone, msg);
@@ -1589,7 +1626,7 @@
             return;
           }
           if(said.indexOf("کال") >= 0 || said.indexOf("فون") >= 0){
-            act("TAP TO CALL " + fhName.toUpperCase(), "tel:+" + digits(fh.phone), false, "bg-green",
+            act("TAP TO CALL " + fhName.toUpperCase(), "tel:+" + normalizePhone(fh.phone), false, "bg-green",
               "ٹھیک ہے۔ " + fhName + " کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔");
             return;
           }
@@ -1636,7 +1673,7 @@
             if(hs[i].name && low.indexOf(hs[i].name.toLowerCase()) >= 0){ target = hs[i]; break; }
           }
           if(target.phone){
-            act("TAP TO CALL " + (target.name || "FAMILY").toUpperCase(), "tel:+" + digits(target.phone), false, "bg-green",
+            act("TAP TO CALL " + (target.name || "FAMILY").toUpperCase(), "tel:+" + normalizePhone(target.phone), false, "bg-green",
               "Tap the big green button to call " + (target.name || "your family") + " now.");
           } else say("I do not have a phone number for that person yet. Ask " + fhName + " to set it up.");
           return;
@@ -1727,7 +1764,7 @@
           return;
         }
         if(has("screen", "anydesk")){
-          go("panel-screen", "Opening Show My Screen. Tap the big START button there to show your screen, so " + fhName + " can watch and help you.");
+          go("panel-screen", "Opening Show My Screen. Tap the big START button there so a family member can watch and help you.");
           return;
         }
         if(has("weather")){
@@ -1931,15 +1968,15 @@
         d.appendChild(p); return d;
       }
       function renderHealth(){
+        /* Hospital & pharmacy only — doctors live solely in the
+           doctors list (renderDoctors). There is no second, generic
+           doctor button any more. */
         var body = $("healthBody"); body.innerHTML = "";
         if(setup.hospAddr){
           body.appendChild(bigLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((setup.hospName? setup.hospName+" ":"") + setup.hospAddr), "bg-teal", "Directions to My Hospital", setup.hospName || setup.hospAddr));
         } else body.appendChild(notReady("The hospital address"));
-        if(setup.docPhone){
-          body.appendChild(bigLink("tel:+" + digits(setup.docPhone), "bg-green", "Call My Doctor", (setup.docName? setup.docName+" — ":"") + fmtPhone(setup.docPhone)));
-        } else body.appendChild(notReady("The doctor's phone number"));
         if(setup.pharmPhone){
-          body.appendChild(bigLink("tel:+" + digits(setup.pharmPhone), "bg-green", "Call My Pharmacy", (setup.pharmName? setup.pharmName+" — ":"") + fmtPhone(setup.pharmPhone)));
+          body.appendChild(bigLink("tel:+" + normalizePhone(setup.pharmPhone), "bg-green", "Call My Pharmacy", (setup.pharmName? setup.pharmName+" — ":"") + fmtPhone(setup.pharmPhone)));
         } else body.appendChild(notReady("The pharmacy phone number"));
       }
 
@@ -1968,7 +2005,7 @@
             var p = document.createElement("p"); p.textContent = doc.whatfor; p.setAttribute("dir","auto");
             card.appendChild(p);
           }
-          if(doc.phone) card.appendChild(actLink("tel:+" + digits(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
+          if(doc.phone) card.appendChild(actLink("tel:+" + normalizePhone(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
           if(doc.address) card.appendChild(actLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((doc.name ? doc.name + " " : "") + doc.address), "bg-blue", "DIRECTIONS"));
           body.appendChild(card);
         });
@@ -2068,7 +2105,7 @@
       $("grocWhats").addEventListener("click", function(e){
         var list = $("grocText").value.trim(), note = $("grocNote"), t = grocTarget();
         if(!list){ e.preventDefault(); note.textContent = "First say what you need — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
+        if(!normalizePhone(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
         note.textContent = "WhatsApp will open. Tap the green Send arrow to send your list.";
         note.classList.add("show");
         $("grocWhats").href = waLinkTo(t.phone, "I need these things from the shop:\n" + list);
@@ -2101,7 +2138,7 @@
       function renderStuckHelpers(){
         var wrap = $("stuckSendBtns"); if(!wrap) return; wrap.innerHTML = "";
         helpers().forEach(function(h){
-          if(!h.phone) return;
+          if(!normalizePhone(h.phone)) return;
           var name = h.name || "Family";
           var a = document.createElement("a");
           a.className = "bigbtn solid bg-amber"; a.target = "_blank"; a.rel = "noopener";
@@ -2118,7 +2155,7 @@
             label.textContent = "✓ OPENED FOR " + name.toUpperCase();
             s.textContent = "Opened for " + name + " — now come back and tap the next name";
             var note = $("stuckNote");
-            note.textContent = "WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, so all three get your message.";
+            note.textContent = "WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, so everyone listed here gets your message.";
             note.classList.add("show");
           });
           wrap.appendChild(a);
@@ -2129,9 +2166,9 @@
       function renderHelpers(){
         var slot = $("helpersSlot"); slot.innerHTML = "";
         helpers().forEach(function(h){
-          if(!h.phone) return;
+          if(!normalizePhone(h.phone)) return;
           var a = document.createElement("a");
-          a.className = "bigbtn solid bg-green"; a.href = "tel:+" + digits(h.phone);
+          a.className = "bigbtn solid bg-green"; a.href = "tel:+" + normalizePhone(h.phone);
           var ic = document.createElement("span"); ic.className = "ic";
           ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
           var t = document.createElement("span"); t.textContent = "Call " + (h.name || "Family");
@@ -2148,8 +2185,8 @@
       function applySetupToHome(){
         renderHelpers(); applyHelperNames(); renderStuckHelpers();
         var fh = firstHelper();
-        $("stuckCallZee").href = "tel:+" + digits(fh.phone);
-        $("screenCallZee").href = "tel:+" + digits(fh.phone);
+        $("stuckCallZee").href = "tel:+" + normalizePhone(fh.phone);
+        $("screenCallZee").href = "tel:+" + normalizePhone(fh.phone);
         var slot = $("placesSlot"); slot.innerHTML = "";
         setup.places.forEach(function(pl){
           if(!pl.name || !pl.url) return;
@@ -2202,7 +2239,7 @@
         var mm = $("msgText") ? $("msgText").value.trim() : "";
         if(!mm) return;
         var mt = msgTarget();
-        if(digits(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
+        if(normalizePhone(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
         var mto = (mt.email || "").trim();
         if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(mm);
         else $("msgEmail").href = "#";
@@ -2236,7 +2273,7 @@
       function renderSendFileHelpers(){
         var wrap = $("sendFileHelpers"); if(!wrap) return; wrap.innerHTML = "";
         helpers().forEach(function(h){
-          if(!h.phone) return;
+          if(!normalizePhone(h.phone)) return;
           var b = document.createElement("a");
           b.className = "actionbtn bg-green"; b.textContent = "Open WhatsApp to " + (h.name || "Family");
           b.href = waLinkTo(h.phone, "Assalam-o-Alaikum " + (h.name || "") + ", I want to send you a file.");
@@ -2338,15 +2375,19 @@
       });
       renderDocs();
 
-      /* ---------------- Send My Location: all three sections, one big
-         button per helper, exactly like I AM STUCK. WhatsApp cannot send
-         to three chats from one tap, so he taps each name in turn and
+      /* ---------------- Send My Location: one big button per helper
+         in each section, exactly like I AM STUCK. WhatsApp cannot send
+         to several chats from one tap, so he taps each name in turn and
          every tapped button honestly marks itself "✓ OPENED FOR [NAME]"
          — the app knows WhatsApp was opened for that person, not whether
-         he pressed WhatsApp's Send arrow. The location buttons are real
-         anchors: the first tap finds his position and only then points
-         the anchor at the WhatsApp link and follows it; if the position
-         cannot be found, nothing opens and the failure is said plainly. */
+         he pressed WhatsApp's Send arrow. SEND MY LOCATION is explicitly
+         TWO-STAGE per helper: the first tap ("FIND MY LOCATION FOR
+         [NAME]") only finds his position; when it is found, that same
+         button becomes a genuine anchor — "TAP AGAIN — OPEN WHATSAPP
+         TO [NAME]" — and ONLY that second, direct tap marks it OPENED.
+         Nothing is ever clicked programmatically after geolocation
+         returns. If the position cannot be found, the button resets
+         and the failure is said plainly. */
       var locPos = null, locPosAt = 0;
       function locNoteSay(msg){
         var note = $("locNote");
@@ -2370,20 +2411,28 @@
         a._label = label; a._sub = s;
         return a;
       }
-      function locSendPosition(h, a){
+      function locFindPosition(h, a){
         var name = h.name || "Family";
         function fail(){
+          /* Reset the button to stage one, exactly as it started. */
+          a.removeAttribute("data-ready");
+          a.href = "#";
+          if(a._label) a._label.textContent = "FIND MY LOCATION FOR " + name.toUpperCase();
+          if(a._sub) a._sub.textContent = "Tap to find where you are first";
           var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. Tap I AM STUCK below and " + firstHelper().name + " will help.";
           locNoteSay(msg); speak(msg, "en-US");
         }
         if(!("geolocation" in navigator)){ fail(); return; }
         function usePos(pos){
+          /* Stage two: turn the button into the real WhatsApp anchor
+             and STOP. No programmatic click, no OPENED mark — both wait
+             for his own second tap on this same button. */
           var link = "https://www.google.com/maps?q=" + pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
           a.href = waLinkTo(h.phone, "I am here: " + link);
-          a.setAttribute("data-wa", "1");
-          locMarkOpened(a, name);
-          locNoteSay("Found you. WhatsApp is opening for " + name + " — tap the green Send arrow there. Then come back and tap the next name.");
-          a.click();
+          a.setAttribute("data-ready", "1");
+          if(a._label) a._label.textContent = "TAP AGAIN — OPEN WHATSAPP TO " + name.toUpperCase();
+          if(a._sub) a._sub.textContent = "Your place is ready — tap again to open WhatsApp";
+          locNoteSay("Found you. Tap the same button again — WhatsApp will open for " + name + ". Then tap the green Send arrow there.");
         }
         if(locPos && (Date.now() - locPosAt) < 60000){ usePos(locPos); return; }
         locNoteSay("Finding where you are… please wait a moment.");
@@ -2397,14 +2446,21 @@
         if(!wrap) return;
         wrap.innerHTML = ""; if(out) out.innerHTML = ""; if(homeB) homeB.innerHTML = "";
         helpers().forEach(function(h){
-          if(!h.phone) return;
+          if(!normalizePhone(h.phone)) return;
           var name = h.name || "Family";
-          var a = locBtn("SEND MY LOCATION TO " + name.toUpperCase(), "bg-teal");
+          var a = locBtn("FIND MY LOCATION FOR " + name.toUpperCase(), "bg-teal");
           a.href = "#";
+          if(a._sub) a._sub.textContent = "Tap to find where you are first";
           a.addEventListener("click", function(e){
-            if(a.getAttribute("data-wa")){ locMarkOpened(a, name); return; }
+            if(a.getAttribute("data-ready")){
+              /* Second, direct tap on the genuine WhatsApp anchor:
+                 let it open, and only now mark OPENED. */
+              locMarkOpened(a, name);
+              locNoteSay("WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, to tell everyone listed here.");
+              return;
+            }
             e.preventDefault();
-            locSendPosition(h, a);
+            locFindPosition(h, a);
           });
           wrap.appendChild(a);
           if(out){
@@ -2430,7 +2486,7 @@
 
       /* ---------------- Setup form ---------------- */
       var F = { city:"sCity", emailReset:"sEmailReset", groceryLink:"sGroceryLink", hospName:"sHospName", hospAddr:"sHospAddr",
-                docName:"sDocName", docPhone:"sDocPhone", pharmName:"sPharmName", pharmPhone:"sPharmPhone" };
+                pharmName:"sPharmName", pharmPhone:"sPharmPhone" };
       function helperRow(h){
         var row = document.createElement("div");
         row.style.cssText = "border:3px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:#FFFDF8";
@@ -2759,13 +2815,23 @@
       function screenRenderSendBtns(){
         var wrap = $("screenSendBtns"); if(!wrap) return; wrap.innerHTML = "";
         var url = "https://shanstud.github.io/dads-assistant/?watch=" + scr.code;
-        var fh = firstHelper();
         helpers().forEach(function(h){
-          var phone = digits(h.phone) ? h.phone : fh.phone;
+          var name = h.name || "Family";
+          /* NEVER substitute another person's phone: a helper with no
+             saved phone gets NO send button — only the plain line
+             below — so a button named for one person can only ever
+             reach that person. */
+          if(!normalizePhone(h.phone)){
+            var p = document.createElement("p");
+            p.style.cssText = "font-size:21px;font-weight:700;margin:14px 0 0";
+            p.textContent = name + "'s phone number is not saved yet. Ask Zee to add it.";
+            wrap.appendChild(p);
+            return;
+          }
           var a = document.createElement("a");
           a.className = "actionbtn bg-green"; a.target = "_blank"; a.rel = "noopener";
-          a.textContent = "SEND TO " + (h.name || "FAMILY").toUpperCase();
-          a.href = waLinkTo(phone, "I am showing my screen. Tap this link to watch: " + url);
+          a.textContent = "SEND TO " + name.toUpperCase();
+          a.href = waLinkTo(h.phone, "I am showing my screen. Tap this link to watch: " + url);
           wrap.appendChild(a);
         });
       }
