@@ -47,8 +47,9 @@
       .greeting .clock{ font-size:clamp(17px,3.6vw,21px); color:var(--ink-soft); margin:2px 0 0; }
 
       /* ---------- Big home buttons ---------- */
-      .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:22px; }
+      .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:22px; align-items:stretch; }
       @media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
+      .grid > .bigbtn{ height:100%; }
       .bigbtn{
         display:flex; align-items:center; gap:14px;
         width:100%; min-height:88px;
@@ -276,20 +277,20 @@
         .greeting .today{ font-size:19px; margin-top:4px; }
         .greeting .clock{ font-size:17px; }
 
-        .grid{ gap:8px; margin-top:10px; }
+        .grid{ gap:10px; margin-top:12px; }
         .bigbtn{
-          min-height:64px; padding:10px 14px; gap:12px;
-          font-size:19px; border-radius:16px; border-width:2px;
+          min-height:78px; padding:12px 14px; gap:12px;
+          font-size:22px; border-radius:16px; border-width:2px;
         }
-        .bigbtn .ic{ width:40px; height:40px; border-radius:12px; }
-        .bigbtn .ic svg{ width:24px; height:24px; }
-        .bigbtn .sub{ font-size:15px; line-height:1.3; }
+        .bigbtn .ic{ width:44px; height:44px; border-radius:12px; }
+        .bigbtn .ic svg{ width:26px; height:26px; }
+        .bigbtn .sub{ font-size:17px; line-height:1.35; }
         .emergency-strip{ margin-top:10px; }
         .setup-link-wrap{ margin-top:28px; }
         .setup-link{ font-size:14px; padding:10px 12px; }
 
         .bottombar{ gap:8px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); border-top-width:3px; }
-        .bottombar button{ min-height:50px; font-size:18px; border-radius:12px; gap:7px; white-space:nowrap; }
+        .bottombar button{ min-height:56px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
         .bottombar button svg{ width:24px; height:24px; }
 
         .backbtn{ min-height:54px; padding:10px 16px; font-size:20px; border-radius:12px; margin-bottom:16px; gap:9px; }
@@ -356,73 +357,57 @@
       <!-- ================= HOME ================= -->
       <main id="home">
         <div class="greeting">
-          <p class="salam">Assalam-o-Alaikum,<br />Wazir Ali</p>
+          <p class="salam">Wazir Ali</p>
           <p class="today" id="todayLine">Today</p>
           <p class="clock" id="clockLine"></p>
           <div class="hearwrap">
-            <button class="hearbtn" id="hearHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Listen — Hear Your Options</button>
+            <button class="hearbtn" id="hearHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Read My Choices Aloud</button>
           </div>
         </div>
 
         <div class="grid" id="homeGrid">
           <button class="bigbtn solid bg-plum span2" data-open="panel-voice" id="voiceOpenBtn" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
-            <span>VOICE MODE — Just Talk<span class="sub">Tap, then speak — no typing. Say “Call Zee” or “Fix my document”</span></span>
+            <span>VOICE HELP — Tap and Speak<span class="sub">Say what you want. I will show you one big button to finish it.</span></span>
           </button>
 
           <span id="helpersSlot" style="display:contents"></span>
 
-          <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <span>I AM FINE<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
-          </a>
-
-          <a class="bigbtn solid bg-blue" data-quicklink="call" href="https://wa.me/14705790994?text=Please%20call%20me%20when%20you%20can." target="_blank" rel="noopener">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-            <span>PLEASE CALL ME<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
-          </a>
-
           <a class="bigbtn solid bg-amber" data-quicklink="help" href="https://wa.me/14705790994?text=I%20need%20help%2C%20please%20call%20me%20now." target="_blank" rel="noopener">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
-            <span>I NEED HELP<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+            <span>I NEED HELP<span class="sub">Message <span data-hname>Zee</span> on WhatsApp</span></span>
           </a>
-
-          <a class="bigbtn solid bg-plum" data-quicklink="out" href="https://wa.me/14705790994?text=I%20am%20going%20out%20now." target="_blank" rel="noopener">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
-            <span>I AM GOING OUT<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
-          </a>
-
-          <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span>
-            <span>I AM HOME NOW<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
-          </a>
-
-          <button class="bigbtn solid bg-teal" data-open="panel-location" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>
-            <span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span>
-          </button>
 
           <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">DOCUMENTS</span></div>
 
           <button class="bigbtn solid bg-amber" data-open="panel-rewrite" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
-            <span>Fix My Document<span class="sub">Send your letter to <span data-hname>Zee</span> — he fixes it for you</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
-            <span>Change a Document<span class="sub">Photos into a PDF · PDF into photos · join PDFs together</span></span>
+            <span>Fix My Document<span class="sub">4 easy steps — a person fixes it for you</span></span>
           </button>
 
           <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
-            <span>My Documents<span class="sub">Your important papers, kept here</span></span>
+            <span>My Documents<span class="sub">Your papers, kept here</span></span>
           </button>
 
           <button class="bigbtn solid bg-teal" data-open="panel-sendfile" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
             <span>Send My File or Photo<span class="sub">Send a document or a picture</span></span>
           </button>
+
+          <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">MORE THINGS</span></div>
+
+          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+            <span>Change My File<span class="sub">Photos into a PDF · PDF into photos · join PDFs</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-teal" data-open="panel-quick" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span>Quick Messages<span class="sub">I am fine · Going out · Home · My place</span></span>
+          </button>
+
+          <span id="helpersMoreSlot" style="display:contents"></span>
 
           <button class="bigbtn solid bg-teal" data-open="panel-talk" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
@@ -436,7 +421,7 @@
 
           <button class="bigbtn solid bg-teal" data-open="panel-write" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-            <span>Write and Send a Message<span class="sub">Speak once — send on WhatsApp or email</span></span>
+            <span>Send a Message<span class="sub">Speak once — send on WhatsApp or email</span></span>
           </button>
 
           <button class="bigbtn" data-open="panel-email" type="button">
@@ -492,6 +477,20 @@
         </div>
       </main>
 
+      <!-- ================= QUICK MESSAGES ================= -->
+      <section class="panel" id="panel-quick" aria-label="Quick messages">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Quick Messages</h2>
+        <p class="hint">Tap one. WhatsApp opens to <span data-hname>Zee</span> with the words ready — tap the green Send arrow there.</p>
+        <div class="grid" style="margin-top:6px">
+          <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>I AM FINE</span></a>
+          <a class="bigbtn solid bg-blue" data-quicklink="call" href="https://wa.me/14705790994?text=Please%20call%20me%20when%20you%20can." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>PLEASE CALL ME</span></a>
+          <a class="bigbtn solid bg-plum" data-quicklink="out" href="https://wa.me/14705790994?text=I%20am%20going%20out%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span><span>I AM GOING OUT</span></a>
+          <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>I AM HOME NOW</span></a>
+          <button class="bigbtn solid bg-teal span2" data-open="panel-location" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span><span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span></button>
+        </div>
+      </section>
+
       <!-- ================= TALK ================= -->
       <section class="panel" id="panel-talk" aria-label="Talk and ask anything">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
@@ -518,10 +517,10 @@
       </section>
 
       <!-- ================= VOICE MODE ================= -->
-      <section class="panel" id="panel-voice" aria-label="Voice mode">
+      <section class="panel" id="panel-voice" aria-label="Voice help">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Voice Mode</h2>
-        <p class="hint">Tap a big microphone and just speak — no typing, like talking to a person. Simple things I answer myself, out loud. Anything else, I help you send to <span data-hname>Zee</span>.</p>
+        <h2>Voice Help</h2>
+        <p class="hint">Tap a big microphone and say what you want. I will show you one big button to finish it. Simple things I answer out loud. Anything else, I help you send to <span data-hname>Zee</span>.</p>
         <div class="card">
           <div class="voicemic-wrap">
             <div class="voicemic-col">
@@ -576,24 +575,49 @@
       <section class="panel" id="panel-rewrite" aria-label="Rewrite my document">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Fix My Document</h2>
-        <p class="hint">Put your letter or document in the big box — type it, paste it, or speak it. Then listen to it, or send it to <span data-hname>Zee</span> — a person will fix it properly and send it back.</p>
+        <p class="hint">Four steps, in order. A person fixes your document properly at the other end and sends it back — this app does not change your words by itself.</p>
         <div class="card">
+          <h3>STEP 1 — PUT YOUR DOCUMENT</h3>
+          <p>Speak it, type it, paste it — or pick a photo or file of it.</p>
           <label class="flabel" for="docText">Your document</label>
-          <textarea id="docText" dir="auto" style="min-height:220px" placeholder="Your letter or document goes here…"></textarea>
+          <textarea id="docText" dir="auto" style="min-height:200px" placeholder="Your letter or document goes here…"></textarea>
           <div class="microw">
             <button class="micbtn" type="button" data-mic data-target="docText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
             <button class="micbtn" type="button" data-mic data-target="docText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
           </div>
-          <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Read It to Me</button>
-          <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">Send to <span data-hname>Zee</span> to Fix</a>
+          <label class="filepick" for="docFileInput" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a Photo or File</label>
+          <input type="file" id="docFileInput" accept="image/*,.pdf,.txt,.doc,.docx" />
+          <div class="picked" id="docFilePicked"></div>
+        </div>
+        <div class="card">
+          <h3>STEP 2 — SEE IT AND HEAR IT</h3>
+          <p>Check your document here, in big writing.</p>
+          <div id="docPreview" dir="auto" style="font-size:24px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:#FFFDF8;border:3px solid var(--line);border-radius:14px;padding:16px;min-height:80px">Nothing yet — do Step 1 first.</div>
+          <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read It to Me</button>
+        </div>
+        <div class="card">
+          <h3>STEP 3 — SAY WHAT TO CHANGE</h3>
+          <p>Say or type what you want changed — for example “change the date to Friday” or “make it polite”. Your words are kept exactly as you say them.</p>
+          <label class="flabel" for="docChange">What should change?</label>
+          <textarea id="docChange" dir="auto" placeholder="For example: change the date to Friday, and make it polite…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="docChange" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="docChange" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>STEP 4 — SEND IT</h3>
+          <p>Your document and your words from Step 3 go together. A person fixes it properly and sends it back.</p>
+          <a class="actionbtn bg-teal" id="docEmail" href="#">SEND BY EMAIL</a>
+          <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">SEND TO <span data-hname>Zee</span> — WhatsApp</a>
           <div class="note" id="docNote"></div>
         </div>
       </section>
 
       <!-- ================= CONVERT ================= -->
-      <section class="panel" id="panel-convert" aria-label="Convert a document">
+      <section class="panel" id="panel-convert" aria-label="Change my file">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Change a Document</h2>
+        <h2>Change My File</h2>
         <p class="hint">Your document files are worked on here on this device and are not uploaded.</p>
 
         <div class="card">
@@ -709,9 +733,9 @@
       </section>
 
       <!-- ================= WRITE AND SEND ================= -->
-      <section class="panel" id="panel-write" aria-label="Write and send a message">
+      <section class="panel" id="panel-write" aria-label="Send a message">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Write and Send a Message</h2>
+        <h2>Send a Message</h2>
         <p class="hint">Say your message once. Then choose who it is for, and how to send it. WhatsApp or your mail app opens with your message ready — you tap Send there.</p>
         <div class="card">
           <label class="flabel" for="writeText">1. Your message</label>
@@ -762,6 +786,7 @@
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>My Documents</h2>
         <p class="hint">Your important papers, kept on this device. Tap a document to open it or send it.</p>
+        <div class="note show" role="note"><strong>These are copies only. Keep the original papers. These copies can disappear if this browser is cleared.</strong></div>
         <div class="card">
           <label class="filepick" for="docsInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> ADD A DOCUMENT</label>
           <input type="file" id="docsInput" multiple />
@@ -993,6 +1018,7 @@
                 target.value = cur ? (cur.replace(/\s+$/,"") + " " + said) : said;
                 target.focus();
                 refreshSendLinks();
+                if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview();
               }
             };
             rec.onend = function(){ if(activeRec===rec) activeRec=null; btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label"); };
@@ -1107,7 +1133,7 @@
         var p = dateParts();
         var names = helpers().map(function(h){ return h.name; }).filter(Boolean);
         var who = names.length ? ("You can call " + names.join(", ") + ". ") : "";
-        speak("Assalam-o-Alaikum, Wazir Ali. Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Mode and just speak. For papers and letters, look for the word Documents on the screen.", "en-US");
+        speak("Wazir Ali. Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
       });
 
       /* ---------------- Voice Mode: tap, speak, done ---------------- */
@@ -1140,8 +1166,16 @@
           else voiceStatus("I did not hear anything. Tap the microphone and try again.");
         };
         rec.onend = function(){ if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); } };
-        rec.onerror = function(){
-          if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); voiceStatus("I did not hear that. Tap the microphone and try again."); }
+        rec.onerror = function(ev){
+          if(voiceRec !== rec) return;
+          voiceRec = null; setVoiceMic(null);
+          var err = (ev && ev.error) || "";
+          if(err === "not-allowed" || err === "service-not-allowed" || err === "network" || err === "audio-capture"){
+            voiceStatus("Voice is not working on this phone right now. Tap HOME below and use the big buttons instead.");
+            speak("Voice is not working on this phone right now. Tap HOME below and use the big buttons instead.", "en-US");
+          } else {
+            voiceStatus("I did not hear that. Tap the microphone and try again.");
+          }
         };
         try{ rec.start(); }catch(e){ voiceRec = null; setVoiceMic(null); }
       }
@@ -1152,7 +1186,7 @@
         voiceStatus("Tap a microphone, then speak.");
       });
       $("voiceOpenBtn").addEventListener("click", function(){
-        setTimeout(function(){ speak("Voice mode. Tap a big microphone and just speak.", "en-US"); }, 400);
+        setTimeout(function(){ speak("Voice help. Tap a big microphone and say what you want.", "en-US"); }, 400);
       });
 
       function handleVoice(said){
@@ -1164,6 +1198,17 @@
         var low = " " + said.toLowerCase().replace(/[^a-z0-9\s]/g, " ") + " ";
         var fh = firstHelper();
         var fhName = fh.name || "Zee";
+        /* Negation first: a negative phrase must never fire the positive action. */
+        var negLow = said.toLowerCase();
+        var isNeg = /\b(not|no|never)\b/.test(negLow) || negLow.indexOf("don't") >= 0 || negLow.indexOf("dont") >= 0 || negLow.indexOf("do not") >= 0
+          || /\b(nahi|nahin|mat)\b/.test(negLow) || said.indexOf("\u0646\u06c1\u06cc\u06ba") >= 0 || said.indexOf("\u0645\u062a") >= 0;
+        if(isNeg){
+          replyEl.textContent = "I am not sure what you meant. I will not send anything. Tap the microphone and say it again.";
+          replyEl.style.display = "";
+          speak("I am not sure what you meant. I will not send anything. Tap the microphone and say it again.", "en-US");
+          voiceStatus("Nothing was sent. Tap a microphone to say it again.");
+          return;
+        }
         function say(t){
           replyEl.textContent = t; replyEl.style.display = "";
           speak(t, speakLangFor(kind));
@@ -1266,7 +1311,7 @@
           return;
         }
         if(has("convert") || has("pdf") || (has("change") && has("document", "photo", "picture"))){
-          go("panel-convert", "Opening Change a Document. There you can turn photos into a PDF, a PDF into photos, or join PDFs together.");
+          go("panel-convert", "Opening Change My File. There you can turn photos into a PDF, a PDF into photos, or join PDFs together.");
           return;
         }
         if(has("document", "documents", "papers", "paper")){
@@ -1282,7 +1327,7 @@
           return;
         }
         if(has("message", "write")){
-          go("panel-write", "Opening Write and Send a Message. Say your message once, then choose who it is for.");
+          go("panel-write", "Opening Send a Message. Say your message once, then choose who it is for.");
           return;
         }
         if(has("task", "tasks", "remember", "reminder")){
@@ -1334,18 +1379,49 @@
         note.classList.remove("show");
         speak(t, speakLangFor(detectLang(t)));
       });
+      var docPickedName = "";
+      function docFullText(){
+        var d = $("docText").value.trim();
+        var c = $("docChange").value.trim();
+        var out = "Please fix this document for me.\n\nMY DOCUMENT:\n" + d;
+        if(c) out += "\n\nWHAT TO CHANGE (my words, exactly):\n" + c;
+        if(docPickedName) out += "\n\n(I also picked this file: " + docPickedName + " — I will send the photo or file itself in WhatsApp as well.)";
+        return out;
+      }
+      function syncDocPreview(){
+        var d = $("docText").value.trim();
+        $("docPreview").textContent = d || "Nothing yet — do Step 1 first.";
+      }
+      $("docText").addEventListener("input", syncDocPreview);
+      $("docFileInput").addEventListener("change", function(){
+        var f = (this.files || [])[0];
+        docPickedName = f ? f.name : "";
+        $("docFilePicked").textContent = f ? ("You picked: " + f.name) : "";
+        if(f && (f.type === "text/plain" || /\.txt$/i.test(f.name))){
+          var r = new FileReader();
+          r.onload = function(){ $("docText").value = String(r.result || ""); syncDocPreview(); };
+          r.readAsText(f);
+        }
+      });
       $("docSend").addEventListener("click", function(e){
-        var t = $("docText").value.trim();
+        var d = $("docText").value.trim();
         var note = $("docNote");
-        if(!t){ e.preventDefault(); note.textContent = "The box is empty. First put your document in the box — type it, paste it, or speak it."; note.classList.add("show"); return; }
-        var head = "Assalam-o-Alaikum " + firstHelper().name + ", please fix and rewrite this document for me:\n\n";
-        var body = t, partial = false;
-        if(head.length + t.length > 1500){ body = t.slice(0, 1500 - head.length); partial = true; }
+        if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
+        var full = docFullText(), partial = false;
+        if(full.length > 1500){ full = full.slice(0, 1500); partial = true; }
         note.textContent = partial
           ? "Your document is very long, so only the first part is in WhatsApp. WhatsApp is opening — tap the green Send arrow to send this. " + firstHelper().name + " will ask you for the rest."
-          : "WhatsApp is opening. Tap the green Send arrow to send this, and " + firstHelper().name + " will fix it and send it back.";
+          : "WhatsApp is opening. Tap the green Send arrow to send this, and a person will fix it properly and send it back.";
         note.classList.add("show");
-        $("docSend").href = waLink(head + body + (partial ? "\n\n(This was very long — sent in part.)" : ""));
+        $("docSend").href = waLink(full);
+      });
+      $("docEmail").addEventListener("click", function(e){
+        var d = $("docText").value.trim();
+        var note = $("docNote");
+        if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
+        note.textContent = "Your mail app is opening with your document and your words filled in. Tap Send there — a person will fix it properly and send it back.";
+        note.classList.add("show");
+        $("docEmail").href = "mailto:" + encodeURIComponent(firstHelper().email || "") + "?subject=" + encodeURIComponent("Please fix my document") + "&body=" + encodeURIComponent(docFullText());
       });
 
       /* ---------------- My Tasks (saved on this device) ---------------- */
@@ -1481,7 +1557,8 @@
       /* ---------------- Home: calls, places, weather ---------------- */
       function renderHelpers(){
         var slot = $("helpersSlot"); slot.innerHTML = "";
-        helpers().forEach(function(h){
+        var more = $("helpersMoreSlot"); if(more) more.innerHTML = "";
+        helpers().forEach(function(h, idx){
           if(!h.phone) return;
           var a = document.createElement("a");
           a.className = "bigbtn solid bg-green"; a.href = "tel:+" + digits(h.phone);
@@ -1490,7 +1567,7 @@
           var t = document.createElement("span"); t.textContent = "Call " + (h.name || "Family");
           var s = document.createElement("span"); s.className = "sub"; s.textContent = fmtPhone(h.phone);
           t.appendChild(s); a.appendChild(ic); a.appendChild(t);
-          slot.appendChild(a);
+          if(idx === 0 || !more) slot.appendChild(a); else more.appendChild(a);
         });
       }
       function applyHelperNames(){
@@ -1619,7 +1696,11 @@
         var note = $("sendFileNote");
         if(!sendFile){ note.textContent = "First tap the blue button above and pick your file or photo."; note.classList.add("show"); return; }
         if(canShareFile(sendFile)){
-          navigator.share({files:[sendFile], title:sendFile.name}).catch(function(){});
+          navigator.share({files:[sendFile], title:sendFile.name}).catch(function(err){
+            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap SEND IT if you want to try again.";
+            else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
+            note.classList.add("show");
+          });
           note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
           note.classList.add("show"); return;
         }
@@ -1710,7 +1791,11 @@
         if(docSel<0 || !docs[docSel]) return;
         var f = docToFile(docs[docSel]);
         if(canShareFile(f)){
-          navigator.share({files:[f], title:f.name}).catch(function(){});
+          navigator.share({files:[f], title:f.name}).catch(function(err){
+            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap SEND IT if you want to try again.";
+            else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
+            note.classList.add("show");
+          });
           note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
         }else{
           note.textContent = "This cannot be sent from here. Tap ASK " + (firstHelper().name || "ZEE").toUpperCase() + " FOR HELP on the home screen and " + firstHelper().name + " will do this with you.";
