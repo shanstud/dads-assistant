@@ -524,7 +524,7 @@
       <!-- ================= HOME ================= -->
       <main id="home">
         <div class="greeting">
-          <p class="salam">Wazir Ali</p>
+          <p class="salam" id="elderGreeting">Wazir Ali</p>
           <p class="today" id="todayLine">Today</p>
           <p class="clock" id="clockLine"></p>
           <div class="hearwrap">
@@ -632,7 +632,7 @@
         </div>
 
         <div class="setup-link-wrap">
-          <a class="setup-link" href="#" id="setupLink">Family setup — for Zee and family only</a>
+          <a class="setup-link" href="#" id="setupLink">Family setup — for family only</a>
         </div>
       </main>
 
@@ -860,6 +860,7 @@
             <button class="micbtn" type="button" data-mic data-target="taskText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
           </div>
           <button class="actionbtn bg-green" id="taskAdd" type="button">Add Task</button>
+          <div class="note" id="taskNote"></div>
         </div>
         <div id="taskList"></div>
       </section>
@@ -924,7 +925,7 @@
         </button>
         <div id="papersSend" style="display:none">
           <div class="card">
-            <p>Pick a file or photo, then tap SEND IT. Your phone will ask where to send it — tap WhatsApp, then tap the person.</p>
+            <p>Pick a file or photo, then tap SEND IT. Your phone will ask where to send it — tap WhatsApp, then tap the person, check the attached file, and press Send. Nothing has been sent yet.</p>
             <label class="filepick" for="sendFileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a File or Photo</label>
             <input type="file" id="sendFileInput" />
             <div class="pickedname" id="sendFileName" dir="auto"></div>
@@ -936,6 +937,7 @@
             <ol class="steps">
               <li><b>1</b> Tap the person's name below.</li>
               <li><b>2</b> Tap the paperclip and choose your file.</li>
+              <li><b>3</b> Check the file is attached, then tap the green Send arrow. Nothing has been sent yet.</li>
             </ol>
             <div id="sendFileHelpers"></div>
           </div>
@@ -981,7 +983,7 @@
       <section class="panel" id="panel-setup" aria-label="Family setup">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Family Setup</h2>
-        <p class="hint">For Zee and family — fill this in once. Everything saves on this device only and makes the big buttons work. Leave a box empty if it is not needed yet.</p>
+        <p class="hint">For the family — fill this in once. Everything saves on this device only and makes the big buttons work. Leave a box empty if it is not needed yet.</p>
         <div class="card">
           <p style="font-size:22px;font-weight:700;margin:0 0 4px">Family Helpers — who he can call and ask for help</p>
           <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The FIRST person in this list is the main helper: the "Ask for Help" and quick-message buttons go to them. The "I AM STUCK" message buttons go to EVERYONE in this list — one button for each person, so he can send the same stuck message to all of them, one by one. Add a sister or anyone else here and they get their own big Call button on the home screen, and appear everywhere a helper can be chosen. Take someone off with the button under their name.</p>
@@ -989,6 +991,7 @@
           <div id="helpersEditor"></div>
           <button class="actionbtn secondary" id="addHelperBtn" type="button">+ Add Another Helper</button>
           <div class="setup-grid" style="margin-top:10px">
+            <div><label class="flabel" for="sElderName">His name</label><input type="text" id="sElderName" placeholder="e.g. Wazir Ali" /></div>
             <div><label class="flabel" for="sCity">His city (for weather)</label><input type="text" id="sCity" placeholder="e.g. Toronto" /></div>
             <div><label class="flabel" for="sEmailReset">Extra password-help page (optional)</label><input type="url" id="sEmailReset" dir="ltr" /></div>
             <div><label class="flabel" for="sGroceryLink">Grocery shop link (optional)</label><input type="url" id="sGroceryLink" dir="ltr" placeholder="https://…" /></div>
@@ -1126,6 +1129,7 @@
         zeeEmail:"shanstud@hotmail.com", amreenEmail:"", zehraEmail:"",
         helpers:[],
         doctors:[], medicines:[], appointments:[], groceryLink:"",
+        elderName:"Wazir Ali",
         city:"", emailReset:"https://accounts.google.com/signin/recovery",
         hospName:"", hospAddr:"", docName:"", docPhone:"", pharmName:"", pharmPhone:"",
         places:[]
@@ -1145,7 +1149,16 @@
       }
       if(!setup.zehraSeeded){
         var hasZehra = setup.helpers.some(function(h){ return h && (h.phone||"").replace(/[^0-9]/g,"")==="14172887882"; });
-        if(!hasZehra) setup.helpers.push({name:"Zehra", phone:"14172887882", email:""});
+        /* Zehra is only ever added to THIS family's saved config: the
+           existing helpers must already contain the seeded family —
+           Zee as a helper with his number, or Amreen. An unrelated
+           family's saved helpers never gain her. */
+        var seededFamily = setup.helpers.some(function(h){
+          if(!h) return false;
+          var dp = (h.phone||"").replace(/[^0-9]/g,"");
+          return dp === "14705790994" || dp === "16475350684" || (h.name||"").trim().toLowerCase() === "amreen";
+        });
+        if(!hasZehra && seededFamily) setup.helpers.push({name:"Zehra", phone:"14172887882", email:""});
         setup.zehraSeeded = true;
         try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){}
       }
@@ -1154,8 +1167,24 @@
       function medsList(){ return (setup.medicines || []).filter(function(m){ return m && (m.name || m.when); }); }
       function apptsList(){ return (setup.appointments || []).filter(function(a){ return a && a.text; }); }
       function firstHelper(){ var hs = helpers(); return hs.length ? hs[0] : {name:"Zee", phone:"14705790994", email:""}; }
+      /* His name, from Family Setup ("His name", default "Wazir Ali"):
+         drives the greeting and the email subjects. */
+      function elderName(){ var n = (setup.elderName || "").trim(); return n || "Wazir Ali"; }
+      /* A helper's display name, or "" when no name is saved — labels
+         fall back to neutral wording, never to a hard-coded person. */
+      function dispName(h){ return (h && h.name) ? h.name.trim() : ""; }
+      function mainHelperLabel(){ return dispName(firstHelper()) || "Family"; }
+      /* The ONE final-send-step wording for every WhatsApp/share route,
+         shown and spoken BEFORE the handoff: the button only OPENS
+         WhatsApp; nothing is sent until he taps Send there. */
+      function handoffText(name){
+        return "Tap this button to open WhatsApp for " + (name || "your family") + ". Then tap the green Send arrow there. Nothing has been sent yet.";
+      }
+      function handoffAttachText(name){
+        return "Tap this button to open WhatsApp for " + (name || "your family") + ". Choose the person, check the attached file, then press Send. Nothing has been sent yet.";
+      }
 
-      function saveSetup(){ try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){} }
+      function saveSetup(){ try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); return true; }catch(e){ return false; } }
       function digits(p){ return (p||"").replace(/[^0-9]/g,""); }
       /* ONE phone normalization for every tel: and WhatsApp number in
          the app (helpers, doctors, pharmacy, hospital — all of them):
@@ -1219,10 +1248,23 @@
       /* ---------------- Panels ---------------- */
       var homeEl = $("home");
       function openPanel(id){
+        /* Leaving viewer mode: ONE central cleanup that runs BEFORE any
+           panel-state change — close the call and data connection,
+           destroy the peer, clear the video, drop ?watch= from the URL.
+           Every way out of the viewer (HOME, I AM STUCK, Go Back, the
+           viewer's own HOME button) passes through here. */
+        var pvEl = $("panel-viewer");
+        if(pvEl && pvEl.classList.contains("active") && id !== "panel-viewer" && typeof viewerCleanup === "function"){
+          viewerCleanup();
+          if(typeof stripWatchParam === "function") stripWatchParam();
+        }
         if((id === null || id === "panel-stuck") && typeof scr !== "undefined" && scr && (scr.stream || scr.peer || scr.watching) && typeof screenCleanup === "function"){
           screenCleanup("You stopped showing your screen. Nothing is being shown now.");
           if(typeof speak === "function") speak("You stopped showing your screen.", "en-US");
         }
+        /* A new location panel session starts clean: no OPENED marks
+           and no prepared links carried over from last time. */
+        if(id === "panel-location" && typeof renderLocHelpers === "function") renderLocHelpers();
         var panels = document.querySelectorAll(".panel");
         for(var i=0;i<panels.length;i++) panels[i].classList.remove("active");
         if(id){ homeEl.style.display="none"; $(id).classList.add("active"); if(id === "panel-rewrite" && typeof showWizStep === "function") showWizStep(1); }
@@ -1235,9 +1277,39 @@
       }
       var backs = document.querySelectorAll("[data-back]");
       for(var j=0;j<backs.length;j++) backs[j].addEventListener("click", function(){ openPanel(null); });
-      $("bbHome").addEventListener("click", function(){ openPanel(null); });
-      $("bbStuck").addEventListener("click", function(){ openPanel("panel-stuck"); });
+      $("bbHome").addEventListener("click", function(){ cancelSession(); openPanel(null); });
+      $("bbStuck").addEventListener("click", function(){ cancelSession(); openPanel("panel-stuck"); });
       $("setupLink").addEventListener("click", function(e){ e.preventDefault(); fillSetupForm(); openPanel("panel-setup"); });
+
+      /* ---------------- Session cancellation ----------------
+         HOME and I AM STUCK are his escape buttons: they must win over
+         anything still in flight. cancelSession() bumps the session
+         token, stops any active microphone/recognition and microphone
+         initialisation, and clears every pending voice-navigation
+         timer. Recognition callbacks, delayed go() calls and the
+         screen-capture promise all check the token and do nothing
+         when it has moved on. */
+      var sessionToken = 0;
+      var navTimers = [];
+      function later(fn, ms){
+        var t = setTimeout(fn, ms);
+        navTimers.push(t);
+        return t;
+      }
+      function cancelSession(){
+        sessionToken++;
+        for(var ci=0; ci<navTimers.length; ci++) clearTimeout(navTimers[ci]);
+        navTimers = [];
+        if(typeof voiceRec !== "undefined" && voiceRec){ try{ voiceRec.stop(); }catch(e){} voiceRec = null; }
+        if(typeof setVoiceMic === "function") setVoiceMic(null);
+        if(typeof activeRec !== "undefined" && activeRec){ try{ activeRec.stop(); }catch(e){} activeRec = null; }
+        if(typeof activeBtn !== "undefined" && activeBtn){
+          activeBtn.classList.remove("listening");
+          var ls = activeBtn.querySelector("[data-miclabel]");
+          if(ls) ls.textContent = activeBtn.getAttribute("data-label");
+          activeBtn = null;
+        }
+      }
 
       /* ---------------- Greeting: day, date, clock ---------------- */
       function tickClock(){
@@ -1343,8 +1415,10 @@
             if(activeRec){ stopRec(btn); return; }
             var target = $(btn.getAttribute("data-target"));
             var lang = btn.getAttribute("data-lang") || "en-US";
+            var tok = sessionToken;
             micSay(btn, lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…", false);
             primeMic(function(ready){
+              if(tok !== sessionToken) return; /* HOME / I AM STUCK was tapped while the mic was getting ready */
               if(ready !== true){ micSay(btn, ready, true); return; }
               var rec = new SR();
               rec.lang = lang;
@@ -1357,6 +1431,7 @@
               labelSpan.textContent = (lang === "ur-PK") ? "سن رہا ہوں… رک کر ٹھہریں" : "Listening… tap to stop";
               micSay(btn, lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW. Your words will appear in the box as you speak.", false);
               rec.onresult = function(ev){
+                if(tok !== sessionToken) return; /* stale: he escaped with HOME / I AM STUCK */
                 var finals = "", interim = "";
                 for(var i = ev.resultIndex; i < ev.results.length; i++){
                   var r = ev.results[i];
@@ -1500,7 +1575,7 @@
         var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
         if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
         if(!normalizePhone(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
-        note.textContent = "WhatsApp will open. Tap the green Send arrow to send this. The answer will come on WhatsApp — you can listen to it there, and reply with your voice.";
+        note.textContent = handoffText(t.name || "your family") + " The answer will come on WhatsApp — you can listen to it there, and reply with your voice.";
         note.classList.add("show");
         $("msgWhats").href = waLinkTo(t.phone, msg);
       });
@@ -1508,10 +1583,10 @@
         var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
         if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
         var to = (t.email || "").trim();
-        if(!to){ e.preventDefault(); var nm = t.name || "that person"; var emsg = "I do not have " + nm + "'s email address. Send it on WhatsApp instead, or ask Zee to add " + nm + "'s email."; note.textContent = emsg; note.classList.add("show"); speak(emsg, "en-US"); return; }
+        if(!to){ e.preventDefault(); var nm = t.name || "that person"; var emsg = "I do not have " + nm + "'s email address. Send it on WhatsApp instead, or ask " + mainHelperLabel() + " to add " + nm + "'s email."; note.textContent = emsg; note.classList.add("show"); speak(emsg, "en-US"); return; }
         note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
         note.classList.add("show");
-        $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(msg);
+        $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from " + elderName()) + "&body=" + encodeURIComponent(msg);
       });
 
       /* ---------------- Listen: hear your options (home) ---------------- */
@@ -1519,7 +1594,7 @@
         var p = dateParts();
         var names = helpers().map(function(h){ return h.name; }).filter(Boolean);
         var who = names.length ? ("You can call " + names.join(", ") + ". ") : "";
-        speak("Wazir Ali. Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
+        speak(elderName() + ". Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
       });
 
       /* ---------------- Voice Mode: tap, speak, done ---------------- */
@@ -1541,9 +1616,11 @@
       function startVoice(btn, lang){
         if(!SR) return;
         if(voiceRec){ try{ voiceRec.stop(); }catch(e){} return; }
+        var tok = sessionToken;
         setVoiceMic(btn);
         voiceStatus(lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…");
         primeMic(function(ready){
+          if(tok !== sessionToken) return; /* HOME / I AM STUCK was tapped while the mic was getting ready */
           if(ready !== true){
             setVoiceMic(null);
             voiceStatus(ready);
@@ -1557,6 +1634,7 @@
           voiceStatus(lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW.");
           var heard = false, failed = false;
           rec.onresult = function(ev){
+            if(tok !== sessionToken) return; /* stale: he escaped with HOME / I AM STUCK */
             var finals = "", interim = "";
             for(var i = ev.resultIndex; i < ev.results.length; i++){
               var r = ev.results[i];
@@ -1592,7 +1670,7 @@
         voiceStatus("Tap a microphone, then speak.");
       });
       $("voiceOpenBtn").addEventListener("click", function(){
-        setTimeout(function(){ speak("Voice help. Tap a big microphone and say what you want.", "en-US"); }, 400);
+        later(function(){ speak("Voice help. Tap a big microphone and say what you want.", "en-US"); }, 400);
       });
 
       function handleVoice(said){
@@ -1603,7 +1681,7 @@
         var kind = detectLang(said);
         var low = " " + said.toLowerCase().replace(/[^a-z0-9\s]/g, " ") + " ";
         var fh = firstHelper();
-        var fhName = fh.name || "Zee";
+        var fhName = mainHelperLabel();
         /* Negation first: a negative phrase must never fire the positive action. */
         var negLow = said.toLowerCase();
         var isNeg = /\b(not|no|never)\b/.test(negLow) || negLow.indexOf("don't") >= 0 || negLow.indexOf("dont") >= 0 || negLow.indexOf("do not") >= 0
@@ -1620,9 +1698,103 @@
           speak(t, speakLangFor(kind));
           voiceStatus("Tap a microphone to say something else.");
         }
-        function act(label, href, external, colorClass, spoken){ voiceActionShow(label, href, external, colorClass); say(spoken); }
-        function go(panelId, spoken){ say(spoken); setTimeout(function(){ openPanel(panelId); refreshSendLinks(); }, 1000); }
+        function act(label, href, external, colorClass, spoken){
+          voiceActionShow(label, href, external, colorClass);
+          /* Every WhatsApp action carries the final-send step BEFORE
+             the handoff: the button only opens WhatsApp. */
+          if(href && href.indexOf("wa.me") >= 0){
+            spoken += /[\u0600-\u06FF]/.test(spoken)
+              ? " ابھی کچھ نہیں بھیجا گیا — واٹس ایپ کھلے گا، وہاں سبز تیر دبائیں۔"
+              : " Nothing has been sent yet — WhatsApp will open, then tap the green Send arrow there.";
+          }
+          say(spoken);
+        }
+        function go(panelId, spoken){ say(spoken); later(function(){ openPanel(panelId); refreshSendLinks(); }, 1000); }
         function has(){ for(var i=0;i<arguments.length;i++){ if(low.indexOf(" " + arguments[i] + " ") >= 0 || low.indexOf(arguments[i]) >= 0) return true; } return false; }
+
+        /* ---- Call resolution: WHO he wants to call is resolved
+           BEFORE any call button is shown, identically for English,
+           Urdu and Roman Urdu. Order: an explicit 911 request gets a
+           deliberate tel:911 button; doctor/pharmacy requests route
+           to the saved doctor/pharmacy contact or their selection
+           screen; a person matches only by COMPLETE saved name or
+           alias — substrings never match, so "call Joanne" cannot
+           find helper "Ann"; an unresolved person gets the family
+           picker on the home screen. The main helper is NEVER
+           silently substituted for the person he asked for. ---- */
+        var UR_ALIAS = { zee:"\u0632\u06cc", zeeshan:"\u0632\u06cc\u0634\u0627\u0646", amreen:"\u0627\u0645\u0631\u06cc\u0646", zehra:"\u0632\u06c1\u0631\u06c1" };
+        function matchHelperName(){
+          var hs = helpers();
+          for(var i=0;i<hs.length;i++){
+            var nm = (hs[i].name || "").toLowerCase().trim();
+            if(!nm) continue;
+            if(low.indexOf(" " + nm + " ") >= 0) return hs[i];
+            var parts = nm.split(/\s+/);
+            for(var w=0; w<parts.length; w++){
+              if(parts[w].length >= 2 && low.indexOf(" " + parts[w] + " ") >= 0) return hs[i];
+            }
+            var al = UR_ALIAS[parts[0]];
+            if(al && said.indexOf(al) >= 0) return hs[i];
+          }
+          return null;
+        }
+        function callHelperAction(h){
+          var nm = h.name || "Family";
+          var np = normalizePhone(h.phone);
+          if(!np){
+            say(kind === "ur"
+              ? nm + " کا نمبر صحیح طرح محفوظ نہیں ہے۔ " + fhName + " سے کہیں کہ فیملی سیٹ اپ میں ٹھیک کر دیں۔"
+              : "I have " + nm + " in the family list, but their number is not saved properly. Ask " + fhName + " to fix it in Family Setup.");
+            return;
+          }
+          act("TAP TO CALL " + nm.toUpperCase(), "tel:+" + np, false, "bg-green",
+            kind === "ur" ? "ٹھیک ہے۔ " + nm + " کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔"
+                          : "Tap the big green button to call " + nm + " now.");
+        }
+        function call911Action(){
+          act("TAP TO CALL 911 — EMERGENCY", "tel:911", false, "bg-red",
+            kind === "ur" ? "یہ ایمرجنسی نمبر ہے۔ صرف اصل ایمرجنسی میں بڑا سرخ بٹن دبائیں۔"
+                          : "This is the emergency number. Tap the big red button only for a real emergency.");
+        }
+        function doctorAction(){
+          var callable = doctorsList().filter(function(d){ return normalizePhone(d.phone); });
+          if(callable.length === 1){
+            var d = callable[0];
+            act("TAP TO CALL " + (d.name || "MY DOCTOR").toUpperCase(), "tel:+" + normalizePhone(d.phone), false, "bg-green",
+              kind === "ur" ? "ٹھیک ہے۔ اپنے ڈاکٹر کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔"
+                            : "Tap the big green button to call " + (d.name || "your doctor") + " now.");
+            return;
+          }
+          go("panel-health", kind === "ur"
+            ? "ڈاکٹر والا صفحہ کھل رہا ہے — اپنے ڈاکٹر کے نام کے نیچے کال والا بٹن دبائیں۔"
+            : "Opening Health and Hospital. Tap the CALL button under your doctor's name there.");
+        }
+        function pharmacyAction(){
+          var np = normalizePhone(setup.pharmPhone);
+          if(np){
+            act("TAP TO CALL MY PHARMACY", "tel:+" + np, false, "bg-green",
+              kind === "ur" ? "ٹھیک ہے۔ دوائی والی دکان کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔"
+                            : "Tap the big green button to call your pharmacy now.");
+            return;
+          }
+          go("panel-health", kind === "ur"
+            ? "صحت والا صفحہ کھل رہا ہے — وہاں دوائی والی دکان کا بٹن ہے۔"
+            : "Opening Health and Hospital. Your pharmacy button is there.");
+        }
+        function pickerAction(){
+          var names = helpers().map(function(h){ return h.name; }).filter(Boolean).join(", ");
+          go(null, kind === "ur"
+            ? "مجھے سمجھ نہیں آیا کہ کس کو کال کرنی ہے۔ میں اندازہ نہیں لگاؤں گا۔ آپ ان کو کال کر سکتے ہیں: " + names + "۔ گھر والا صفحہ کھل رہا ہے — صحیح نام والا سبز کال بٹن دبائیں۔"
+            : "I am not sure who you mean, and I will not guess. You can call: " + names + ". Opening the home screen — tap the green Call button for the right person, or say their full name.");
+        }
+        function resolveCall(){
+          if(low.indexOf(" 911 ") >= 0 || said.indexOf("\u06f9\u06f1\u06f1") >= 0 || said.indexOf("\u0669\u0661\u0661") >= 0 || has("nine one one") || has("emergency") || said.indexOf("ایمرجنسی") >= 0){ call911Action(); return; }
+          if(has("doctor") || said.indexOf("ڈاکٹر") >= 0){ doctorAction(); return; }
+          if(has("pharmacy") || said.indexOf("فارمیسی") >= 0 || said.indexOf("دواخانہ") >= 0){ pharmacyAction(); return; }
+          var h = matchHelperName();
+          if(h){ callHelperAction(h); return; }
+          pickerAction();
+        }
 
         /* ---- Urdu words ---- */
         if(/[\u0600-\u06FF]/.test(said)){
@@ -1632,8 +1804,10 @@
             return;
           }
           if(said.indexOf("کال") >= 0 || said.indexOf("فون") >= 0){
-            act("TAP TO CALL " + fhName.toUpperCase(), "tel:+" + normalizePhone(fh.phone), false, "bg-green",
-              "ٹھیک ہے۔ " + fhName + " کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔");
+            /* Same resolution as English: 911, doctor, pharmacy, or a
+               complete saved name/alias — never a silent substitution
+               of the main helper. */
+            resolveCall();
             return;
           }
           if(said.indexOf("دستاویز") >= 0 || said.indexOf("کاغذ") >= 0){
@@ -1661,8 +1835,12 @@
           }
           var ua = instantAnswer(said);
           if(ua){ say(ua); return; }
+          if(!normalizePhone(fh.phone)){
+            say("یہ میں خود نہیں کر سکتا، اور " + fhName + " کا نمبر صحیح محفوظ نہیں ہے۔ گھر کے صفحے سے کوشش کریں۔");
+            return;
+          }
           act("SEND THIS TO " + fhName.toUpperCase(), waLink("Assalam-o-Alaikum " + fhName + ", I have a question: " + said), true, "bg-amber",
-            "یہ میں خود نہیں کر سکتا۔ بڑا پیلا بٹن دبائیں — آپ کی بات " + fhName + " کو بھیج دی جائے گی، وہ مدد کرے گا۔");
+            "یہ میں خود نہیں کر سکتا۔ بڑا پیلا بٹن دبائیں — آپ کی بات واٹس ایپ پر " + fhName + " کو چلی جائے گی۔");
           return;
         }
 
@@ -1673,15 +1851,10 @@
           return;
         }
         if(has("call", "phone", "ring")){
-          var target = fh;
-          var hs = helpers();
-          for(var i=0;i<hs.length;i++){
-            if(hs[i].name && low.indexOf(hs[i].name.toLowerCase()) >= 0){ target = hs[i]; break; }
-          }
-          if(target.phone){
-            act("TAP TO CALL " + (target.name || "FAMILY").toUpperCase(), "tel:+" + normalizePhone(target.phone), false, "bg-green",
-              "Tap the big green button to call " + (target.name || "your family") + " now.");
-          } else say("I do not have a phone number for that person yet. Ask " + fhName + " to set it up.");
+          /* Resolved first (911 / doctor / pharmacy / complete name /
+             picker) — see resolveCall above. No substring matching,
+             no silent main-helper substitution. */
+          resolveCall();
           return;
         }
         if(has("fine", "theek")){
@@ -1722,7 +1895,7 @@
         }
         if(has("send") && has("file", "photo", "picture")){
           go("panel-docs", "Opening MY PAPERS. Tap SEND A PHOTO OR FILE there, pick your file, then tap Send It.");
-          setTimeout(function(){ var ps = $("papersSend"); if(ps) ps.style.display = ""; }, 1100);
+          later(function(){ var ps = $("papersSend"); if(ps) ps.style.display = ""; }, 1100);
           return;
         }
         if(has("document", "documents", "papers", "paper")){
@@ -1790,6 +1963,10 @@
         }
         var a = instantAnswer(said);
         if(a){ say(a); return; }
+        if(!normalizePhone(fh.phone)){
+          say("I cannot do that one myself, and I do not have a working phone number to send it to. Tap HOME and use the big buttons, or ask family to fix the number in Family Setup.");
+          return;
+        }
         act("SEND THIS TO " + fhName.toUpperCase(), waLink("Assalam-o-Alaikum " + fhName + ", I have a question: " + said), true, "bg-amber",
           "I cannot do that one myself. Tap the yellow button to send your words to " + fhName + " on WhatsApp, and he will help you.");
       }
@@ -1800,10 +1977,16 @@
         var c = $("docChange").value.trim();
         var note = $("docNote");
         if(!t && !c){
-          note.textContent = docPickedFile
-            ? "LISTEN reads only words you typed or spoke — a photo or file cannot be read aloud. You can see it in Step 2, and it will be sent in Step 4."
-            : "The box is empty. First put your document in the box — type it, paste it, or speak it.";
-          note.classList.add("show"); return;
+          /* The explanation is shown AND spoken here in Step 2 —
+             docNote lives in hidden Step 4, so writing there made
+             this tap look like it did nothing. */
+          var why = docPickedFile
+            ? "LISTEN reads only words you typed or spoke — a photo or file cannot be read aloud. You can see it here in Step 2, and it will be sent in Step 4."
+            : "There are no words to read yet. First put your document in Step 1 — type it, paste it, or speak it.";
+          var hn = $("docFileHearNote");
+          if(hn){ hn.textContent = why; hn.style.display = ""; }
+          speak(why, "en-US");
+          return;
         }
         note.classList.remove("show");
         var toRead = t;
@@ -1824,7 +2007,18 @@
       }
       function syncDocPreview(){
         var d = $("docText").value.trim();
-        $("docPreview").textContent = d || "Nothing yet — do Step 1 first.";
+        var f = docPickedFile;
+        /* The "Nothing yet" empty state shows ONLY when there is
+           neither text nor a picked file. A photo-only pick is
+           acknowledged as the photo (shown above); any other file
+           is acknowledged by its filename. */
+        if(d) $("docPreview").textContent = d;
+        else if(f && docIsImage()) $("docPreview").textContent = "You picked this photo: " + f.name + ". You can see it above. LISTEN cannot read a photo aloud — the photo itself will be sent in Step 4.";
+        else if(f) $("docPreview").textContent = "You picked this file: " + f.name + ". It will be sent in Step 4.";
+        else $("docPreview").textContent = "Nothing yet — do Step 1 first.";
+        /* LISTEN only exists when there are words to read. */
+        var rd = $("docRead");
+        if(rd) rd.style.display = (d || $("docChange").value.trim()) ? "" : "none";
       }
       /* SEND BY EMAIL on Step 4 exists only when it can actually work:
          with a photo/file picked, the road is WhatsApp-only; and for a
@@ -1852,19 +2046,27 @@
         }
         $("docFileHearNote").style.display = f ? "" : "none";
         $("docFileSendWrap").style.display = f ? "" : "none";
+        /* Every recipient label is generated from the SAME configured
+           main-helper object as the address it sends to, and refreshed
+           whenever setup changes — never a hard-coded name. No name
+           saved → neutral wording. */
+        var recip = dispName(firstHelper());
+        var recipLabel = recip ? recip.toUpperCase() : "FAMILY";
         if(f){
           $("docFileSendHow").textContent = isImg
-            ? "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the photo itself will go."
-            : "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the file itself will go.";
+            ? "First tap SEND 1 OF 2 above — MESSAGE " + recipLabel + " ON WHATSAPP — and tap the green Send arrow there. Then tap this button, choose WhatsApp again, check the photo is attached, and press Send."
+            : "First tap SEND 1 OF 2 above — MESSAGE " + recipLabel + " ON WHATSAPP — and tap the green Send arrow there. Then tap this button, choose WhatsApp again, check the file is attached, and press Send.";
           $("docSendFile").textContent = isImg ? "SEND 2 OF 2 — SEND MY PHOTO" : "SEND 2 OF 2 — SEND MY FILE";
-          $("docSend").textContent = "SEND 1 OF 2 — MESSAGE ZEE ON WHATSAPP";
+          $("docSend").textContent = "SEND 1 OF 2 — MESSAGE " + recipLabel + " ON WHATSAPP";
         }else{
           $("docEmail").textContent = "SEND BY EMAIL";
-          $("docSend").textContent = "SEND TO " + (firstHelper().name || "Zee") + " — WhatsApp";
+          $("docSend").textContent = recip ? ("SEND TO " + recip.toUpperCase() + " — WhatsApp") : "SEND TO FAMILY — WhatsApp";
         }
         syncDocEmailVisibility();
+        syncDocPreview();
       }
       $("docText").addEventListener("input", syncDocPreview);
+      $("docChange").addEventListener("input", syncDocPreview);
       $("docFileInput").addEventListener("change", function(){
         var f = (this.files || [])[0];
         docPickedFile = f || null;
@@ -1881,11 +2083,12 @@
         var d = $("docText").value.trim();
         var note = $("docNote");
         if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
+        if(!normalizePhone(firstHelper().phone)){ e.preventDefault(); note.textContent = "The phone number for " + mainHelperLabel() + " is not saved properly, so this cannot be sent. Ask family to fix it in Family Setup."; note.classList.add("show"); return; }
         var full = docFullText(), partial = false;
         if(full.length > 1500){ full = full.slice(0, 1500); partial = true; }
         note.textContent = partial
-          ? "Your document is very long, so only the first part is in WhatsApp. WhatsApp is opening — tap the green Send arrow to send this. " + firstHelper().name + " will ask you for the rest."
-          : "WhatsApp is opening. Tap the green Send arrow to send this, and a person will fix it properly and send it back.";
+          ? "Your document is very long, so only the first part is in WhatsApp. " + handoffText(dispName(firstHelper()) || "your family") + " " + firstHelper().name + " will ask you for the rest."
+          : handoffText(dispName(firstHelper()) || "your family") + " A person will fix it properly and send it back.";
         if(docPickedFile) note.textContent += " Then come back here and tap the green SEND 2 OF 2 button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
         note.classList.add("show");
         $("docSend").href = waLink(full);
@@ -1911,7 +2114,7 @@
             else note.textContent = "That did not work. Tap I AM STUCK or use Send My File or Photo.";
             note.classList.add("show");
           });
-          note.textContent = "Your phone is asking where to send it — choose WhatsApp again, then tap the person. The " + what + " itself will go.";
+          note.textContent = handoffAttachText(dispName(firstHelper()) || "your family") + " Your phone is asking where to send it — choose WhatsApp again.";
           note.classList.add("show"); return;
         }
         note.textContent = "This device cannot send the " + what + " from here, so nothing was sent. Go back to the home screen, open MY PAPERS and use SEND A PHOTO OR FILE, or tap I AM STUCK.";
@@ -1922,7 +2125,18 @@
       var tasks = [];
       try{ tasks = JSON.parse(localStorage.getItem("dadTasks")||"[]"); }catch(e){ tasks = []; }
       if(!Array.isArray(tasks)) tasks = [];
-      function saveTasks(){ try{ localStorage.setItem("dadTasks", JSON.stringify(tasks)); }catch(e){} }
+      /* Persistence reports honestly: false means NOT saved, and the
+         callers below only change what he sees after a successful
+         write — a failed save never looks saved. */
+      function saveTasks(){ try{ localStorage.setItem("dadTasks", JSON.stringify(tasks)); return true; }catch(e){ return false; } }
+      function taskSaveFailed(){
+        var n = $("taskNote");
+        if(n){ n.textContent = "Not saved — please try again."; n.classList.add("show"); }
+      }
+      function taskSaveOk(){
+        var n = $("taskNote");
+        if(n){ n.textContent = ""; n.classList.remove("show"); }
+      }
       function renderTasks(){
         var list = $("taskList"); list.innerHTML = "";
         if(!tasks.length){
@@ -1939,10 +2153,20 @@
           main.type = "button"; main.style.cssText = "display:flex;align-items:center;gap:14px;flex:1;background:none;border:none;font:inherit;text-align:left;cursor:pointer;padding:0;min-height:52px;color:inherit";
           main.appendChild(box); main.appendChild(txt);
           main.setAttribute("aria-label", task.done ? "Mark not done: "+task.text : "Mark done: "+task.text);
-          main.addEventListener("click", function(){ task.done = !task.done; saveTasks(); renderTasks(); });
+          main.addEventListener("click", function(){
+            task.done = !task.done;
+            if(saveTasks()) taskSaveOk();
+            else { task.done = !task.done; taskSaveFailed(); }
+            renderTasks();
+          });
           var del = document.createElement("button");
           del.type = "button"; del.className = "del"; del.textContent = "\u2715"; del.setAttribute("aria-label","Remove task: "+task.text);
-          del.addEventListener("click", function(){ tasks.splice(idx,1); saveTasks(); renderTasks(); });
+          del.addEventListener("click", function(){
+            var removed = tasks.splice(idx,1)[0];
+            if(saveTasks()) taskSaveOk();
+            else { tasks.splice(idx,0,removed); taskSaveFailed(); }
+            renderTasks();
+          });
           row.appendChild(main); row.appendChild(del);
           list.appendChild(row);
         });
@@ -1951,8 +2175,14 @@
         var t = $("taskText").value.trim();
         if(!t) return;
         tasks.push({text:t, done:false});
-        $("taskText").value = "";
-        saveTasks(); renderTasks();
+        if(saveTasks()){
+          taskSaveOk();
+          $("taskText").value = ""; /* cleared only once it is truly saved; on failure his words stay in the box */
+        }else{
+          tasks.pop();
+          taskSaveFailed();
+        }
+        renderTasks();
       });
       $("taskText").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); $("taskAdd").click(); } });
       renderTasks();
@@ -1981,8 +2211,17 @@
         if(setup.hospAddr){
           body.appendChild(bigLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((setup.hospName? setup.hospName+" ":"") + setup.hospAddr), "bg-teal", "Directions to My Hospital", setup.hospName || setup.hospAddr));
         } else body.appendChild(notReady("The hospital address"));
-        if(setup.pharmPhone){
+        if(normalizePhone(setup.pharmPhone)){
           body.appendChild(bigLink("tel:+" + normalizePhone(setup.pharmPhone), "bg-green", "Call My Pharmacy", (setup.pharmName? setup.pharmName+" — ":"") + fmtPhone(setup.pharmPhone)));
+        } else if((setup.pharmPhone || "").trim()){
+          /* A number was saved but does not normalize — never turn it
+             into a call button; say plainly that it is not saved
+             properly. (Previously stored configs are validated here,
+             at render.) */
+          var bd = document.createElement("div"); bd.className = "card";
+          var bp = document.createElement("p"); bp.style.margin = "0"; bp.style.fontSize = "23px";
+          bp.textContent = "The pharmacy phone number is not saved properly. Ask " + firstHelper().name + " to fix it in Family Setup.";
+          bd.appendChild(bp); body.appendChild(bd);
         } else body.appendChild(notReady("The pharmacy phone number"));
       }
 
@@ -2011,7 +2250,12 @@
             var p = document.createElement("p"); p.textContent = doc.whatfor; p.setAttribute("dir","auto");
             card.appendChild(p);
           }
-          if(doc.phone) card.appendChild(actLink("tel:+" + normalizePhone(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
+          if(normalizePhone(doc.phone)) card.appendChild(actLink("tel:+" + normalizePhone(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
+          else if((doc.phone || "").trim()){
+            var bp2 = document.createElement("p");
+            bp2.textContent = "This number is not saved properly. Ask " + firstHelper().name + " to fix it in Family Setup.";
+            card.appendChild(bp2);
+          }
           if(doc.address) card.appendChild(actLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((doc.name ? doc.name + " " : "") + doc.address), "bg-blue", "DIRECTIONS"));
           body.appendChild(card);
         });
@@ -2112,7 +2356,7 @@
         var list = $("grocText").value.trim(), note = $("grocNote"), t = grocTarget();
         if(!list){ e.preventDefault(); note.textContent = "First say what you need — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
         if(!normalizePhone(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
-        note.textContent = "WhatsApp will open. Tap the green Send arrow to send your list.";
+        note.textContent = handoffText(t.name || "your family");
         note.classList.add("show");
         $("grocWhats").href = waLinkTo(t.phone, "I need these things from the shop:\n" + list);
       });
@@ -2184,15 +2428,25 @@
         });
       }
       function applyHelperNames(){
-        var nm = firstHelper().name || "Zee";
+        /* From the configured main helper; a saved helper with no
+           name gives neutral wording, never a hard-coded person. */
+        var nm = mainHelperLabel();
         var spans = document.querySelectorAll("[data-hname]");
         for(var i=0;i<spans.length;i++) spans[i].textContent = nm;
       }
       function applySetupToHome(){
         renderHelpers(); applyHelperNames(); renderStuckHelpers();
+        var eg = $("elderGreeting"); if(eg) eg.textContent = elderName();
         var fh = firstHelper();
-        $("stuckCallZee").href = "tel:+" + normalizePhone(fh.phone);
-        $("screenCallZee").href = "tel:+" + normalizePhone(fh.phone);
+        /* The standing Call buttons only ever point at a number that
+           normalizes; an invalid stored number hides the button
+           instead of producing a broken tel:+ link. */
+        var fhN = normalizePhone(fh.phone);
+        [["stuckCallZee"],["screenCallZee"]].forEach(function(pair){
+          var el = $(pair[0]); if(!el) return;
+          if(fhN){ el.href = "tel:+" + fhN; el.style.display = ""; }
+          else el.style.display = "none";
+        });
         var slot = $("placesSlot"); slot.innerHTML = "";
         setup.places.forEach(function(pl){
           if(!pl.name || !pl.url) return;
@@ -2215,6 +2469,9 @@
         renderMsgChips(); renderHealth(); renderPassword(); renderSendFileHelpers(); renderLocHelpers(); refreshSendLinks();
         renderDoctors(); renderMeds(); renderAppts(); renderRide(); renderGroceries();
         if(typeof syncDocEmailVisibility === "function") syncDocEmailVisibility();
+        /* Recipient labels on the document wizard are regenerated
+           from the configured helper whenever setup changes. */
+        if(typeof syncDocFileUI === "function") syncDocFileUI();
       }
 
       /* ---------------- Quick notifications (one tap, to the main helper) ---------------- */
@@ -2234,11 +2491,16 @@
          currently in their boxes — so a tap always opens the right thing,
          with no script-opened window anywhere. */
       function refreshSendLinks(){
-        var links = document.querySelectorAll("[data-quicklink]");
-        for(var qi=0; qi<links.length; qi++){
-          links[qi].href = waLink(QUICK[links[qi].getAttribute("data-quicklink")] || "");
+        /* Only a number that normalizes may become a WhatsApp
+           address; otherwise the standing links are left untouched
+           rather than rewritten into broken wa.me/ links. */
+        if(normalizePhone(firstHelper().phone)){
+          var links = document.querySelectorAll("[data-quicklink]");
+          for(var qi=0; qi<links.length; qi++){
+            links[qi].href = waLink(QUICK[links[qi].getAttribute("data-quicklink")] || "");
+          }
+          var pa = $("passwordAskZee"); if(pa) pa.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I forgot my password and I need your help, please.");
         }
-        var pa = $("passwordAskZee"); if(pa) pa.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I forgot my password and I need your help, please.");
         refreshFormLinks();
       }
       function refreshFormLinks(){
@@ -2247,7 +2509,7 @@
         var mt = msgTarget();
         if(normalizePhone(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
         var mto = (mt.email || "").trim();
-        if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(mm);
+        if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from " + elderName()) + "&body=" + encodeURIComponent(mm);
         else $("msgEmail").href = "#";
       }
       ["msgText","docText"].forEach(function(id){
@@ -2270,7 +2532,7 @@
             else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
             note.classList.add("show");
           });
-          note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
+          note.textContent = handoffAttachText("your family") + " Your phone is asking where to send it — tap WhatsApp.";
           note.classList.add("show"); return;
         }
         note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
@@ -2365,7 +2627,7 @@
             else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
             note.classList.add("show");
           });
-          note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
+          note.textContent = handoffAttachText("your family") + " Your phone is asking where to send it — tap WhatsApp.";
         }else{
           note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
         }
@@ -2432,10 +2694,13 @@
         function usePos(pos){
           /* Stage two: turn the button into the real WhatsApp anchor
              and STOP. No programmatic click, no OPENED mark — both wait
-             for his own second tap on this same button. */
+             for his own second tap on this same button. The prepared
+             link is TIMESTAMPED: a tap that comes after the freshness
+             window must never send this position as "I am here". */
           var link = "https://www.google.com/maps?q=" + pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
           a.href = waLinkTo(h.phone, "I am here: " + link);
           a.setAttribute("data-ready", "1");
+          a._readyAt = Date.now();
           if(a._label) a._label.textContent = "TAP AGAIN — OPEN WHATSAPP TO " + name.toUpperCase();
           if(a._sub) a._sub.textContent = "Your place is ready — tap again to open WhatsApp";
           locNoteSay("Found you. Tap the same button again — WhatsApp will open for " + name + ". Then tap the green Send arrow there.");
@@ -2459,10 +2724,28 @@
           if(a._sub) a._sub.textContent = "Tap to find where you are first";
           a.addEventListener("click", function(e){
             if(a.getAttribute("data-ready")){
-              /* Second, direct tap on the genuine WhatsApp anchor:
-                 let it open, and only now mark OPENED. */
-              locMarkOpened(a, name);
-              locNoteSay("WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, to tell everyone listed here.");
+              if(a._readyAt && (Date.now() - a._readyAt) <= 60000){
+                /* Second, direct tap on the genuine WhatsApp anchor,
+                   while the prepared position is still fresh: let it
+                   open, and only now mark OPENED. */
+                locMarkOpened(a, name);
+                locNoteSay("WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, to tell everyone listed here.");
+                return;
+              }
+              /* The prepared position is stale (same ~60-second spirit
+                 as the shared fix cache): it must NOT be sent as
+                 "I am here". Invalidate it, stop the open, fetch a
+                 fresh position, and require the explicit second tap
+                 again. */
+              e.preventDefault();
+              a.removeAttribute("data-ready");
+              a._readyAt = 0;
+              a.href = "#";
+              if(a._label) a._label.textContent = "FIND MY LOCATION FOR " + name.toUpperCase();
+              if(a._sub) a._sub.textContent = "Tap to find where you are first";
+              locPos = null; locPosAt = 0;
+              locNoteSay("That place was found a while ago, so it is not being sent. Finding where you are now…");
+              locFindPosition(h, a);
               return;
             }
             e.preventDefault();
@@ -2491,7 +2774,7 @@
       }
 
       /* ---------------- Setup form ---------------- */
-      var F = { city:"sCity", emailReset:"sEmailReset", groceryLink:"sGroceryLink", hospName:"sHospName", hospAddr:"sHospAddr",
+      var F = { elderName:"sElderName", city:"sCity", emailReset:"sEmailReset", groceryLink:"sGroceryLink", hospName:"sHospName", hospAddr:"sHospAddr",
                 pharmName:"sPharmName", pharmPhone:"sPharmPhone" };
       function helperRow(h){
         var row = document.createElement("div");
@@ -2578,60 +2861,83 @@
         $("apptsEditor").appendChild(apptRow({text:""}));
       });
       $("setupSave").addEventListener("click", function(){
-        for(var k in F) setup[k] = $(F[k]).value.trim();
-        setup.helpers = [];
+        /* Build a separate CANDIDATE config from the form. The live
+           setup is not touched while the candidate is built or
+           validated — a rejected save changes nothing the running app
+           uses. Only successful validation AND successful persistence
+           replace the live setup and re-render the controls. */
+        var cand;
+        try{ cand = JSON.parse(JSON.stringify(setup)); }catch(e){ cand = Object.assign({}, setup); }
+        for(var k in F) cand[k] = $(F[k]).value.trim();
+        cand.helpers = [];
         var rows = $("helpersEditor").children;
         for(var r=0;r<rows.length;r++){
           var nm = rows[r].querySelector(".h-name").value.trim();
           var ph = rows[r].querySelector(".h-phone").value.trim();
           var em = rows[r].querySelector(".h-email").value.trim();
-          if(nm || ph || em) setup.helpers.push({name:nm, phone:ph, email:em});
+          if(nm || ph || em) cand.helpers.push({name:nm, phone:ph, email:em});
         }
-        /* The FIRST helper is the main helper: HELP, WhatsApp and the
-           emergency-family buttons all use their number, so a save with
-           no valid phone for them must not go through. Other helpers may
-           be saved without a phone — their buttons simply do not render. */
-        var firstPhone = setup.helpers.length ? setup.helpers[0].phone : "";
-        if(!normalizePhone(firstPhone)){
-          var needMsg = "The main helper needs a phone number because HELP, WhatsApp and emergency-family buttons use it.";
-          var warn = $("setupPhoneWarn");
-          warn.textContent = needMsg;
-          warn.classList.add("show");
-          speak(needMsg, "en-US");
-          if(rows.length) rows[0].scrollIntoView({behavior:"smooth", block:"center"});
-          return;
-        }
-        $("setupPhoneWarn").classList.remove("show");
-        var fh = firstHelper();
-        setup.zeePhone = fh.phone || ""; setup.zeeEmail = fh.email || "";
-        setup.doctors = [];
+        cand.doctors = [];
         var drows = $("doctorsEditor").children;
         for(var dr=0; dr<drows.length; dr++){
           var dn = drows[dr].querySelector(".d-name").value.trim();
           var dw = drows[dr].querySelector(".d-what").value.trim();
           var dp = drows[dr].querySelector(".d-phone").value.trim();
           var da = drows[dr].querySelector(".d-addr").value.trim();
-          if(dn || dw || dp || da) setup.doctors.push({name:dn, whatfor:dw, phone:dp, address:da});
+          if(dn || dw || dp || da) cand.doctors.push({name:dn, whatfor:dw, phone:dp, address:da});
         }
-        setup.medicines = [];
+        cand.medicines = [];
         var mrows = $("medsEditor").children;
         for(var mr=0; mr<mrows.length; mr++){
           var mn = mrows[mr].querySelector(".m-name").value.trim();
           var mw = mrows[mr].querySelector(".m-when").value.trim();
-          if(mn || mw) setup.medicines.push({name:mn, when:mw});
+          if(mn || mw) cand.medicines.push({name:mn, when:mw});
         }
-        setup.appointments = [];
+        cand.appointments = [];
         var arows = $("apptsEditor").children;
         for(var ar=0; ar<arows.length; ar++){
           var at = arows[ar].querySelector(".a-text").value.trim();
-          if(at) setup.appointments.push({text:at});
+          if(at) cand.appointments.push({text:at});
         }
-        setup.places = [];
+        cand.places = [];
         for(var i=0;i<4;i++){
           var n = $("sP"+(i+1)+"Name").value.trim(), u = $("sP"+(i+1)+"Url").value.trim();
-          if(n || u) setup.places.push({name:n, url:u});
+          if(n || u) cand.places.push({name:n, url:u});
         }
-        saveSetup(); applySetupToHome();
+        /* The FIRST helper is the main helper: HELP, WhatsApp and the
+           emergency-family buttons all use their number, so a save with
+           no valid phone for them must not go through. Other helpers may
+           be saved without a phone — their buttons simply do not render. */
+        var firstPhone = cand.helpers.length ? cand.helpers[0].phone : "";
+        if(!normalizePhone(firstPhone)){
+          var needMsg = "The main helper needs a phone number because HELP, WhatsApp and emergency-family buttons use it.";
+          var warn = $("setupPhoneWarn");
+          warn.textContent = needMsg;
+          warn.classList.add("show");
+          $("setupSaved").classList.remove("show");
+          speak(needMsg, "en-US");
+          if(rows.length) rows[0].scrollIntoView({behavior:"smooth", block:"center"});
+          return;
+        }
+        var cfh = cand.helpers[0];
+        cand.zeePhone = cfh.phone || ""; cand.zeeEmail = cfh.email || "";
+        /* Persist the CANDIDATE first. On a failed write nothing is
+           committed: the live and stored config stay exactly as they
+           were, the entered data stays visible in the form, and no
+           "Saved" confirmation is shown. */
+        var wrote = false;
+        try{ localStorage.setItem("dadSetup", JSON.stringify(cand)); wrote = true; }catch(e){ wrote = false; }
+        if(!wrote){
+          var w2 = $("setupPhoneWarn");
+          w2.textContent = "Not saved — please try again.";
+          w2.classList.add("show");
+          $("setupSaved").classList.remove("show");
+          speak("Not saved. Please try again.", "en-US");
+          return;
+        }
+        $("setupPhoneWarn").classList.remove("show");
+        setup = cand;
+        applySetupToHome();
         $("setupSaved").classList.add("show");
         window.scrollTo(0, document.body.scrollHeight);
       });
@@ -2655,13 +2961,31 @@
         if(needPdfJs && typeof pdfjsLib === "undefined") return false;
         return true;
       }
-      var LIB_MSG = "This needs the internet the first time it loads. Connect to the internet, wait a moment, and try again — or ask Zee.";
+      function libMsg(){ return "This needs the internet the first time it loads. Connect to the internet, wait a moment, and try again — or ask " + mainHelperLabel() + "."; }
+      function askMsg(){ return "Try again, or ask " + mainHelperLabel() + "."; }
 
+      /* Stale-output rule for every conversion route: on ANY input
+         change and at conversion start, the previous output is
+         cleared — download hidden, href removed, object URL revoked —
+         and a generation counter is bumped, so a late async result
+         from older inputs can never reappear or overwrite a newer
+         selection. He can never save the previous conversion by
+         mistake. */
+      var imgGen = 0, mergeGen = 0, pdfGen = 0;
       var lastImgUrl = null;
+      function clearImgOut(){
+        imgGen++;
+        if(lastImgUrl){ URL.revokeObjectURL(lastImgUrl); lastImgUrl = null; }
+        var dl = $("imgDownload"); dl.classList.remove("show"); dl.removeAttribute("href");
+        setStatus("imgStatus","");
+      }
+      $("imgInput").addEventListener("change", clearImgOut);
       $("imgConvert").addEventListener("click", async function(){
+        clearImgOut();
+        var gen = imgGen;
         var files = Array.prototype.slice.call($("imgInput").files || []);
         if(!files.length){ setStatus("imgStatus","First tap Pick Photos and choose your photos.", true); return; }
-        if(!libsReady(false)){ setStatus("imgStatus", LIB_MSG, true); return; }
+        if(!libsReady(false)){ setStatus("imgStatus", libMsg(), true); return; }
         setStatus("imgStatus","Working… please wait.");
         try{
           var pdf = await PDFLib.PDFDocument.create();
@@ -2680,28 +3004,37 @@
             page.drawImage(img, {x:0, y:0, width:img.width, height:img.height});
           }
           var bytes = await pdf.save();
+          if(gen !== imgGen) return; /* inputs changed while working — discard this result */
           if(lastImgUrl) URL.revokeObjectURL(lastImgUrl);
           lastImgUrl = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
           var dl = $("imgDownload"); dl.href = lastImgUrl; dl.classList.add("show");
           setStatus("imgStatus","Done — your PDF is ready. Tap the green button to save it.");
           dl.scrollIntoView({behavior:"smooth", block:"center"});
-        }catch(e){ setStatus("imgStatus","Something went wrong with those photos. Try again, or ask Zee.", true); }
+        }catch(e){ if(gen === imgGen) setStatus("imgStatus","Something went wrong with those photos. " + askMsg(), true); }
       });
 
       var pageUrls = [];
+      function clearPdfOut(){
+        pdfGen++;
+        pageUrls.forEach(function(u){ URL.revokeObjectURL(u); }); pageUrls = [];
+        var holder = $("pagePhotos"); if(holder) holder.innerHTML = "";
+        setStatus("pdfStatus","");
+      }
+      $("pdfInput").addEventListener("change", clearPdfOut);
       $("pdfConvert").addEventListener("click", async function(){
+        clearPdfOut();
+        var gen = pdfGen;
         var file = ($("pdfInput").files || [])[0];
         var holder = $("pagePhotos");
         if(!file){ setStatus("pdfStatus","First tap Pick a PDF and choose your file.", true); return; }
-        if(!libsReady(true)){ setStatus("pdfStatus", LIB_MSG, true); return; }
+        if(!libsReady(true)){ setStatus("pdfStatus", libMsg(), true); return; }
         setStatus("pdfStatus","Working… please wait.");
-        holder.innerHTML = "";
-        pageUrls.forEach(function(u){ URL.revokeObjectURL(u); }); pageUrls = [];
         try{
           pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
           var data = await file.arrayBuffer();
           var pdf = await pdfjsLib.getDocument({data:data}).promise;
           for(var pno=1; pno<=pdf.numPages; pno++){
+            if(gen !== pdfGen) return; /* a newer selection replaced this run */
             var page = await pdf.getPage(pno);
             var vp = page.getViewport({scale:2});
             var c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
@@ -2714,15 +3047,25 @@
             a.textContent = "Save page " + pno;
             fig.appendChild(im); fig.appendChild(a); holder.appendChild(fig);
           }
+          if(gen !== pdfGen) return;
           setStatus("pdfStatus","Done — " + pdf.numPages + (pdf.numPages===1 ? " page is" : " pages are") + " ready below. Tap Save under each picture.");
-        }catch(e){ setStatus("pdfStatus","That file could not be read. Try another PDF, or ask Zee.", true); }
+        }catch(e){ if(gen === pdfGen) setStatus("pdfStatus","That file could not be read. Try another PDF, or ask " + mainHelperLabel() + ".", true); }
       });
 
       var lastMergeUrl = null;
+      function clearMergeOut(){
+        mergeGen++;
+        if(lastMergeUrl){ URL.revokeObjectURL(lastMergeUrl); lastMergeUrl = null; }
+        var dl = $("mergeDownload"); dl.classList.remove("show"); dl.removeAttribute("href");
+        setStatus("mergeStatus","");
+      }
+      $("mergeInput").addEventListener("change", clearMergeOut);
       $("mergeConvert").addEventListener("click", async function(){
+        clearMergeOut();
+        var gen = mergeGen;
         var files = Array.prototype.slice.call($("mergeInput").files || []);
         if(files.length < 2){ setStatus("mergeStatus","Pick two or more PDFs first.", true); return; }
-        if(!libsReady(false)){ setStatus("mergeStatus", LIB_MSG, true); return; }
+        if(!libsReady(false)){ setStatus("mergeStatus", libMsg(), true); return; }
         setStatus("mergeStatus","Working… please wait.");
         try{
           var out = await PDFLib.PDFDocument.create();
@@ -2732,12 +3075,13 @@
             pages.forEach(function(pg){ out.addPage(pg); });
           }
           var bytes = await out.save();
+          if(gen !== mergeGen) return; /* inputs changed while working — discard this result */
           if(lastMergeUrl) URL.revokeObjectURL(lastMergeUrl);
           lastMergeUrl = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
           var dl = $("mergeDownload"); dl.href = lastMergeUrl; dl.classList.add("show");
           setStatus("mergeStatus","Done — your joined PDF is ready. Tap the green button to save it.");
           dl.scrollIntoView({behavior:"smooth", block:"center"});
-        }catch(e){ setStatus("mergeStatus","One of those files could not be read. Try again, or ask Zee.", true); }
+        }catch(e){ if(gen === mergeGen) setStatus("mergeStatus","One of those files could not be read. " + askMsg(), true); }
       });
 
       /* ---------------- MY PAPERS: send-a-photo-or-file toggle ---------------- */
@@ -2819,7 +3163,8 @@
          browser-to-browser over WebRTC. View only: the watcher can never
          click or control anything. Every failure is said out loud in plain
          words, never swallowed. */
-      var scr = { peer:null, stream:null, call:null, code:"", watching:false, startedAt:0, timer:null, ending:false };
+      var scr = { peer:null, stream:null, call:null, code:"", watching:false, startedAt:0, timer:null, ending:false,
+                  peerReady:false, readyShown:false, connTimer:null };
       function screenSetStatus(msg, isErr){
         var el = $("screenStatus"); if(!el) return;
         el.textContent = msg; el.className = "status" + (isErr ? " err" : "");
@@ -2845,7 +3190,7 @@
           if(!normalizePhone(h.phone)){
             var p = document.createElement("p");
             p.style.cssText = "font-size:21px;font-weight:700;margin:14px 0 0";
-            p.textContent = name + "'s phone number is not saved yet. Ask Zee to add it.";
+            p.textContent = name + "'s phone number is not saved yet. Ask " + mainHelperLabel() + " to add it.";
             wrap.appendChild(p);
             return;
           }
@@ -2870,6 +3215,8 @@
            watcher leaving. */
         scr.ending = true;
         if(scr.timer){ clearInterval(scr.timer); scr.timer = null; }
+        if(scr.connTimer){ clearTimeout(scr.connTimer); scr.connTimer = null; }
+        scr.peerReady = false; scr.readyShown = false;
         if(scr.call){ try{ scr.call.close(); }catch(e){} scr.call = null; }
         if(scr.stream){ try{ scr.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} scr.stream = null; }
         if(scr.peer){ try{ scr.peer.destroy(); }catch(e){} scr.peer = null; }
@@ -2891,7 +3238,7 @@
       $("screenStart").addEventListener("click", function(){
         if(scr.peer || scr.stream) return;
         scr.ending = false;
-        var fhName = firstHelper().name || "Zee";
+        var fhName = mainHelperLabel();
         if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
           var m1 = "Screen viewing in this app works on the computer. On this phone, use AnyDesk below.";
           screenSetStatus(m1, true); speak(m1, "en-US"); return;
@@ -2902,7 +3249,8 @@
         }
         var code = screenCodeGen(); scr.code = code;
         screenSetStatus("Getting ready…", false);
-        var peer = null, failed = false;
+        var tok = sessionToken;
+        var peer = null;
         try{ peer = new Peer("dadsassistant-" + code); }catch(e){ peer = null; }
         if(!peer){
           scr.code = "";
@@ -2910,13 +3258,44 @@
           return;
         }
         scr.peer = peer;
-        peer.on("error", function(){
-          if(!scr.stream){
-            failed = true;
-            screenCleanup("");
-            screenSetStatus("The screen service could not be reached. Check the internet, or use AnyDesk below.", true);
-          }
+        scr.peerReady = false; scr.readyShown = false;
+        /* Connection-service readiness is tracked SEPARATELY from
+           capture readiness. The invitation (code + send buttons) is
+           shown only when BOTH are ready. If the connection service
+           fails while waiting for the first watcher — whenever that
+           happens — capture is stopped, everything is cleaned up,
+           the failure is shown and spoken, and START is restored.
+           Once media is actually connected, a signalling error alone
+           is not fatal: the media connection itself is the judge. */
+        function connFail(){
+          if(scr.watching) return;
+          screenCleanup("");
+          var m = "The screen service could not be reached. Check the internet, or use AnyDesk below.";
+          screenSetStatus(m, true); speak(m, "en-US");
+        }
+        function maybeReady(){
+          if(scr.readyShown || !scr.stream || !scr.peerReady) return;
+          scr.readyShown = true;
+          if(scr.connTimer){ clearTimeout(scr.connTimer); scr.connTimer = null; }
+          $("screenCode").textContent = scr.code;
+          screenRenderSendBtns();
+          $("screenStep2").style.display = "";
+          screenSetStatus("Waiting for your family… Send the link below to whoever will watch, or read the code out loud.", false);
+          speak("Your screen is ready. Send the link, or read the code out loud.", "en-US");
+        }
+        peer.on("open", function(){
+          scr.peerReady = true;
+          maybeReady();
         });
+        peer.on("error", function(){
+          if(scr.watching) return; /* media already connected — not fatal */
+          connFail();
+        });
+        /* Bounded wait for the connection service: never sit on
+           "Waiting for your family…" forever with a live track. */
+        scr.connTimer = setTimeout(function(){
+          if(!scr.readyShown && !scr.watching) connFail();
+        }, 20000);
         peer.on("call", function(call){
           /* One watcher at a time: while a media call is already active,
              any further incoming call is closed at once, unanswered. */
@@ -2960,7 +3339,14 @@
           }
         });
         navigator.mediaDevices.getDisplayMedia({ video:true }).then(function(stream){
-          if(failed){ try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} return; }
+          if(tok !== sessionToken || scr.peer !== peer){
+            /* A late-resolving capture: he escaped with HOME / I AM
+               STUCK, or the session was already cleaned up. Stop its
+               tracks immediately and leave the current screen alone —
+               a stopped session is never resurrected. */
+            try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+            return;
+          }
           scr.stream = stream;
           var vt = stream.getVideoTracks()[0];
           if(vt && vt.addEventListener) vt.addEventListener("ended", function(){
@@ -2968,9 +3354,6 @@
           });
           var pv = $("screenPreview"); pv.srcObject = stream; pv.classList.add("show");
           $("screenPreviewLabel").style.display = "";
-          $("screenCode").textContent = code;
-          screenRenderSendBtns();
-          $("screenStep2").style.display = "";
           var stop = $("screenStop"); stop.style.display = ""; stop.classList.add("screen-stop-live");
           $("screenStart").style.display = "none";
           scr.startedAt = Date.now();
@@ -2979,11 +3362,13 @@
           scr.timer = setInterval(function(){
             el.textContent = "Showing your screen for " + fmtElapsed(Date.now() - scr.startedAt) + ".";
           }, 1000);
-          screenSetStatus("Waiting for your family… Send the link below to whoever will watch, or read the code out loud.", false);
-          speak("Your screen is ready. Send the link, or read the code out loud.", "en-US");
+          /* The invitation appears only when the connection service
+             is ALSO ready (maybeReady); until then, honest status. */
+          maybeReady();
+          if(!scr.readyShown) screenSetStatus("Getting ready…", false);
         }, function(err){
           var msg = (err && err.name === "NotAllowedError")
-            ? "Screen sharing was cancelled or not allowed. If you did not tap Cancel, use AnyDesk below or call Zee."
+            ? "Screen sharing was cancelled or not allowed. If you did not tap Cancel, use AnyDesk below or call " + mainHelperLabel() + "."
             : "The computer did not share the screen. Tap START, choose Entire screen, then tap Share.";
           screenCleanup("");
           screenSetStatus(msg, true);
@@ -3052,11 +3437,13 @@
       $("watchGo").addEventListener("click", function(){ viewerConnect($("watchCodeInput").value); });
       function stripWatchParam(){ try{ history.replaceState(null, "", window.location.pathname); }catch(e){} }
       $("watchHome").addEventListener("click", function(){
-        viewerCleanup(); stripWatchParam(); openPanel(null);
+        /* openPanel runs the one central viewer cleanup (above)
+           before the panel state changes. */
+        openPanel(null);
       });
-      $("bbHome").addEventListener("click", function(){
-        if($("panel-viewer").classList.contains("active")){ viewerCleanup(); stripWatchParam(); }
-      });
+      /* No second HOME handler: the fixed HOME button's own handler
+         calls openPanel(null), which performs the viewer cleanup
+         centrally for every exit route. */
       (function initViewer(){
         var w = null;
         try{ w = new URLSearchParams(window.location.search).get("watch"); }catch(e){}
