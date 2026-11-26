@@ -226,6 +226,41 @@
       .savedmsg{ display:none; font-size:20px; font-weight:700; color:var(--green-dark); background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; margin-top:16px; }
       .savedmsg.show{ display:block; }
       .pickedname{ font-size:24px; font-weight:700; margin-top:14px; word-break:break-word; }
+      /* ---------- Screen viewing (in-app, view only) ---------- */
+      .screen-video{ display:none; width:100%; border:3px solid var(--line); border-radius:14px; background:#111; margin-top:12px; }
+      .screen-video.show{ display:block; }
+      .screen-code{
+        font-size:46px; font-weight:700; letter-spacing:.22em; text-align:center;
+        background:#EFF7EE; border:3px solid var(--green); border-radius:14px;
+        padding:12px 8px; margin:10px 0 4px; word-break:break-all;
+      }
+      .viewer-video{ width:100%; border:3px solid var(--line); border-radius:14px; background:#111; min-height:220px; }
+      /* In-session indicator: pinned to the very top the whole time a
+         viewer is connected, gone the moment the session ends. */
+      #watchBanner{
+        display:none; position:fixed; top:0; left:0; right:0; z-index:60;
+        background:var(--red); color:#fff; text-align:center;
+        font-size:23px; font-weight:700; letter-spacing:.04em;
+        padding:12px 14px calc(12px + env(safe-area-inset-top));
+        box-shadow:0 6px 20px rgba(32,48,42,.3);
+      }
+      #watchBanner.show{ display:block; }
+      body.screen-live{ padding-top:64px; }
+      /* STOP stays pinned above the bottom bar for the whole session. */
+      .screen-stop-live{
+        position:fixed; left:12px; right:12px; z-index:55;
+        bottom:calc(100px + env(safe-area-inset-bottom)); margin-top:0 !important;
+        box-shadow:0 8px 28px rgba(32,48,42,.35);
+      }
+      @media (max-width:619px){ .screen-stop-live{ bottom:calc(84px + env(safe-area-inset-bottom)); } #watchBanner{ font-size:20px; } }
+      .live-badge{
+        display:inline-flex; align-items:center; gap:9px;
+        background:var(--red); color:#fff; font-size:19px; font-weight:700; letter-spacing:.08em;
+        border-radius:999px; padding:7px 16px; margin-bottom:10px;
+      }
+      .live-dot{ width:12px; height:12px; border-radius:50%; background:#fff; animation:voicepulse 1.2s ease-in-out infinite; }
+      @media (prefers-reduced-motion: reduce){ .live-dot{ animation:none; } }
+
       .doc-photo-preview{ display:none; width:100%; border:3px solid var(--line); border-radius:14px; margin-bottom:14px; }
       .doc-photo-preview.show{ display:block; }
       .doc-file-big{ display:none; font-size:26px; font-weight:700; word-break:break-word; background:#E2EDF9; border:3px solid var(--blue); border-radius:14px; padding:16px; margin-bottom:14px; }
@@ -364,6 +399,7 @@
     </style>
   </head>
   <body>
+    <div id="watchBanner" role="alert"><span id="watchBannerName">YOUR FAMILY</span> IS WATCHING YOUR SCREEN</div>
     <div class="wrap">
 
       <!-- ================= HOME ================= -->
@@ -401,44 +437,24 @@
 
           <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
-            <span>My Documents<span class="sub">Your papers, kept here</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-teal" data-open="panel-sendfile" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
-            <span>Send My File or Photo<span class="sub">Send a document or a picture</span></span>
+            <span>MY PAPERS<span class="sub">Your papers, kept here — and send a photo or file</span></span>
           </button>
 
           <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">MORE THINGS</span></div>
-
-          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
-            <span>Change My File<span class="sub">Photos into a PDF · PDF into photos · join PDFs</span></span>
-          </button>
 
           <button class="bigbtn solid bg-teal" data-open="panel-quick" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
             <span>Quick Messages<span class="sub">I am fine · Going out · Home · My place</span></span>
           </button>
 
-          <button class="bigbtn solid bg-teal" data-open="panel-talk" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
-            <span>Ask a Question<span class="sub">Tap, speak, done — بولیں یا لکھیں</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-amber" data-open="panel-ask" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 2h8.4L22 7.9V22H7.9a5.9 5.9 0 0 1 0-11.8Z" opacity="0"/><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
-            <span>Ask <span data-hname>Zee</span> for Help<span class="sub">Any problem — <span data-hname>Zee</span> will handle it</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-teal" data-open="panel-write" type="button">
+          <button class="bigbtn solid bg-amber" data-open="panel-message" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-            <span>Send a Message<span class="sub">Speak once — send on WhatsApp or email</span></span>
+            <span>ASK OR MESSAGE FAMILY<span class="sub">Speak or type what you need</span></span>
           </button>
 
-          <button class="bigbtn" data-open="panel-email" type="button">
-            <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
-            <span>Send an Email<span class="sub">Three easy steps</span></span>
+          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+            <span>Change My File<span class="sub">Photos into a PDF · PDF into photos · join PDFs</span></span>
           </button>
 
           <button class="bigbtn" data-open="panel-tasks" type="button">
@@ -453,7 +469,7 @@
 
           <button class="bigbtn" data-open="panel-screen" type="button">
             <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
-            <span>Show My Screen to <span data-hname>Zee</span><span class="sub">Opens AnyDesk so <span data-hname>Zee</span> can connect and help</span></span>
+            <span>Show My Screen to <span data-hname>Zee</span><span class="sub"><span data-hname>Zee</span> watches your screen in this app — or use AnyDesk</span></span>
           </button>
 
           <a class="bigbtn solid bg-blue" href="https://www.facebook.com" target="_blank" rel="noopener">
@@ -503,28 +519,28 @@
         </div>
       </section>
 
-      <!-- ================= TALK ================= -->
-      <section class="panel" id="panel-talk" aria-label="Talk and ask anything">
+      <!-- ================= ASK OR MESSAGE FAMILY ================= -->
+      <section class="panel" id="panel-message" aria-label="Ask or message family">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Ask a Question</h2>
-        <p class="hint">Tap a microphone and speak — or type in the box. English, اردو, or Roman Urdu — all are fine. I can tell you the time or the date. For other questions, I can help you send them to <span data-hname>Zee</span>.</p>
+        <h2>Ask or Message Family</h2>
+        <p class="hint">Speak or type what you need — a question, a problem, any message. English, اردو, or Roman Urdu — all are fine. Tap ANSWER ME and I answer simple things myself, like the time or the date. Or pick a name below and send it to them.</p>
         <div class="card">
-          <label class="flabel" for="talkText">What do you want to say?</label>
-          <textarea id="talkText" dir="auto" placeholder="Type here, or tap a microphone below…"></textarea>
+          <label class="flabel" for="msgText">What do you want to say?</label>
+          <textarea id="msgText" dir="auto" placeholder="Type here, or tap a microphone below…"></textarea>
           <div class="microw">
-            <button class="micbtn" type="button" data-mic data-target="talkText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
-            <button class="micbtn" type="button" data-mic data-target="talkText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+            <button class="micbtn" type="button" data-mic data-target="msgText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="msgText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
           </div>
-          <button class="actionbtn bg-teal" id="talkGo" type="button">Answer Me</button>
-          <div class="answer" id="talkAnswer">
-            <div id="talkAnswerText" dir="auto"></div>
-            <button class="actionbtn secondary listenbtn" id="talkListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Listen</button>
-            <a class="actionbtn bg-amber" id="talkSendZee" href="#" target="_blank" rel="noopener" style="display:none">Send this to <span data-hname>Zee</span></a>
+          <button class="actionbtn bg-teal" id="msgGo" type="button">ANSWER ME</button>
+          <div class="answer" id="msgAnswer">
+            <div id="msgAnswerText" dir="auto"></div>
+            <button class="actionbtn secondary listenbtn" id="msgListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Listen</button>
           </div>
-          <div class="answer" id="talkSent">
-            <div id="talkSentText" dir="auto"></div>
-            <p style="margin:14px 0 0">WhatsApp is opening. Tap the green Send arrow to send this. The answer will come on WhatsApp — you can listen to it there, and reply with your voice.</p>
-          </div>
+          <label class="flabel">Who is it for?</label>
+          <div class="chips" id="msgChips"></div>
+          <a class="actionbtn bg-green" id="msgWhats" href="#" target="_blank" rel="noopener">SEND ON WHATSAPP</a>
+          <a class="actionbtn bg-teal" id="msgEmail" href="#">SEND BY EMAIL</a>
+          <div class="note" id="msgNote"></div>
         </div>
       </section>
 
@@ -566,29 +582,13 @@
         </div>
       </section>
 
-      <!-- ================= ASK ZEE ================= -->
-      <section class="panel" id="panel-ask" aria-label="Ask Zee for help">
-        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Ask <span data-hname>Zee</span> for Help</h2>
-        <p class="hint">Anything at all — a broken email, an appointment, a confusing letter. Speak or type it, then tap SEND. WhatsApp opens with your words ready — you tap the green send arrow there, and <span data-hname>Zee</span> will handle it.</p>
-        <div class="card">
-          <label class="flabel" for="askText">What do you need?</label>
-          <textarea id="askText" dir="auto" placeholder="For example: my email is not working…"></textarea>
-          <div class="microw">
-            <button class="micbtn" type="button" data-mic data-target="askText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
-            <button class="micbtn" type="button" data-mic data-target="askText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
-          </div>
-          <a class="actionbtn bg-amber" id="askSend" href="#" target="_blank" rel="noopener">Send to <span data-hname>Zee</span></a>
-          <div class="note" id="askNote"></div>
-        </div>
-      </section>
-
       <!-- ================= REWRITE ================= -->
       <section class="panel" id="panel-rewrite" aria-label="Rewrite my document">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Fix My Document</h2>
-        <p class="hint">Four steps, in order. A person fixes your document properly at the other end and sends it back — this app does not change your words by itself.</p>
-        <div class="card">
+        <p class="hint">One step at a time. A person fixes your document properly at the other end and sends it back — this app does not change your words by itself.</p>
+        <p id="wizStepLabel" style="font-size:24px;font-weight:700;text-align:center;background:#E0F0F0;border:3px solid var(--teal);border-radius:14px;padding:10px;margin:0 0 14px">STEP 1 OF 4</p>
+        <div class="card wizstep" data-step="1">
           <h3>STEP 1 — PUT YOUR DOCUMENT</h3>
           <p>Speak it, type it, paste it — or pick a photo or file of it.</p>
           <label class="flabel" for="docText">Your document</label>
@@ -601,7 +601,7 @@
           <input type="file" id="docFileInput" accept="image/*,.pdf,.txt,.doc,.docx" />
           <div class="picked" id="docFilePicked"></div>
         </div>
-        <div class="card">
+        <div class="card wizstep" data-step="2">
           <h3>STEP 2 — SEE IT AND HEAR IT</h3>
           <p>Check your document here, in big writing. If you picked a photo or file, it shows here too.</p>
           <img class="doc-photo-preview" id="docPhotoPreview" alt="The photo you picked" />
@@ -610,9 +610,10 @@
           <p id="docFileHearNote" style="display:none;font-size:19px;margin:12px 0 0">LISTEN reads only the words you typed or spoke — a photo or file cannot be read aloud. You can see it here, and it will be sent in Step 4.</p>
           <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read It to Me</button>
         </div>
-        <div class="card">
+        <div class="card wizstep" data-step="3">
           <h3>STEP 3 — SAY WHAT TO CHANGE</h3>
           <p>Say or type what you want changed — for example “change the date to Friday” or “make it polite”. Your words are kept exactly as you say them.</p>
+          <p>Any paper can be checked — a will, a letter, a form, anything. Just send its photo in Step 1, and say what you need. Say: <b>“Please check this paper”</b> — or <b>“Please fix this letter”</b> — or <b>“This is my will, please read it and tell me if it is all right.”</b></p>
           <label class="flabel" for="docChange">What should change?</label>
           <textarea id="docChange" dir="auto" placeholder="For example: change the date to Friday, and make it polite…"></textarea>
           <div class="microw">
@@ -620,7 +621,7 @@
             <button class="micbtn" type="button" data-mic data-target="docChange" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
           </div>
         </div>
-        <div class="card">
+        <div class="card wizstep" data-step="4">
           <h3>STEP 4 — SEND IT</h3>
           <p>Your document and your words from Step 3 go together. A person fixes it properly and sends it back.</p>
           <a class="actionbtn bg-teal" id="docEmail" href="#">SEND BY EMAIL</a>
@@ -628,9 +629,13 @@
           <div id="docFileSendWrap" style="display:none">
             <hr class="divider" />
             <p id="docFileSendHow" style="font-size:21px;font-weight:700;margin:0">First send your words above. Then tap this button and choose WhatsApp again — the photo itself will go.</p>
-            <button class="actionbtn bg-green" id="docSendFile" type="button">NOW SEND THE PHOTO</button>
+            <button class="actionbtn bg-green" id="docSendFile" type="button">SEND 2 OF 2 — SEND MY PHOTO</button>
           </div>
           <div class="note" id="docNote"></div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="actionbtn secondary" id="wizBack" type="button" style="flex:1 1 180px;width:auto;margin-top:0">← BACK</button>
+          <button class="actionbtn bg-teal" id="wizNext" type="button" style="flex:1 1 180px;width:auto;margin-top:0">NEXT →</button>
         </div>
       </section>
 
@@ -675,35 +680,6 @@
       </section>
 
       <!-- ================= EMAIL ================= -->
-      <section class="panel" id="panel-email" aria-label="Send an email">
-        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Send an Email</h2>
-        <p class="hint">Only three things: who it is for, what you want to say, then SEND. Your own mail app opens with everything filled in — you just tap send there.</p>
-        <div class="card">
-          <h3>How to answer a letter you got</h3>
-          <ol class="steps">
-            <li><b>1</b> Tap MY EMAIL on the home screen.</li>
-            <li><b>2</b> Tap the letter to open it.</li>
-            <li><b>3</b> Tap Reply, then tap the microphone on the keyboard and speak your reply.</li>
-          </ol>
-        </div>
-        <div class="card">
-          <label class="flabel">1. Who is it for?</label>
-          <div class="chips" id="emailChips"></div>
-          <input type="email" id="emailTo" dir="ltr" placeholder="…or type an email address here" />
-          <label class="flabel" for="emailMsg">2. What do you want to say?</label>
-          <textarea id="emailMsg" dir="auto" placeholder="Type here, or tap a microphone…"></textarea>
-          <div class="microw">
-            <button class="micbtn" type="button" data-mic data-target="emailMsg" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
-            <button class="micbtn" type="button" data-mic data-target="emailMsg" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
-          </div>
-          <label class="flabel">3. Send it</label>
-          <a class="actionbtn bg-teal" id="emailSend" href="#">Open My Mail and Send</a>
-          <a class="actionbtn bg-amber" id="emailAskZee" href="#" target="_blank" rel="noopener">Ask <span data-hname>Zee</span> to Send It for Me</a>
-          <div class="note" id="emailNote"></div>
-        </div>
-      </section>
-
       <!-- ================= TASKS ================= -->
       <section class="panel" id="panel-tasks" aria-label="My tasks">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
@@ -752,60 +728,34 @@
         </a>
       </section>
 
-      <!-- ================= WRITE AND SEND ================= -->
-      <section class="panel" id="panel-write" aria-label="Send a message">
+      <!-- ================= MY PAPERS ================= -->
+      <section class="panel" id="panel-docs" aria-label="My papers">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Send a Message</h2>
-        <p class="hint">Say your message once. Then choose who it is for, and how to send it. WhatsApp or your mail app opens with your message ready — you tap Send there.</p>
-        <div class="card">
-          <label class="flabel" for="writeText">1. Your message</label>
-          <textarea id="writeText" dir="auto" placeholder="Type here, or tap a microphone below…"></textarea>
-          <div class="microw">
-            <button class="micbtn" type="button" data-mic data-target="writeText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
-            <button class="micbtn" type="button" data-mic data-target="writeText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+        <h2>MY PAPERS</h2>
+        <p class="hint">Send a photo or file, and your important papers, kept on this device. Tap a saved paper to open it or send it.</p>
+        <button class="bigbtn solid bg-teal" id="papersSendToggle" type="button" style="margin-bottom:14px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
+          <span>SEND A PHOTO OR FILE<span class="sub">Tap, pick it, send it</span></span>
+        </button>
+        <div id="papersSend" style="display:none">
+          <div class="card">
+            <p>Pick a file or photo, then tap SEND IT. Your phone will ask where to send it — tap WhatsApp, then tap the person.</p>
+            <label class="filepick" for="sendFileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a File or Photo</label>
+            <input type="file" id="sendFileInput" />
+            <div class="pickedname" id="sendFileName" dir="auto"></div>
+            <button class="actionbtn bg-green" id="sendFileGo" type="button">SEND IT</button>
+            <div class="note" id="sendFileNote"></div>
           </div>
-          <label class="flabel">2. Who is it for?</label>
-          <div class="chips" id="writeChips"></div>
-          <div id="writeOther" style="display:none">
-            <label class="flabel" for="writeOtherPhone">Their phone number (for WhatsApp)</label>
-            <input type="tel" id="writeOtherPhone" dir="ltr" placeholder="e.g. +1 555 123 4567" />
-            <label class="flabel" for="writeOtherEmail">Their email address (for email)</label>
-            <input type="email" id="writeOtherEmail" dir="ltr" placeholder="name@example.com" />
+          <div class="card">
+            <h3>Or open WhatsApp first</h3>
+            <ol class="steps">
+              <li><b>1</b> Tap the person's name below.</li>
+              <li><b>2</b> Tap the paperclip and choose your file.</li>
+            </ol>
+            <div id="sendFileHelpers"></div>
           </div>
-          <label class="flabel">3. Send it</label>
-          <a class="actionbtn bg-green" id="writeWhats" href="#" target="_blank" rel="noopener">SEND ON WHATSAPP</a>
-          <a class="actionbtn bg-teal" id="writeEmail" href="#">SEND BY EMAIL</a>
-          <div class="note" id="writeNote"></div>
         </div>
-      </section>
-
-      <!-- ================= SEND MY FILE ================= -->
-      <section class="panel" id="panel-sendfile" aria-label="Send my file or photo">
-        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Send My File or Photo</h2>
-        <p class="hint">Pick a file or photo, then tap SEND IT. Your phone will ask where to send it — tap WhatsApp, then tap the person.</p>
-        <div class="card">
-          <label class="filepick" for="sendFileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a File or Photo</label>
-          <input type="file" id="sendFileInput" />
-          <div class="pickedname" id="sendFileName" dir="auto"></div>
-          <button class="actionbtn bg-green" id="sendFileGo" type="button">SEND IT</button>
-          <div class="note" id="sendFileNote"></div>
-        </div>
-        <div class="card">
-          <h3>Or open WhatsApp first</h3>
-          <ol class="steps">
-            <li><b>1</b> Tap the person's name below.</li>
-            <li><b>2</b> Tap the paperclip and choose your file.</li>
-          </ol>
-          <div id="sendFileHelpers"></div>
-        </div>
-      </section>
-
-      <!-- ================= MY DOCUMENTS ================= -->
-      <section class="panel" id="panel-docs" aria-label="My documents">
-        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>My Documents</h2>
-        <p class="hint">Your important papers, kept on this device. Tap a document to open it or send it.</p>
+        <h3 style="font-size:24px;margin:20px 0 10px">MY SAVED PAPERS</h3>
         <div class="note show" role="note"><strong>These are copies only. Keep the original papers. These copies can disappear if this browser is cleared.</strong></div>
         <div class="card">
           <label class="filepick" for="docsInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> ADD A DOCUMENT</label>
@@ -874,7 +824,7 @@
             <div><label class="flabel" for="sP4Url">Place 4 — web address</label><input type="url" id="sP4Url" dir="ltr" placeholder="https://…" /></div>
           </div>
           <hr class="divider" />
-          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Remote help:</b> install AnyDesk (free) once on his phone and computer, turn on unattended access, and keep the password with family only — never write it in this app. After that one-time setup, family can connect and help from anywhere; on some phones he may be asked to tap Allow. The SHOW MY SCREEN button on the home screen only opens AnyDesk; this app never sees or stores that password.</p>
+          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Remote help:</b> the SHOW MY SCREEN screen now has two routes. Route 1 is built into this app (computer only): he taps START, chooses Entire screen, and family watches live in this same app from the link he sends — view only, nobody can click for him, and nothing is recorded or stored. Route 2 is AnyDesk: install AnyDesk (free) once on his phone and computer, turn on unattended access, and keep the password with family only — never write it in this app. After that one-time setup, family can connect and help from anywhere, with control; on some phones he may be asked to tap Allow. This app never sees or stores that password.</p>
           <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>His documents:</b> Copies on this shelf live only on this device — they are not a backup. For the real collection, put his documents in Google Drive or OneDrive once (they then appear on his new computer and phone by themselves), and use AnyDesk file transfer to pull anything else from his old computer. This app cannot collect files from his computer by itself — no web page can.</p>
           <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Where is he — family location:</b> This web app cannot watch his location in the background or send automatic leaving-home alerts — no web page can. The automatic leaving-home and coming-home alerts will come with the Android version of this same app (the family's own app — no third-party service). Until then, his in-app way is the SEND MY LOCATION button (one tap prepares a WhatsApp message with his position to the helper he picks, while the app is open) and the I AM GOING OUT / I AM HOME NOW buttons.</p>
           <button class="actionbtn bg-green" id="setupSave" type="button">Save Setup</button>
@@ -902,23 +852,59 @@
       <section class="panel" id="panel-screen" aria-label="Show my screen to Zee">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Show My Screen to <span data-hname>Zee</span></h2>
-        <p class="hint">Tap the big button. This opens AnyDesk. If <span data-hname>Zee</span> has already set it up for you, he can then connect and help.</p>
-        <a class="bigbtn solid bg-teal" id="screenOpen" href="anydesk://" style="margin-bottom:16px">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
-          <span>Show My Screen<span class="sub">Tap — AnyDesk will open</span></span>
-        </a>
+        <p class="hint">Two ways. The first way is easiest: <span data-hname>Zee</span> watches your screen from inside this app and talks you through it. He can see your screen, but he cannot click or control anything.</p>
+
         <div class="card">
-          <p style="margin:0;font-size:24px">If nothing opened, do not worry. This needs one-time setup by <span data-hname>Zee</span>. Tap CALL <span data-hname>Zee</span> below and he will set it up with you.</p>
+          <h3>SHOW MY SCREEN — IN THIS APP (computer only)</h3>
+          <p><b>Step 1.</b> Tap the big START button below. The computer will ask which screen. Choose <b>“Entire screen”</b>, then tap <b>Share</b>.</p>
+          <button class="actionbtn bg-teal" id="screenStart" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> START — CHOOSE MY SCREEN</button>
+          <div class="status" id="screenStatus" role="status" aria-live="polite"></div>
+          <p id="screenElapsed" style="display:none;font-size:21px;font-weight:700;margin:10px 0 0"></p>
+          <video class="screen-video" id="screenPreview" autoplay muted playsinline></video>
+          <p id="screenPreviewLabel" style="display:none;font-size:21px;font-weight:700;margin:12px 0 0">This is what <span data-hname>Zee</span> will see.</p>
+          <div id="screenStep2" style="display:none">
+            <hr class="divider" />
+            <p style="font-size:21px;margin:0"><b>Step 2.</b> Send the link to whoever will watch — <span data-hname>Zee</span>, Amreen or Zehra. Tap their name and WhatsApp will open with the link ready:</p>
+            <div class="screen-code" id="screenCode"></div>
+            <div id="screenSendBtns"></div>
+            <p style="font-size:19px;margin:10px 0 0">WhatsApp will open. Tap the green Send arrow.</p>
+          </div>
+          <button class="actionbtn bg-red" id="screenStop" type="button" style="display:none">STOP SHOWING MY SCREEN</button>
+        </div>
+
+        <div class="card">
+          <h3>IF <span data-hname>Zee</span> NEEDS TO CLICK FOR YOU — AnyDesk</h3>
+          <p>Sometimes watching is not enough and <span data-hname>Zee</span> needs to click for you. That is what AnyDesk is for. Tap the button and AnyDesk opens. If <span data-hname>Zee</span> has already set it up for you, he can then connect and help.</p>
+          <a class="bigbtn solid bg-teal" id="screenOpen" href="anydesk://" style="margin-bottom:16px">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
+            <span>Open AnyDesk<span class="sub">Tap — AnyDesk will open</span></span>
+          </a>
+          <p style="margin:0;font-size:21px">If nothing opened, do not worry. AnyDesk needs one-time setup by <span data-hname>Zee</span>. Tap CALL <span data-hname>Zee</span> below and he will set it up with you.</p>
         </div>
         <a class="bigbtn solid bg-green" href="tel:+14705790994" id="screenCallZee">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
         </a>
       </section>
+
+      <!-- ================= WATCH DAD'S SCREEN (viewer mode) ================= -->
+      <section class="panel" id="panel-viewer" aria-label="Watch Dad's screen">
+        <h2>DAD'S SCREEN</h2>
+        <p class="hint" id="viewerStatus" role="status" aria-live="polite">Connecting…</p>
+        <div><span class="live-badge" id="viewerLive" style="display:none"><span class="live-dot"></span> LIVE</span></div>
+        <video class="viewer-video" id="viewerVideo" autoplay playsinline></video>
+        <div class="card" id="viewerManual" style="display:none;margin-top:14px">
+          <label class="flabel" for="watchCodeInput">Type the code Dad gave you</label>
+          <input type="text" id="watchCodeInput" dir="ltr" autocomplete="off" autocapitalize="characters" placeholder="e.g. K7P2QX" style="text-transform:uppercase" />
+          <button class="actionbtn bg-teal" id="watchGo" type="button">WATCH</button>
+        </div>
+        <button class="actionbtn secondary" id="watchHome" type="button" style="margin-top:14px">HOME — Stop Watching</button>
+      </section>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
     <!-- ================= FIXED BOTTOM BAR ================= -->
     <nav class="bottombar" aria-label="Always here">
@@ -986,7 +972,7 @@
       function openPanel(id){
         var panels = document.querySelectorAll(".panel");
         for(var i=0;i<panels.length;i++) panels[i].classList.remove("active");
-        if(id){ homeEl.style.display="none"; $(id).classList.add("active"); }
+        if(id){ homeEl.style.display="none"; $(id).classList.add("active"); if(id === "panel-rewrite" && typeof showWizStep === "function") showWizStep(1); }
         else{ homeEl.style.display=""; }
         window.scrollTo(0,0);
       }
@@ -1220,42 +1206,59 @@
         }
         return null;
       }
-      $("talkGo").addEventListener("click", function(){
-        var q = $("talkText").value.trim();
-        var ansBox = $("talkAnswer"), sentBox = $("talkSent");
-        sentBox.classList.remove("show");
-        if(!q){ $("talkAnswerText").textContent = "First tap a microphone and speak, or type your question in the box."; ansBox.classList.add("show"); $("talkSendZee").style.display="none"; lastAnswer=""; return; }
+      /* ---------------- Ask or Message Family (merged) ---------------- */
+      var msgSel = 0; /* index into helpers() */
+      function msgTarget(){
+        var hs = helpers();
+        if(typeof msgSel !== "number" || msgSel < 0 || msgSel >= hs.length) msgSel = 0;
+        return hs[msgSel] || firstHelper();
+      }
+      function renderMsgChips(){
+        var wrap = $("msgChips"); if(!wrap) return; wrap.innerHTML = "";
+        var hs = helpers();
+        if(typeof msgSel !== "number" || msgSel < 0 || msgSel >= hs.length) msgSel = 0;
+        hs.forEach(function(h, idx){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip"; b.textContent = h.name || h.phone || h.email;
+          b.setAttribute("aria-pressed", msgSel===idx ? "true" : "false");
+          b.addEventListener("click", function(){ msgSel = idx; renderMsgChips(); });
+          wrap.appendChild(b);
+        });
+        refreshFormLinks();
+      }
+      $("msgGo").addEventListener("click", function(){
+        var q = $("msgText").value.trim();
+        var ansBox = $("msgAnswer");
+        if(!q){ $("msgAnswerText").textContent = "First tap a microphone and speak, or type your question in the box."; ansBox.classList.add("show"); lastAnswer = ""; return; }
         lastQuestion = q;
         var a = instantAnswer(q);
         if(a){
           lastAnswer = a; lastAnswerLang = speakLangFor(detectLang(q));
-          $("talkAnswerText").textContent = a;
-          $("talkSendZee").style.display = "none";
         }else{
-          lastAnswer = "I cannot answer that one myself. Tap the yellow button below to send it to " + firstHelper().name + " on WhatsApp, and he will answer you there.";
+          lastAnswer = "I cannot answer that one myself. Pick a name below, then tap SEND ON WHATSAPP or SEND BY EMAIL, and they will answer you.";
           lastAnswerLang = "en-US";
-          $("talkAnswerText").textContent = lastAnswer;
-          $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + q);
-          $("talkSendZee").style.display = "";
         }
+        $("msgAnswerText").textContent = lastAnswer;
         ansBox.classList.add("show");
+        speak(lastAnswer, lastAnswerLang);
       });
-      $("talkListen").addEventListener("click", function(){ if(lastAnswer) speak(lastAnswer, lastAnswerLang); });
-      $("talkSendZee").addEventListener("click", function(){
-        var q = lastQuestion || $("talkText").value.trim();
-        $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + q);
-        $("talkSentText").textContent = "You asked: \u201C" + q + "\u201D";
-        $("talkSent").classList.add("show");
-      });
-
-      /* ---------------- Ask Zee for Help ---------------- */
-      $("askSend").addEventListener("click", function(e){
-        var t = $("askText").value.trim();
-        var note = $("askNote");
-        if(!t){ e.preventDefault(); note.textContent = "First tap a microphone and speak, or type what you need in the box."; note.classList.add("show"); return; }
-        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this. " + firstHelper().name + "'s answer will come on WhatsApp, and you can reply with your voice.";
+      $("msgListen").addEventListener("click", function(){ if(lastAnswer) speak(lastAnswer, lastAnswerLang); });
+      $("msgWhats").addEventListener("click", function(e){
+        var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
+        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
+        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
+        note.textContent = "WhatsApp will open. Tap the green Send arrow to send this. The answer will come on WhatsApp — you can listen to it there, and reply with your voice.";
         note.classList.add("show");
-        $("askSend").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I need help: " + t);
+        $("msgWhats").href = waLinkTo(t.phone, msg);
+      });
+      $("msgEmail").addEventListener("click", function(e){
+        var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
+        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
+        var to = (t.email || "").trim() || (firstHelper().email || "").trim();
+        if(!to){ e.preventDefault(); note.textContent = "No email address is saved for " + (t.name || "that person") + " yet. WhatsApp above works — or ask " + firstHelper().name + " to add the email address in Family Setup."; note.classList.add("show"); return; }
+        note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
+        note.classList.add("show");
+        $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(msg);
       });
 
       /* ---------------- Listen: hear your options (home) ---------------- */
@@ -1464,20 +1467,21 @@
           go("panel-convert", "Opening Change My File. There you can turn photos into a PDF, a PDF into photos, or join PDFs together.");
           return;
         }
-        if(has("document", "documents", "papers", "paper")){
-          go("panel-docs", "Opening My Documents — your important papers, kept on this device.");
+        if(has("send") && has("file", "photo", "picture")){
+          go("panel-docs", "Opening MY PAPERS. Tap SEND A PHOTO OR FILE there, pick your file, then tap Send It.");
+          setTimeout(function(){ var ps = $("papersSend"); if(ps) ps.style.display = ""; }, 1100);
           return;
         }
-        if(has("send") && has("file", "photo", "picture")){
-          go("panel-sendfile", "Opening Send My File or Photo. Pick your file there, then tap Send It.");
+        if(has("document", "documents", "papers", "paper")){
+          go("panel-docs", "Opening MY PAPERS — send a photo or file, and your important papers, kept on this device.");
           return;
         }
         if(has("email", "mail")){
-          go("panel-email", "Opening Send an Email. Three easy steps: who it is for, what you want to say, then send.");
+          go("panel-message", "Opening Ask or Message Family. Say your message there, pick a name, then tap SEND BY EMAIL.");
           return;
         }
         if(has("message", "write")){
-          go("panel-write", "Opening Send a Message. Say your message once, then choose who it is for.");
+          go("panel-message", "Opening Ask or Message Family. Say your message once, then choose who it is for.");
           return;
         }
         if(has("task", "tasks", "remember", "reminder")){
@@ -1497,7 +1501,7 @@
           return;
         }
         if(has("screen", "anydesk")){
-          go("panel-screen", "Opening Show My Screen. Tap the big button there and AnyDesk will open, so " + fhName + " can help you.");
+          go("panel-screen", "Opening Show My Screen. Tap the big START button there to show your screen, so " + fhName + " can watch and help you.");
           return;
         }
         if(has("weather")){
@@ -1512,7 +1516,7 @@
           return;
         }
         if(has("question", "ask")){
-          go("panel-talk", "Opening Ask a Question. Tap a microphone there and speak your question.");
+          go("panel-message", "Opening Ask or Message Family. Tap a microphone there and speak your question, then tap ANSWER ME.");
           return;
         }
         var a = instantAnswer(said);
@@ -1571,9 +1575,14 @@
         $("docFileSendWrap").style.display = f ? "" : "none";
         if(f){
           $("docFileSendHow").textContent = isImg
-            ? "First send your words above. Then tap this button and choose WhatsApp again — the photo itself will go."
-            : "First send your words above. Then tap this button and choose WhatsApp again — the file itself will go.";
-          $("docSendFile").textContent = isImg ? "NOW SEND THE PHOTO" : "NOW SEND THE FILE";
+            ? "First send your message above (SEND 1 OF 2). Then tap this button and choose WhatsApp again — the photo itself will go."
+            : "First send your message above (SEND 1 OF 2). Then tap this button and choose WhatsApp again — the file itself will go.";
+          $("docSendFile").textContent = isImg ? "SEND 2 OF 2 — SEND MY PHOTO" : "SEND 2 OF 2 — SEND MY FILE";
+          $("docEmail").textContent = "SEND 1 OF 2 — SEND MY MESSAGE";
+          $("docSend").textContent = "SEND 1 OF 2 — SEND MY MESSAGE";
+        }else{
+          $("docEmail").textContent = "SEND BY EMAIL";
+          $("docSend").textContent = "SEND TO " + (firstHelper().name || "Zee") + " — WhatsApp";
         }
       }
       $("docText").addEventListener("input", syncDocPreview);
@@ -1598,7 +1607,7 @@
         note.textContent = partial
           ? "Your document is very long, so only the first part is in WhatsApp. WhatsApp is opening — tap the green Send arrow to send this. " + firstHelper().name + " will ask you for the rest."
           : "WhatsApp is opening. Tap the green Send arrow to send this, and a person will fix it properly and send it back.";
-        if(docPickedFile) note.textContent += " Then come back here and tap the green NOW SEND THE " + (docIsImage() ? "PHOTO" : "FILE") + " button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
+        if(docPickedFile) note.textContent += " Then come back here and tap the green SEND 2 OF 2 button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
         note.classList.add("show");
         $("docSend").href = waLink(full);
       });
@@ -1607,7 +1616,7 @@
         var note = $("docNote");
         if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
         note.textContent = "Your mail app is opening with your document and your words filled in. Tap Send there — a person will fix it properly and send it back.";
-        if(docPickedFile) note.textContent += " Then come back here and tap the green NOW SEND THE " + (docIsImage() ? "PHOTO" : "FILE") + " button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
+        if(docPickedFile) note.textContent += " Then come back here and tap the green SEND 2 OF 2 button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
         note.classList.add("show");
         $("docEmail").href = "mailto:" + encodeURIComponent(firstHelper().email || "") + "?subject=" + encodeURIComponent("Please fix my document") + "&body=" + encodeURIComponent(docFullText());
       });
@@ -1626,7 +1635,7 @@
           note.textContent = "Your phone is asking where to send it — choose WhatsApp again, then tap the person. The " + what + " itself will go.";
           note.classList.add("show"); return;
         }
-        note.textContent = "This device cannot send the " + what + " from here, so nothing was sent. Go back to the home screen and use Send My File or Photo, or tap I AM STUCK.";
+        note.textContent = "This device cannot send the " + what + " from here, so nothing was sent. Go back to the home screen, open MY PAPERS and use SEND A PHOTO OR FILE, or tap I AM STUCK.";
         note.classList.add("show");
       });
 
@@ -1668,44 +1677,6 @@
       });
       $("taskText").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); $("taskAdd").click(); } });
       renderTasks();
-
-      /* ---------------- Email ---------------- */
-      var chosenTo = "";
-      function renderEmailChips(){
-        var wrap = $("emailChips"); wrap.innerHTML = "";
-        var people = helpers().filter(function(h){ return h.email; }).map(function(h){ return {name:h.name || h.email, email:h.email}; });
-        if(!people.length){
-          var s = document.createElement("span"); s.style.fontSize = "21px"; s.style.color = "var(--ink-soft)";
-          s.textContent = "Type the address in the box below.";
-          wrap.appendChild(s); return;
-        }
-        people.forEach(function(p){
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "chip"; b.textContent = p.name;
-          b.setAttribute("aria-pressed", chosenTo===p.email ? "true" : "false");
-          b.addEventListener("click", function(){ chosenTo = p.email; $("emailTo").value = p.email; renderEmailChips(); });
-          wrap.appendChild(b);
-        });
-      }
-      $("emailTo").addEventListener("input", function(){ chosenTo = this.value.trim(); });
-      function emailParts(){
-        return { to: ($("emailTo").value.trim() || chosenTo), msg: $("emailMsg").value.trim() };
-      }
-      $("emailSend").addEventListener("click", function(e){
-        var p = emailParts(), note = $("emailNote");
-        if(!p.to){ e.preventDefault(); note.textContent = "First say who it is for — tap a name above, or type the email address."; note.classList.add("show"); return; }
-        if(!p.msg){ e.preventDefault(); note.textContent = "The message box is empty. Type what you want to say, or tap a microphone and speak it."; note.classList.add("show"); return; }
-        note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
-        note.classList.add("show");
-        $("emailSend").href = "mailto:" + encodeURIComponent(p.to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(p.msg);
-      });
-      $("emailAskZee").addEventListener("click", function(e){
-        var p = emailParts(), note = $("emailNote");
-        if(!p.msg){ e.preventDefault(); note.textContent = "The message box is empty. Type what you want to say, or tap a microphone and speak it."; note.classList.add("show"); return; }
-        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this, and " + firstHelper().name + " will send the email for you.";
-        note.classList.add("show");
-        $("emailAskZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", please send this email for me.\nTo: " + (p.to||"(I did not write the address)") + "\nMessage: " + p.msg);
-      });
 
       /* ---------------- Health & Hospital ---------------- */
       function bigLink(href, colorClass, label, sub){
@@ -1804,7 +1775,7 @@
           $("weatherCity").textContent = "In " + setup.city;
           wb.href = "https://www.google.com/search?q=" + encodeURIComponent("weather in " + setup.city);
         } else wb.style.display = "none";
-        renderEmailChips(); renderHealth(); renderPassword(); renderWriteChips(); renderSendFileHelpers(); renderLocHelpers(); refreshSendLinks();
+        renderMsgChips(); renderHealth(); renderPassword(); renderSendFileHelpers(); renderLocHelpers(); refreshSendLinks();
       }
 
       /* ---------------- Quick notifications (one tap, to the main helper) ---------------- */
@@ -1832,65 +1803,18 @@
         refreshFormLinks();
       }
       function refreshFormLinks(){
-        var tq = lastQuestion || $("talkText").value.trim();
-        if(tq) $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + tq);
-        var at = $("askText").value.trim();
-        if(at) $("askSend").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I need help: " + at);
-        var wm = $("writeText").value.trim(), wt = writeTarget();
-        if(wm && digits(wt.phone)) $("writeWhats").href = waLinkTo(wt.phone, wm);
-        if(wm && wt.email) $("writeEmail").href = "mailto:" + encodeURIComponent(wt.email) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(wm);
-        var ep = emailParts();
-        if(ep.to && ep.msg) $("emailSend").href = "mailto:" + encodeURIComponent(ep.to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(ep.msg);
-        if(ep.msg) $("emailAskZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", please send this email for me.\nTo: " + (ep.to||"(I did not write the address)") + "\nMessage: " + ep.msg);
+        var mm = $("msgText") ? $("msgText").value.trim() : "";
+        if(!mm) return;
+        var mt = msgTarget();
+        if(digits(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
+        var mto = (mt.email || "").trim() || (firstHelper().email || "").trim();
+        if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(mm);
       }
-      ["talkText","askText","docText","writeText","writeOtherPhone","writeOtherEmail","emailTo","emailMsg"].forEach(function(id){
+      ["msgText","docText"].forEach(function(id){
         var el = $(id); if(el) el.addEventListener("input", refreshFormLinks);
       });
 
-      /* ---------------- Write and Send a Message ---------------- */
-      var writeSel = 0; /* index into helpers(), or -1 for someone else */
-      function renderWriteChips(){
-        var wrap = $("writeChips"); if(!wrap) return; wrap.innerHTML = "";
-        var hs = helpers();
-        if(writeSel >= hs.length) writeSel = hs.length ? 0 : -1;
-        hs.forEach(function(h, idx){
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "chip"; b.textContent = h.name || h.phone || h.email;
-          b.setAttribute("aria-pressed", writeSel===idx ? "true" : "false");
-          b.addEventListener("click", function(){ writeSel = idx; renderWriteChips(); });
-          wrap.appendChild(b);
-        });
-        var other = document.createElement("button");
-        other.type = "button"; other.className = "chip"; other.textContent = "Someone else";
-        other.setAttribute("aria-pressed", writeSel===-1 ? "true" : "false");
-        other.addEventListener("click", function(){ writeSel = -1; renderWriteChips(); });
-        wrap.appendChild(other);
-        $("writeOther").style.display = writeSel===-1 ? "" : "none";
-        refreshFormLinks();
-      }
-      function writeTarget(){
-        if(writeSel===-1) return { phone: $("writeOtherPhone").value.trim(), email: $("writeOtherEmail").value.trim() };
-        var h = helpers()[writeSel] || {};
-        return { phone: h.phone || "", email: h.email || "" };
-      }
-      $("writeWhats").addEventListener("click", function(e){
-        var msg = $("writeText").value.trim(), note = $("writeNote"), t = writeTarget();
-        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for that person. Tap a family name above, or tap Someone else and write their number."; note.classList.add("show"); return; }
-        note.textContent = "WhatsApp is opening with your message ready. Tap the green Send arrow to send this.";
-        note.classList.add("show");
-        $("writeWhats").href = waLinkTo(t.phone, msg);
-      });
-      $("writeEmail").addEventListener("click", function(e){
-        var msg = $("writeText").value.trim(), note = $("writeNote"), t = writeTarget();
-        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!t.email){ e.preventDefault(); note.textContent = "I do not have an email address for that person. Tap a family name above, or tap Someone else and write their address."; note.classList.add("show"); return; }
-        note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
-        note.classList.add("show");
-        $("writeEmail").href = "mailto:" + encodeURIComponent(t.email) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(msg);
-      });
-
-      /* ---------------- Send My File or Photo ---------------- */
+      /* ---------------- Send a Photo or File (inside MY PAPERS) ---------------- */
       var sendFile = null;
       $("sendFileInput").addEventListener("change", function(){
         sendFile = (this.files || [])[0] || null;
@@ -1909,7 +1833,7 @@
           note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
           note.classList.add("show"); return;
         }
-        note.textContent = "This cannot be sent from here. Tap ASK " + (firstHelper().name || "ZEE").toUpperCase() + " FOR HELP on the home screen and " + firstHelper().name + " will do this with you.";
+        note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
         note.classList.add("show");
       });
       function renderSendFileHelpers(){
@@ -2003,7 +1927,7 @@
           });
           note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
         }else{
-          note.textContent = "This cannot be sent from here. Tap ASK " + (firstHelper().name || "ZEE").toUpperCase() + " FOR HELP on the home screen and " + firstHelper().name + " will do this with you.";
+          note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
         }
         note.classList.add("show");
       });
@@ -2212,6 +2136,253 @@
           dl.scrollIntoView({behavior:"smooth", block:"center"});
         }catch(e){ setStatus("mergeStatus","One of those files could not be read. Try again, or ask Zee.", true); }
       });
+
+      /* ---------------- MY PAPERS: send-a-photo-or-file toggle ---------------- */
+      $("papersSendToggle").addEventListener("click", function(){
+        var ps = $("papersSend");
+        ps.style.display = (ps.style.display === "none" || !ps.style.display) ? "" : "none";
+      });
+
+      /* ---------------- Fix My Document: one step at a time ---------------- */
+      var wizStep = 1;
+      function showWizStep(n){
+        wizStep = Math.max(1, Math.min(4, n));
+        var steps = document.querySelectorAll(".wizstep");
+        for(var i=0;i<steps.length;i++){
+          steps[i].style.display = (parseInt(steps[i].getAttribute("data-step"), 10) === wizStep) ? "" : "none";
+        }
+        var lbl = $("wizStepLabel"); if(lbl) lbl.textContent = "STEP " + wizStep + " OF 4";
+        $("wizBack").style.display = wizStep === 1 ? "none" : "";
+        $("wizNext").style.display = wizStep === 4 ? "none" : "";
+        if(wizStep === 2 && typeof syncDocPreview === "function") syncDocPreview();
+        window.scrollTo(0, 0);
+      }
+      $("wizNext").addEventListener("click", function(){ showWizStep(wizStep + 1); });
+      $("wizBack").addEventListener("click", function(){ showWizStep(wizStep - 1); });
+      showWizStep(1);
+
+      /* ---------------- Show My Screen: in-app viewing (computer only) ----------------
+         Dad shares his screen from this panel; a family member watches in
+         this same app's viewer mode (?watch=CODE). PeerJS (free cloud) only
+         introduces the two browsers — the picture itself travels directly
+         browser-to-browser over WebRTC. View only: the watcher can never
+         click or control anything. Every failure is said out loud in plain
+         words, never swallowed. */
+      var scr = { peer:null, stream:null, call:null, code:"", watching:false, sentTo:"", startedAt:0, timer:null };
+      function screenSetStatus(msg, isErr){
+        var el = $("screenStatus"); if(!el) return;
+        el.textContent = msg; el.className = "status" + (isErr ? " err" : "");
+      }
+      function screenCodeGen(){
+        var chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", c = "";
+        for(var i=0;i<6;i++) c += chars.charAt(Math.floor(Math.random() * chars.length));
+        return c;
+      }
+      function fmtElapsed(ms){
+        var s = Math.floor(ms / 1000), m = Math.floor(s / 60); s = s % 60;
+        return (m ? (m + (m === 1 ? " minute " : " minutes ")) : "") + s + (s === 1 ? " second" : " seconds");
+      }
+      function screenRenderSendBtns(){
+        var wrap = $("screenSendBtns"); if(!wrap) return; wrap.innerHTML = "";
+        var url = "https://shanstud.github.io/dads-assistant/?watch=" + scr.code;
+        var fh = firstHelper();
+        helpers().forEach(function(h){
+          var phone = digits(h.phone) ? h.phone : fh.phone;
+          var a = document.createElement("a");
+          a.className = "actionbtn bg-green"; a.target = "_blank"; a.rel = "noopener";
+          a.textContent = "SEND TO " + (h.name || "FAMILY").toUpperCase();
+          a.href = waLinkTo(phone, "I am showing my screen. Tap this link to watch: " + url);
+          (function(name){ a.addEventListener("click", function(){ scr.sentTo = name; }); })(h.name || "");
+          wrap.appendChild(a);
+        });
+      }
+      function screenSetWatching(){
+        if(scr.watching) return;
+        scr.watching = true;
+        $("watchBannerName").textContent = scr.sentTo ? scr.sentTo.toUpperCase() : "YOUR FAMILY";
+        $("watchBanner").classList.add("show");
+        document.body.classList.add("screen-live");
+        var nm = scr.sentTo || "Your family";
+        screenSetStatus(nm + " is watching your screen now.", false);
+        speak(nm + " is watching your screen now.", "en-US");
+      }
+      function screenCleanup(msg){
+        if(scr.timer){ clearInterval(scr.timer); scr.timer = null; }
+        if(scr.call){ try{ scr.call.close(); }catch(e){} scr.call = null; }
+        if(scr.stream){ try{ scr.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} scr.stream = null; }
+        if(scr.peer){ try{ scr.peer.destroy(); }catch(e){} scr.peer = null; }
+        scr.watching = false; scr.code = ""; scr.sentTo = "";
+        $("watchBanner").classList.remove("show");
+        document.body.classList.remove("screen-live");
+        var pv = $("screenPreview"); pv.classList.remove("show"); try{ pv.srcObject = null; }catch(e){}
+        $("screenPreviewLabel").style.display = "none";
+        $("screenStep2").style.display = "none";
+        $("screenElapsed").style.display = "none";
+        var stop = $("screenStop"); stop.style.display = "none"; stop.classList.remove("screen-stop-live");
+        $("screenStart").style.display = "";
+        if(msg) screenSetStatus(msg, false);
+      }
+      $("screenStop").addEventListener("click", function(){
+        screenCleanup("You stopped showing your screen. Nothing is being shown now.");
+        speak("You stopped showing your screen.", "en-US");
+      });
+      $("screenStart").addEventListener("click", function(){
+        if(scr.peer || scr.stream) return;
+        var fhName = firstHelper().name || "Zee";
+        if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
+          var m1 = "Screen viewing in this app works on the computer. On this phone, use AnyDesk below.";
+          screenSetStatus(m1, true); speak(m1, "en-US"); return;
+        }
+        if(typeof Peer === "undefined"){
+          var m2 = "The screen service could not be reached. Check the internet, or use AnyDesk below.";
+          screenSetStatus(m2, true); speak(m2, "en-US"); return;
+        }
+        var code = screenCodeGen(); scr.code = code;
+        screenSetStatus("Getting ready…", false);
+        var peer = null, failed = false;
+        try{ peer = new Peer("dadsassistant-" + code); }catch(e){ peer = null; }
+        if(!peer){
+          scr.code = "";
+          screenSetStatus("The screen service could not be reached. Check the internet, or use AnyDesk below.", true);
+          return;
+        }
+        scr.peer = peer;
+        peer.on("error", function(){
+          if(!scr.stream){
+            failed = true;
+            screenCleanup("");
+            screenSetStatus("The screen service could not be reached. Check the internet, or use AnyDesk below.", true);
+          }
+        });
+        peer.on("call", function(call){
+          if(scr.stream){
+            scr.call = call;
+            try{ call.answer(scr.stream); }catch(e){}
+            if(call.on){
+              call.on("iceStateChanged", function(state){
+                if(state === "connected" || state === "completed") screenSetWatching();
+              });
+            }
+          }else{
+            screenSetStatus(fhName + " is trying to watch. Tap START — CHOOSE MY SCREEN first.", true);
+            try{ call.close(); }catch(e){}
+          }
+        });
+        peer.on("connection", function(conn){
+          if(conn && conn.on) conn.on("open", function(){ if(scr.stream) screenSetWatching(); });
+        });
+        navigator.mediaDevices.getDisplayMedia({ video:true }).then(function(stream){
+          if(failed){ try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} return; }
+          scr.stream = stream;
+          var vt = stream.getVideoTracks()[0];
+          if(vt && vt.addEventListener) vt.addEventListener("ended", function(){
+            screenCleanup("You stopped showing your screen. Nothing is being shown now.");
+          });
+          var pv = $("screenPreview"); pv.srcObject = stream; pv.classList.add("show");
+          $("screenPreviewLabel").style.display = "";
+          $("screenCode").textContent = code;
+          screenRenderSendBtns();
+          $("screenStep2").style.display = "";
+          var stop = $("screenStop"); stop.style.display = ""; stop.classList.add("screen-stop-live");
+          $("screenStart").style.display = "none";
+          scr.startedAt = Date.now();
+          var el = $("screenElapsed"); el.style.display = "";
+          el.textContent = "Showing your screen for 0 seconds.";
+          scr.timer = setInterval(function(){
+            el.textContent = "Showing your screen for " + fmtElapsed(Date.now() - scr.startedAt) + ".";
+          }, 1000);
+          screenSetStatus("Waiting for your family… Send the link below to whoever will watch, or read the code out loud.", false);
+          speak("Your screen is ready. Send the link, or read the code out loud.", "en-US");
+        }, function(err){
+          var msg = (err && err.name === "NotAllowedError")
+            ? "You tapped Cancel, so nothing is being shown. Tap START when you are ready."
+            : "The computer did not share the screen. Tap START, choose Entire screen, then tap Share.";
+          screenCleanup("");
+          screenSetStatus(msg, true);
+        });
+      });
+
+      /* ---------------- Viewer mode: watch Dad's screen (?watch=CODE) ---------------- */
+      var view = { peer:null, call:null, data:null };
+      function viewerSetStatus(t){ var el = $("viewerStatus"); if(el) el.textContent = t; }
+      function viewerCleanup(){
+        if(view.call){ try{ view.call.close(); }catch(e){} view.call = null; }
+        if(view.data){ try{ view.data.close(); }catch(e){} view.data = null; }
+        if(view.peer){ try{ view.peer.destroy(); }catch(e){} view.peer = null; }
+        var v = $("viewerVideo"); if(v){ try{ v.srcObject = null; }catch(e){} }
+        var lb = $("viewerLive"); if(lb) lb.style.display = "none";
+      }
+      function viewerFail(){
+        $("viewerLive").style.display = "none";
+        $("viewerManual").style.display = "";
+        viewerSetStatus("Could not connect. Dad may have stopped, or the code is wrong.");
+      }
+      function viewerConnect(code){
+        code = (code || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if(!code){ $("viewerManual").style.display = ""; viewerSetStatus("Type the code Dad gave you, then tap WATCH."); return; }
+        if(typeof Peer === "undefined"){
+          $("viewerManual").style.display = "";
+          viewerSetStatus("Could not connect. The screen service could not be reached — check the internet and try again.");
+          return;
+        }
+        viewerCleanup();
+        $("viewerManual").style.display = "none";
+        viewerSetStatus("Connecting…");
+        var peer = null;
+        try{ peer = new Peer(); }catch(e){ peer = null; }
+        if(!peer){ viewerFail(); return; }
+        view.peer = peer;
+        peer.on("open", function(){
+          /* The watcher sends no picture of their own — a blank canvas
+             stream simply carries the connection so Dad's screen can
+             flow back. There are no controls: watching only. */
+          var dummy = null;
+          try{
+            var cv = document.createElement("canvas"); cv.width = 2; cv.height = 2;
+            dummy = cv.captureStream(1);
+          }catch(e){ try{ dummy = new MediaStream(); }catch(e2){ dummy = null; } }
+          var call = null;
+          try{ call = peer.call("dadsassistant-" + code, dummy); }catch(e){ call = null; }
+          if(!call){ viewerFail(); return; }
+          view.call = call;
+          call.on("stream", function(rs){
+            var v = $("viewerVideo");
+            v.srcObject = rs;
+            var p = v.play(); if(p && p.catch) p.catch(function(){});
+            $("viewerLive").style.display = "";
+            viewerSetStatus("You are watching. You can see the screen, but you cannot click or control it.");
+          });
+          call.on("error", function(){ viewerFail(); });
+          call.on("close", function(){
+            $("viewerLive").style.display = "none";
+            viewerSetStatus("Dad stopped showing his screen.");
+          });
+          try{ view.data = peer.connect("dadsassistant-" + code, { reliable:true }); }catch(e){}
+        });
+        peer.on("error", function(){ viewerFail(); });
+      }
+      $("watchGo").addEventListener("click", function(){ viewerConnect($("watchCodeInput").value); });
+      function stripWatchParam(){ try{ history.replaceState(null, "", window.location.pathname); }catch(e){} }
+      $("watchHome").addEventListener("click", function(){
+        viewerCleanup(); stripWatchParam(); openPanel(null);
+      });
+      $("bbHome").addEventListener("click", function(){
+        if($("panel-viewer").classList.contains("active")){ viewerCleanup(); stripWatchParam(); }
+      });
+      (function initViewer(){
+        var w = null;
+        try{ w = new URLSearchParams(window.location.search).get("watch"); }catch(e){}
+        if(w === null) return;
+        openPanel("panel-viewer");
+        w = (w || "").trim().toUpperCase();
+        if(w){
+          $("watchCodeInput").value = w;
+          viewerConnect(w);
+        }else{
+          $("viewerManual").style.display = "";
+          viewerSetStatus("Type the code Dad gave you, then tap WATCH.");
+        }
+      })();
     })();
     </script>
   </body>
