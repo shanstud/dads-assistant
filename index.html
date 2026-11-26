@@ -1,0 +1,1606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#FFF8EE" />
+    <link rel="icon" href="data:," />
+    <title>Dad's Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#FFF8EE;
+        --card:#FFFFFF;
+        --ink:#20302A;
+        --ink-soft:#4A5A52;
+        --line:#E4D9C6;
+        --green:#177245;
+        --green-dark:#0F5A35;
+        --teal:#0B6B6B;
+        --amber:#9A5B00;
+        --amber-bg:#B96E00;
+        --plum:#7A3B2E;
+        --blue:#1D5FA8;
+        --red:#B3261E;
+        --red-dark:#8F1D17;
+        --shadow:0 3px 0 rgba(32,48,42,.14), 0 10px 24px rgba(32,48,42,.08);
+      }
+      *{ box-sizing:border-box; }
+      html{ -webkit-text-size-adjust:100%; }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,Arial,sans-serif;
+        font-size:20px;
+        line-height:1.45;
+      }
+      .wrap{ max-width:860px; margin:0 auto; padding:20px 16px 48px; }
+
+      /* ---------- Greeting ---------- */
+      .greeting{ text-align:center; padding:14px 6px 4px; }
+      .greeting .salam{ font-size:clamp(30px,6.5vw,44px); font-weight:700; line-height:1.2; margin:0; }
+      .greeting .today{ font-size:clamp(22px,4.8vw,30px); color:var(--ink-soft); margin:10px 0 0; font-weight:700;}
+      .greeting .clock{ font-size:clamp(20px,4.4vw,26px); color:var(--ink-soft); margin:2px 0 0; }
+
+      /* ---------- Big home buttons ---------- */
+      .grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:26px; }
+      @media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
+      .bigbtn{
+        display:flex; align-items:center; gap:16px;
+        width:100%; min-height:104px;
+        padding:18px 20px;
+        border:none; border-radius:20px;
+        background:var(--card); color:var(--ink);
+        font:inherit; font-size:26px; font-weight:700; text-align:left;
+        cursor:pointer; text-decoration:none;
+        box-shadow:var(--shadow);
+        border:3px solid var(--line);
+      }
+      .bigbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(32,48,42,.14); }
+      .bigbtn .ic{ flex:0 0 auto; width:58px; height:58px; border-radius:16px; display:flex; align-items:center; justify-content:center; }
+      .bigbtn .ic svg{ width:34px; height:34px; }
+      .bigbtn .sub{ display:block; font-size:19px; font-weight:400; color:var(--ink-soft); margin-top:2px; }
+      .bigbtn.solid{ color:#fff; border-color:transparent; }
+      .bigbtn.solid .sub{ color:rgba(255,255,255,.85); }
+      .bigbtn.solid .ic{ background:rgba(255,255,255,.18); }
+      .bg-green{ background:var(--green); } .bg-green:active{ background:var(--green-dark); }
+      .bg-teal{ background:var(--teal); }
+      .bg-amber{ background:var(--amber-bg); }
+      .bg-blue{ background:var(--blue); }
+      .bg-plum{ background:var(--plum); }
+      .bg-red{ background:var(--red); } .bg-red:active{ background:var(--red-dark); }
+      .ic-green{ background:#E3F2E8; color:var(--green); }
+      .ic-teal{ background:#E0F0F0; color:var(--teal); }
+      .ic-amber{ background:#FBEED3; color:var(--amber); }
+      .ic-blue{ background:#E2EDF9; color:var(--blue); }
+      .ic-plum{ background:#F6E4DF; color:var(--plum); }
+
+      .emergency-strip{ margin-top:16px; }
+      .setup-link-wrap{ text-align:center; margin-top:44px; }
+      .setup-link{
+        display:inline-block; padding:14px 18px; min-height:48px;
+        font-size:16px; color:var(--ink-soft); text-decoration:underline;
+      }
+
+      /* ---------- Fixed bottom bar: HOME / I AM STUCK ---------- */
+      .bottombar{
+        position:fixed; left:0; right:0; bottom:0; z-index:50;
+        display:flex; gap:12px; padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+        background:#FFF3DF; border-top:4px solid var(--amber);
+        box-shadow:0 -6px 20px rgba(32,48,42,.15);
+      }
+      .bottombar button{
+        flex:1; min-height:78px; border:none; border-radius:16px; cursor:pointer;
+        font:inherit; font-size:26px; font-weight:700; color:#fff;
+        display:flex; align-items:center; justify-content:center; gap:10px;
+      }
+      .bottombar button svg{ width:32px; height:32px; }
+      .bottombar .bb-home{ background:var(--ink); }
+      .bottombar .bb-stuck{ background:var(--red); }
+      body{ padding-bottom:118px; }
+
+      /* ---------- Panels ---------- */
+      .panel{ display:none; }
+      .panel.active{ display:block; }
+      .backbtn{
+        display:flex; align-items:center; gap:12px;
+        min-height:76px; padding:12px 22px;
+        font:inherit; font-size:26px; font-weight:700;
+        background:var(--ink); color:#fff; border:none; border-radius:16px;
+        cursor:pointer; margin-bottom:22px;
+      }
+      .backbtn svg{ width:30px; height:30px; }
+      .panel h2{ font-size:clamp(28px,6vw,38px); margin:0 0 8px; line-height:1.2; }
+      .panel .hint{ font-size:21px; color:var(--ink-soft); margin:0 0 20px; }
+      .card{
+        background:var(--card); border:3px solid var(--line); border-radius:20px;
+        padding:22px; margin-bottom:20px; box-shadow:var(--shadow);
+      }
+      .card h3{ font-size:26px; margin:0 0 6px; }
+      .card p{ font-size:21px; margin:0 0 14px; }
+
+      textarea, input[type="text"], input[type="tel"], input[type="email"], input[type="url"]{
+        width:100%; font:inherit; font-size:23px; color:var(--ink);
+        background:#FFFDF8; border:3px solid #C9BBA3; border-radius:14px;
+        padding:16px; min-height:60px;
+      }
+      textarea{ min-height:150px; resize:vertical; }
+      textarea:focus, input:focus{ outline:4px solid #F2C14E; outline-offset:1px; border-color:var(--amber); }
+      label.flabel{ display:block; font-size:23px; font-weight:700; margin:18px 0 8px; }
+      label.flabel:first-child{ margin-top:0; }
+
+      .actionbtn{
+        display:flex; align-items:center; justify-content:center; gap:12px;
+        width:100%; min-height:84px; padding:16px 20px; margin-top:14px;
+        font:inherit; font-size:26px; font-weight:700;
+        border:none; border-radius:18px; cursor:pointer; text-decoration:none;
+        color:#fff; box-shadow:var(--shadow); text-align:center;
+      }
+      .actionbtn svg{ width:32px; height:32px; flex:0 0 auto; }
+      .actionbtn.secondary{ background:var(--card); color:var(--ink); border:3px solid var(--line); box-shadow:none; }
+      .microw{ display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+      .micbtn{
+        flex:1 1 200px; display:flex; align-items:center; justify-content:center; gap:10px;
+        min-height:72px; padding:12px 16px;
+        font:inherit; font-size:23px; font-weight:700;
+        background:#FDF3E0; color:var(--ink); border:3px solid var(--amber); border-radius:16px; cursor:pointer;
+      }
+      .micbtn svg{ width:28px; height:28px; color:var(--red); flex:0 0 auto; }
+      .micbtn.listening{ background:#FBE3E0; border-color:var(--red); }
+      .no-mic .micbtn, .no-mic .microw{ display:none !important; }
+
+      .answer{
+        display:none; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:18px;
+        padding:20px; margin-top:18px; font-size:25px;
+      }
+      .answer.show{ display:block; }
+      .answer .listenbtn{ margin-top:14px; }
+      .note{ font-size:21px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; margin-top:14px; display:none; }
+      .note.show{ display:block; }
+      .status{ font-size:22px; font-weight:700; margin-top:14px; min-height:30px; }
+      .status.err{ color:var(--red); }
+
+      /* file pick */
+      .filepick{
+        display:flex; align-items:center; justify-content:center; gap:12px;
+        width:100%; min-height:84px; padding:16px;
+        font-size:25px; font-weight:700; text-align:center;
+        background:#E2EDF9; color:var(--blue); border:3px dashed var(--blue); border-radius:18px; cursor:pointer;
+      }
+      .filepick svg{ width:32px; height:32px; }
+      input[type="file"]{ position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+      .picked{ font-size:21px; margin-top:10px; color:var(--ink-soft); }
+      .downloadbtn{ display:none; }
+      .downloadbtn.show{ display:flex; }
+      .pagephotos{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; margin-top:16px; }
+      .pagephotos figure{ margin:0; text-align:center; }
+      .pagephotos img{ width:100%; border:2px solid var(--line); border-radius:10px; }
+      .pagephotos a{ display:inline-block; padding:10px 12px; min-height:44px; font-size:19px; font-weight:700; color:var(--blue); }
+
+      /* tasks */
+      .taskrow{
+        display:flex; align-items:center; gap:14px; width:100%;
+        background:var(--card); border:3px solid var(--line); border-radius:16px;
+        padding:16px; margin-bottom:12px; text-align:left; font:inherit; cursor:pointer;
+      }
+      .taskrow .box{
+        flex:0 0 auto; width:46px; height:46px; border-radius:12px;
+        border:4px solid var(--green); display:flex; align-items:center; justify-content:center;
+        color:#fff; font-size:30px; font-weight:700;
+      }
+      .taskrow.done .box{ background:var(--green); }
+      .taskrow .ttext{ flex:1; font-size:25px; font-weight:700; word-break:break-word; }
+      .taskrow.done .ttext{ text-decoration:line-through; color:var(--ink-soft); }
+      .taskrow .del{
+        flex:0 0 auto; width:52px; height:52px; border-radius:12px; border:none;
+        background:#F6E4DF; color:var(--red); font-size:26px; font-weight:700; cursor:pointer;
+      }
+      .empty-msg{ font-size:23px; color:var(--ink-soft); text-align:center; padding:22px 0; }
+
+      .steps{ font-size:25px; line-height:1.7; margin:0 0 6px; padding-left:8px; list-style:none; }
+      .steps li{ margin-bottom:10px; }
+      .steps b{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:44px; height:44px; border-radius:50%; background:var(--teal); color:#fff;
+        font-size:24px; margin-right:12px; vertical-align:middle;
+      }
+      .chips{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+      .chip{
+        min-height:64px; padding:12px 22px; font:inherit; font-size:23px; font-weight:700;
+        background:#E3F2E8; color:var(--green-dark); border:3px solid var(--green); border-radius:999px; cursor:pointer;
+      }
+      .chip[aria-pressed="true"]{ background:var(--green); color:#fff; }
+      .divider{ border:none; border-top:3px solid var(--line); margin:26px 0; }
+      .setup-grid{ display:grid; grid-template-columns:1fr; gap:4px; }
+      @media (min-width:620px){ .setup-grid{ grid-template-columns:1fr 1fr; gap:4px 20px; } }
+      .savedmsg{ display:none; font-size:23px; font-weight:700; color:var(--green-dark); background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; margin-top:16px; }
+      .savedmsg.show{ display:block; }
+      .pickedname{ font-size:28px; font-weight:700; margin-top:14px; word-break:break-word; }
+      .docbtn{
+        display:flex; align-items:center; gap:14px; width:100%;
+        background:var(--card); border:3px solid var(--line); border-radius:16px;
+        padding:18px 16px; margin-bottom:12px; text-align:left; font:inherit;
+        font-size:25px; font-weight:700; cursor:pointer; word-break:break-word; color:var(--ink);
+      }
+      [dir="rtl"]{ text-align:right; }
+
+      /* ---------- Phone size: compact, fits the screen ---------- */
+      @media (max-width:619px){
+        body{ font-size:18px; padding-bottom:88px; }
+        .wrap{ padding:12px 12px 32px; }
+
+        .greeting{ padding:8px 4px 2px; }
+        .greeting .salam{ font-size:27px; line-height:1.25; }
+        .greeting .today{ font-size:19px; margin-top:6px; }
+        .greeting .clock{ font-size:17px; }
+
+        .grid{ gap:10px; margin-top:16px; }
+        .bigbtn{
+          min-height:70px; padding:11px 14px; gap:12px;
+          font-size:20px; border-radius:16px; border-width:2px;
+        }
+        .bigbtn .ic{ width:44px; height:44px; border-radius:12px; }
+        .bigbtn .ic svg{ width:26px; height:26px; }
+        .bigbtn .sub{ font-size:15px; line-height:1.3; }
+        .emergency-strip{ margin-top:10px; }
+        .setup-link-wrap{ margin-top:28px; }
+        .setup-link{ font-size:14px; padding:10px 12px; }
+
+        .bottombar{ gap:8px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); border-top-width:3px; }
+        .bottombar button{ min-height:54px; font-size:19px; border-radius:12px; gap:7px; white-space:nowrap; }
+        .bottombar button svg{ width:24px; height:24px; }
+
+        .backbtn{ min-height:54px; padding:10px 16px; font-size:20px; border-radius:12px; margin-bottom:16px; gap:9px; }
+        .backbtn svg{ width:24px; height:24px; }
+        .panel h2{ font-size:24px; }
+        .panel .hint{ font-size:17px; margin-bottom:14px; }
+        .card{ padding:16px; margin-bottom:14px; border-radius:16px; border-width:2px; }
+        .card h3{ font-size:21px; }
+        .card p{ font-size:17px; margin-bottom:10px; }
+
+        textarea, input[type="text"], input[type="tel"], input[type="email"], input[type="url"]{
+          font-size:18px; padding:12px; min-height:48px; border-width:2px; border-radius:12px;
+        }
+        textarea{ min-height:110px; }
+        label.flabel{ font-size:18px; margin:14px 0 6px; }
+
+        .actionbtn{ min-height:58px; padding:12px 16px; margin-top:10px; font-size:20px; border-radius:14px; gap:9px; }
+        .actionbtn svg{ width:25px; height:25px; }
+        .microw{ gap:8px; margin-top:10px; }
+        .micbtn{ flex-basis:150px; min-height:54px; padding:9px 12px; font-size:18px; border-radius:12px; border-width:2px; gap:7px; }
+        .micbtn svg{ width:23px; height:23px; }
+
+        .answer{ padding:16px; margin-top:14px; font-size:19px; border-radius:14px; }
+        .note{ font-size:17px; padding:12px 14px; }
+        .status{ font-size:18px; }
+        .filepick{ min-height:60px; padding:12px; font-size:19px; border-radius:14px; }
+        .filepick svg{ width:25px; height:25px; }
+        .picked{ font-size:17px; }
+        .pickedname{ font-size:21px; }
+        .pagephotos{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
+        .pagephotos a{ font-size:16px; }
+
+        .taskrow{ padding:12px; gap:10px; border-radius:12px; border-width:2px; margin-bottom:9px; }
+        .taskrow .box{ width:36px; height:36px; border-width:3px; border-radius:9px; font-size:23px; }
+        .taskrow .ttext{ font-size:19px; }
+        .taskrow .del{ width:44px; height:44px; font-size:21px; }
+        .empty-msg{ font-size:18px; padding:16px 0; }
+
+        .steps{ font-size:19px; line-height:1.55; }
+        .steps li{ margin-bottom:8px; }
+        .steps b{ width:34px; height:34px; font-size:18px; margin-right:9px; }
+        .chip{ min-height:48px; padding:8px 16px; font-size:18px; border-width:2px; }
+        .savedmsg{ font-size:18px; padding:12px 14px; }
+        .docbtn{ padding:13px 12px; gap:10px; font-size:19px; border-radius:12px; border-width:2px; margin-bottom:9px; }
+        #docText{ min-height:140px !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ================= HOME ================= -->
+      <main id="home">
+        <div class="greeting">
+          <p class="salam">Assalam-o-Alaikum,<br />Wazir Ali</p>
+          <p class="today" id="todayLine">Today</p>
+          <p class="clock" id="clockLine"></p>
+        </div>
+
+        <div class="grid" id="homeGrid">
+          <span id="helpersSlot" style="display:contents"></span>
+
+          <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span>I AM FINE<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-blue" data-quicklink="call" href="https://wa.me/14705790994?text=Please%20call%20me%20when%20you%20can." target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <span>PLEASE CALL ME<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-amber" data-quicklink="help" href="https://wa.me/14705790994?text=I%20need%20help%2C%20please%20call%20me%20now." target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
+            <span>I NEED HELP<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-plum" data-quicklink="out" href="https://wa.me/14705790994?text=I%20am%20going%20out%20now." target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
+            <span>I AM GOING OUT<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span>
+            <span>I AM HOME NOW<span class="sub">Opens WhatsApp to <span data-hname>Zee</span>, ready to send</span></span>
+          </a>
+
+          <button class="bigbtn solid bg-teal" data-open="panel-location" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-teal" data-open="panel-talk" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
+            <span>Ask a Question<span class="sub">Tap, speak, done — بولیں یا لکھیں</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-amber" data-open="panel-ask" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 2h8.4L22 7.9V22H7.9a5.9 5.9 0 0 1 0-11.8Z" opacity="0"/><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
+            <span>Ask <span data-hname>Zee</span> for Help<span class="sub">Any problem — <span data-hname>Zee</span> will handle it</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-teal" data-open="panel-write" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span>Write and Send a Message<span class="sub">Speak once — send on WhatsApp or email</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-blue" data-open="panel-sendfile" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
+            <span>Send My File or Photo<span class="sub">Send a document or a picture</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+            <span>My Documents<span class="sub">Your important papers, kept here</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-rewrite" type="button">
+            <span class="ic ic-plum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
+            <span>Ask <span data-hname>Zee</span> to Fix My Document<span class="sub">A person fixes your letter properly</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-convert" type="button">
+            <span class="ic ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+            <span>Change a Document<span class="sub">Turn photos into a PDF file</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-email" type="button">
+            <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+            <span>Send an Email<span class="sub">Three easy steps</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-tasks" type="button">
+            <span class="ic ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span>
+            <span>My Tasks<span class="sub">Things to remember</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-health" type="button">
+            <span class="ic" style="background:#FBE3E0;color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h6.27"/></svg></span>
+            <span>Health &amp; Hospital<span class="sub">Doctor, pharmacy, directions</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-screen" type="button">
+            <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
+            <span>Show My Screen to <span data-hname>Zee</span><span class="sub">Opens AnyDesk so <span data-hname>Zee</span> can connect and help</span></span>
+          </button>
+
+          <a class="bigbtn solid bg-blue" href="https://www.facebook.com" target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+            <span>Facebook<span class="sub">Open Facebook</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-blue" href="https://mail.google.com" target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+            <span>My Email — Gmail<span class="sub">Tap to open your letters</span></span>
+          </a>
+
+          <a class="bigbtn solid bg-teal" href="https://outlook.live.com/mail" target="_blank" rel="noopener">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+            <span>My Email — Hotmail<span class="sub">Tap to open your letters</span></span>
+          </a>
+
+          <span id="placesSlot" style="display:contents"></span>
+
+          <button class="bigbtn" data-open="panel-password" type="button">
+            <span class="ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg></span>
+            <span>I Forgot My Password<span class="sub">Get a new one, step by step</span></span>
+          </button>
+
+          <a class="bigbtn" href="#" id="weatherBtn" style="display:none" target="_blank" rel="noopener">
+            <span class="ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></span>
+            <span>Today's Weather<span class="sub" id="weatherCity"></span></span>
+          </a>
+        </div>
+
+        <div class="setup-link-wrap">
+          <a class="setup-link" href="#" id="setupLink">Family setup — for Zee and family only</a>
+        </div>
+      </main>
+
+      <!-- ================= TALK ================= -->
+      <section class="panel" id="panel-talk" aria-label="Talk and ask anything">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Ask a Question</h2>
+        <p class="hint">Tap a microphone and speak — or type in the box. English, اردو, or Roman Urdu — all are fine. I can tell you the time or the date. For other questions, I can help you send them to <span data-hname>Zee</span>.</p>
+        <div class="card">
+          <label class="flabel" for="talkText">What do you want to say?</label>
+          <textarea id="talkText" dir="auto" placeholder="Type here, or tap a microphone below…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="talkText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="talkText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <button class="actionbtn bg-teal" id="talkGo" type="button">Answer Me</button>
+          <div class="answer" id="talkAnswer">
+            <div id="talkAnswerText" dir="auto"></div>
+            <button class="actionbtn secondary listenbtn" id="talkListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Listen</button>
+            <a class="actionbtn bg-amber" id="talkSendZee" href="#" target="_blank" rel="noopener" style="display:none">Send this to <span data-hname>Zee</span></a>
+          </div>
+          <div class="answer" id="talkSent">
+            <div id="talkSentText" dir="auto"></div>
+            <p style="margin:14px 0 0">WhatsApp is opening. Tap the green Send arrow to send this. The answer will come on WhatsApp — you can listen to it there, and reply with your voice.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ASK ZEE ================= -->
+      <section class="panel" id="panel-ask" aria-label="Ask Zee for help">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Ask <span data-hname>Zee</span> for Help</h2>
+        <p class="hint">Anything at all — a broken email, an appointment, a confusing letter. Speak or type it, then tap SEND. WhatsApp opens with your words ready — you tap the green send arrow there, and <span data-hname>Zee</span> will handle it.</p>
+        <div class="card">
+          <label class="flabel" for="askText">What do you need?</label>
+          <textarea id="askText" dir="auto" placeholder="For example: my email is not working…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="askText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="askText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <a class="actionbtn bg-amber" id="askSend" href="#" target="_blank" rel="noopener">Send to <span data-hname>Zee</span></a>
+          <div class="note" id="askNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= REWRITE ================= -->
+      <section class="panel" id="panel-rewrite" aria-label="Rewrite my document">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Ask <span data-hname>Zee</span> to Fix My Document</h2>
+        <p class="hint">Put your letter or document in the big box — type it, paste it, or speak it. Then listen to it, or send it to <span data-hname>Zee</span> — a person will fix it properly and send it back.</p>
+        <div class="card">
+          <label class="flabel" for="docText">Your document</label>
+          <textarea id="docText" dir="auto" style="min-height:220px" placeholder="Your letter or document goes here…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="docText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="docText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Read It to Me</button>
+          <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">Send to <span data-hname>Zee</span> to Fix</a>
+          <div class="note" id="docNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= CONVERT ================= -->
+      <section class="panel" id="panel-convert" aria-label="Convert a document">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Change a Document</h2>
+        <p class="hint">Your document files are worked on here on this device and are not uploaded.</p>
+
+        <div class="card">
+          <h3>Photos → PDF</h3>
+          <p>Pick one or more photos. They become one PDF file.</p>
+          <label class="filepick" for="imgInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Pick Photos</label>
+          <input type="file" id="imgInput" accept="image/*" multiple />
+          <div class="picked" id="imgPicked"></div>
+          <button class="actionbtn bg-blue" id="imgConvert" type="button">Make the PDF</button>
+          <div class="status" id="imgStatus"></div>
+          <a class="actionbtn bg-green downloadbtn" id="imgDownload" href="#" download="my-photos.pdf">Tap to Save the PDF</a>
+        </div>
+
+        <div class="card">
+          <h3>PDF → Photos</h3>
+          <p>Pick a PDF. Every page becomes a picture you can save.</p>
+          <label class="filepick" for="pdfInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg> Pick a PDF</label>
+          <input type="file" id="pdfInput" accept="application/pdf" />
+          <div class="picked" id="pdfPicked"></div>
+          <button class="actionbtn bg-blue" id="pdfConvert" type="button">Make the Photos</button>
+          <div class="status" id="pdfStatus"></div>
+          <div class="pagephotos" id="pagePhotos"></div>
+        </div>
+
+        <div class="card">
+          <h3>Join PDFs Together</h3>
+          <p>Pick two or more PDFs. They become one PDF, in the order you picked them.</p>
+          <label class="filepick" for="mergeInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> Pick PDFs</label>
+          <input type="file" id="mergeInput" accept="application/pdf" multiple />
+          <div class="picked" id="mergePicked"></div>
+          <button class="actionbtn bg-blue" id="mergeConvert" type="button">Join Them</button>
+          <div class="status" id="mergeStatus"></div>
+          <a class="actionbtn bg-green downloadbtn" id="mergeDownload" href="#" download="joined.pdf">Tap to Save the PDF</a>
+        </div>
+      </section>
+
+      <!-- ================= EMAIL ================= -->
+      <section class="panel" id="panel-email" aria-label="Send an email">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Send an Email</h2>
+        <p class="hint">Only three things: who it is for, what you want to say, then SEND. Your own mail app opens with everything filled in — you just tap send there.</p>
+        <div class="card">
+          <h3>How to answer a letter you got</h3>
+          <ol class="steps">
+            <li><b>1</b> Tap MY EMAIL on the home screen.</li>
+            <li><b>2</b> Tap the letter to open it.</li>
+            <li><b>3</b> Tap Reply, then tap the microphone on the keyboard and speak your reply.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <label class="flabel">1. Who is it for?</label>
+          <div class="chips" id="emailChips"></div>
+          <input type="email" id="emailTo" dir="ltr" placeholder="…or type an email address here" />
+          <label class="flabel" for="emailMsg">2. What do you want to say?</label>
+          <textarea id="emailMsg" dir="auto" placeholder="Type here, or tap a microphone…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="emailMsg" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="emailMsg" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <label class="flabel">3. Send it</label>
+          <a class="actionbtn bg-teal" id="emailSend" href="#">Open My Mail and Send</a>
+          <a class="actionbtn bg-amber" id="emailAskZee" href="#" target="_blank" rel="noopener">Ask <span data-hname>Zee</span> to Send It for Me</a>
+          <div class="note" id="emailNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= TASKS ================= -->
+      <section class="panel" id="panel-tasks" aria-label="My tasks">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>My Tasks</h2>
+        <p class="hint">Your list stays saved on this device. Tap a task when it is done — it crosses out.</p>
+        <div class="card">
+          <label class="flabel" for="taskText">Add a task</label>
+          <input type="text" id="taskText" dir="auto" placeholder="For example: take medicine at 6…" />
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="taskText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="taskText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <button class="actionbtn bg-green" id="taskAdd" type="button">Add Task</button>
+        </div>
+        <div id="taskList"></div>
+      </section>
+
+      <!-- ================= HEALTH ================= -->
+      <section class="panel" id="panel-health" aria-label="Health and hospital">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Health &amp; Hospital</h2>
+        <p class="hint">Your doctor, your pharmacy, and the way to your hospital.</p>
+        <div id="healthBody"></div>
+        <a class="bigbtn solid bg-red" href="tel:911" style="margin-top:8px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span>EMERGENCY — Call 911<span class="sub">Only for a real emergency</span></span>
+        </a>
+      </section>
+
+      <!-- ================= PASSWORD ================= -->
+      <section class="panel" id="panel-password" aria-label="I forgot my password">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>I Forgot My Password</h2>
+        <p class="hint">Do not worry — this happens to everyone. Follow these three steps:</p>
+        <div class="card">
+          <ol class="steps">
+            <li><b>1</b> Tap the button for the place below.</li>
+            <li><b>2</b> Follow the steps they show you. They may send a code to your phone, or ask you to confirm another way.</li>
+            <li><b>3</b> If you get stuck, tap the yellow button below and <span data-hname>Zee</span> will help you.</li>
+          </ol>
+        </div>
+        <div id="passwordBody"></div>
+        <a class="bigbtn solid bg-amber" id="passwordAskZee" href="https://wa.me/14705790994?text=Assalam-o-Alaikum%20Zee%2C%20I%20forgot%20my%20password%20and%20I%20need%20your%20help%2C%20please." target="_blank" rel="noopener" style="margin-top:4px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
+          <span>Ask <span data-hname>Zee</span> to Help Me<span class="sub">If the code is confusing, tap this</span></span>
+        </a>
+      </section>
+
+      <!-- ================= WRITE AND SEND ================= -->
+      <section class="panel" id="panel-write" aria-label="Write and send a message">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Write and Send a Message</h2>
+        <p class="hint">Say your message once. Then choose who it is for, and how to send it. WhatsApp or your mail app opens with your message ready — you tap Send there.</p>
+        <div class="card">
+          <label class="flabel" for="writeText">1. Your message</label>
+          <textarea id="writeText" dir="auto" placeholder="Type here, or tap a microphone below…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="writeText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="writeText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <label class="flabel">2. Who is it for?</label>
+          <div class="chips" id="writeChips"></div>
+          <div id="writeOther" style="display:none">
+            <label class="flabel" for="writeOtherPhone">Their phone number (for WhatsApp)</label>
+            <input type="tel" id="writeOtherPhone" dir="ltr" placeholder="e.g. +1 555 123 4567" />
+            <label class="flabel" for="writeOtherEmail">Their email address (for email)</label>
+            <input type="email" id="writeOtherEmail" dir="ltr" placeholder="name@example.com" />
+          </div>
+          <label class="flabel">3. Send it</label>
+          <a class="actionbtn bg-green" id="writeWhats" href="#" target="_blank" rel="noopener">SEND ON WHATSAPP</a>
+          <a class="actionbtn bg-teal" id="writeEmail" href="#">SEND BY EMAIL</a>
+          <div class="note" id="writeNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= SEND MY FILE ================= -->
+      <section class="panel" id="panel-sendfile" aria-label="Send my file or photo">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Send My File or Photo</h2>
+        <p class="hint">Pick a file or photo, then tap SEND IT. Your phone will ask where to send it — tap WhatsApp, then tap the person.</p>
+        <div class="card">
+          <label class="filepick" for="sendFileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a File or Photo</label>
+          <input type="file" id="sendFileInput" />
+          <div class="pickedname" id="sendFileName" dir="auto"></div>
+          <button class="actionbtn bg-green" id="sendFileGo" type="button">SEND IT</button>
+          <div class="note" id="sendFileNote"></div>
+        </div>
+        <div class="card">
+          <h3>Or open WhatsApp first</h3>
+          <ol class="steps">
+            <li><b>1</b> Tap the person's name below.</li>
+            <li><b>2</b> Tap the paperclip and choose your file.</li>
+          </ol>
+          <div id="sendFileHelpers"></div>
+        </div>
+      </section>
+
+      <!-- ================= MY DOCUMENTS ================= -->
+      <section class="panel" id="panel-docs" aria-label="My documents">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>My Documents</h2>
+        <p class="hint">Your important papers, kept on this device. Tap a document to open it or send it.</p>
+        <div class="card">
+          <label class="filepick" for="docsInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> ADD A DOCUMENT</label>
+          <input type="file" id="docsInput" multiple />
+          <div class="note" id="docsNote"></div>
+        </div>
+        <div id="docsList"></div>
+        <div class="card" id="docActions" style="display:none">
+          <h3 id="docActionName" dir="auto"></h3>
+          <a class="actionbtn bg-teal" id="docOpen" href="#" target="_blank" rel="noopener">OPEN IT</a>
+          <button class="actionbtn bg-green" id="docShare" type="button">SEND IT</button>
+          <button class="actionbtn bg-red" id="docRemove" type="button">TAKE IT OFF</button>
+          <div id="docConfirm" style="display:none">
+            <p style="font-size:24px;font-weight:700;margin:16px 0 0">Are you sure? This takes it off this shelf.</p>
+            <button class="actionbtn bg-red" id="docRemoveYes" type="button">YES, TAKE IT OFF</button>
+            <button class="actionbtn secondary" id="docRemoveNo" type="button">NO, KEEP IT</button>
+          </div>
+          <div class="note" id="docActionNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= SEND MY LOCATION ================= -->
+      <section class="panel" id="panel-location" aria-label="Send my location">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Send My Location</h2>
+        <p class="hint">Tap the name of the person. This app asks your phone where you are, then a big green button appears — tap it, WhatsApp opens with a map of your place ready, and you tap the green Send arrow there.</p>
+        <div id="locHelpers"></div>
+        <a class="actionbtn bg-green" id="locSendLink" href="#" target="_blank" rel="noopener" style="display:none">SEND MY LOCATION</a>
+        <div class="note" id="locNote"></div>
+      </section>
+
+      <!-- ================= SETUP ================= -->
+      <section class="panel" id="panel-setup" aria-label="Family setup">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Family Setup</h2>
+        <p class="hint">For Zee and family — fill this in once. Everything saves on this device only and makes the big buttons work. Leave a box empty if it is not needed yet.</p>
+        <div class="card">
+          <p style="font-size:22px;font-weight:700;margin:0 0 4px">Family Helpers — who he can call and ask for help</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The FIRST person in this list is the main helper: the "Ask for Help", "I AM STUCK" and quick-message buttons go to them. Add a sister or anyone else here and they get their own big Call button on the home screen, and appear everywhere a helper can be chosen. Take someone off with the button under their name.</p>
+          <div id="helpersEditor"></div>
+          <button class="actionbtn secondary" id="addHelperBtn" type="button">+ Add Another Helper</button>
+          <div class="setup-grid" style="margin-top:10px">
+            <div><label class="flabel" for="sCity">His city (for weather)</label><input type="text" id="sCity" placeholder="e.g. Toronto" /></div>
+            <div><label class="flabel" for="sEmailReset">Extra password-help page (optional)</label><input type="url" id="sEmailReset" dir="ltr" /></div>
+          </div>
+          <hr class="divider" />
+          <div class="setup-grid">
+            <div><label class="flabel" for="sHospName">Hospital name</label><input type="text" id="sHospName" /></div>
+            <div><label class="flabel" for="sHospAddr">Hospital address</label><input type="text" id="sHospAddr" /></div>
+            <div><label class="flabel" for="sDocName">Doctor's name</label><input type="text" id="sDocName" /></div>
+            <div><label class="flabel" for="sDocPhone">Doctor's phone</label><input type="tel" id="sDocPhone" dir="ltr" /></div>
+            <div><label class="flabel" for="sPharmName">Pharmacy name</label><input type="text" id="sPharmName" /></div>
+            <div><label class="flabel" for="sPharmPhone">Pharmacy phone</label><input type="tel" id="sPharmPhone" dir="ltr" /></div>
+          </div>
+          <hr class="divider" />
+          <p style="font-size:22px;font-weight:700;margin:0 0 4px">My Places — his regular websites</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">Each one becomes a big button on the home screen. Examples: his email inbox page, a news site, YouTube, his bank.</p>
+          <div class="setup-grid">
+            <div><label class="flabel" for="sP1Name">Place 1 — name</label><input type="text" id="sP1Name" placeholder="e.g. My Email" /></div>
+            <div><label class="flabel" for="sP1Url">Place 1 — web address</label><input type="url" id="sP1Url" dir="ltr" placeholder="https://…" /></div>
+            <div><label class="flabel" for="sP2Name">Place 2 — name</label><input type="text" id="sP2Name" placeholder="e.g. News" /></div>
+            <div><label class="flabel" for="sP2Url">Place 2 — web address</label><input type="url" id="sP2Url" dir="ltr" placeholder="https://…" /></div>
+            <div><label class="flabel" for="sP3Name">Place 3 — name</label><input type="text" id="sP3Name" placeholder="e.g. YouTube" /></div>
+            <div><label class="flabel" for="sP3Url">Place 3 — web address</label><input type="url" id="sP3Url" dir="ltr" placeholder="https://…" /></div>
+            <div><label class="flabel" for="sP4Name">Place 4 — name</label><input type="text" id="sP4Name" placeholder="e.g. My Bank" /></div>
+            <div><label class="flabel" for="sP4Url">Place 4 — web address</label><input type="url" id="sP4Url" dir="ltr" placeholder="https://…" /></div>
+          </div>
+          <hr class="divider" />
+          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Remote help:</b> install AnyDesk (free) once on his phone and computer, turn on unattended access, and keep the password with family only — never write it in this app. After that one-time setup, family can connect and help from anywhere; on some phones he may be asked to tap Allow. The SHOW MY SCREEN button on the home screen only opens AnyDesk; this app never sees or stores that password.</p>
+          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>His documents:</b> Copies on this shelf live only on this device — they are not a backup. For the real collection, put his documents in Google Drive or OneDrive once (they then appear on his new computer and phone by themselves), and use AnyDesk file transfer to pull anything else from his old computer. This app cannot collect files from his computer by itself — no web page can.</p>
+          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Where is he — family location:</b> This web app cannot watch his location in the background or send automatic leaving-home alerts — no web page can. The automatic leaving-home and coming-home alerts will come with the Android version of this same app (the family's own app — no third-party service). Until then, his in-app way is the SEND MY LOCATION button (one tap prepares a WhatsApp message with his position to the helper he picks, while the app is open) and the I AM GOING OUT / I AM HOME NOW buttons.</p>
+          <button class="actionbtn bg-green" id="setupSave" type="button">Save Setup</button>
+          <div class="savedmsg" id="setupSaved">Saved. The big buttons are ready.</div>
+        </div>
+      </section>
+
+      <!-- ================= STUCK ================= -->
+      <section class="panel" id="panel-stuck" aria-label="I am stuck">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Do not worry.</h2>
+        <p class="hint" style="font-size:25px;color:var(--ink)">Nothing is broken. Tap HOME below to start again, or call <span data-hname>Zee</span> — he will help you.</p>
+        <a class="bigbtn solid bg-green" href="tel:+14705790994" id="stuckCallZee" style="margin-bottom:16px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
+        </a>
+        <a class="bigbtn solid bg-amber" id="stuckMsgZee" href="https://wa.me/14705790994?text=Assalam-o-Alaikum%20Zee%2C%20I%20am%20stuck%2C%20please%20help%20me." target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <span>Send <span data-hname>Zee</span> a Message<span class="sub">It says: I am stuck, please help me</span></span>
+        </a>
+        <div class="note" id="stuckNote"></div>
+      </section>
+
+      <!-- ================= SHOW MY SCREEN ================= -->
+      <section class="panel" id="panel-screen" aria-label="Show my screen to Zee">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Show My Screen to <span data-hname>Zee</span></h2>
+        <p class="hint">Tap the big button. This opens AnyDesk. If <span data-hname>Zee</span> has already set it up for you, he can then connect and help.</p>
+        <a class="bigbtn solid bg-teal" id="screenOpen" href="anydesk://" style="margin-bottom:16px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
+          <span>Show My Screen<span class="sub">Tap — AnyDesk will open</span></span>
+        </a>
+        <div class="card">
+          <p style="margin:0;font-size:24px">If nothing opened, do not worry. This needs one-time setup by <span data-hname>Zee</span>. Tap CALL <span data-hname>Zee</span> below and he will set it up with you.</p>
+        </div>
+        <a class="bigbtn solid bg-green" href="tel:+14705790994" id="screenCallZee">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
+        </a>
+      </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- ================= FIXED BOTTOM BAR ================= -->
+    <nav class="bottombar" aria-label="Always here">
+      <button class="bb-home" id="bbHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> HOME</button>
+      <button class="bb-stuck" id="bbStuck" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg> I AM STUCK</button>
+    </nav>
+
+    <script>
+    (function(){
+      "use strict";
+      var $ = function(id){ return document.getElementById(id); };
+
+      /* ---------------- Setup (saved on this device only) ---------------- */
+      var DEFAULTS = {
+        zeePhone:"14705790994", amreenPhone:"16475350684", zehraPhone:"14172887882",
+        zeeEmail:"shanstud@hotmail.com", amreenEmail:"", zehraEmail:"",
+        helpers:[],
+        city:"", emailReset:"https://accounts.google.com/signin/recovery",
+        hospName:"", hospAddr:"", docName:"", docPhone:"", pharmName:"", pharmPhone:"",
+        places:[]
+      };
+      var setup = {};
+      try{ setup = Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem("dadSetup")||"{}")); }
+      catch(e){ setup = Object.assign({}, DEFAULTS); }
+      if(!Array.isArray(setup.places)) setup.places = [];
+      if(!Array.isArray(setup.helpers)) setup.helpers = [];
+      if(!setup.helpers.length){
+        if(setup.zeePhone || setup.zeeEmail) setup.helpers.push({name:"Zee", phone:setup.zeePhone||"", email:setup.zeeEmail||""});
+        if(setup.amreenPhone || setup.amreenEmail) setup.helpers.push({name:"Amreen", phone:setup.amreenPhone||"", email:setup.amreenEmail||""});
+        if(setup.zehraPhone || setup.zehraEmail) setup.helpers.push({name:"Zehra", phone:setup.zehraPhone||"", email:setup.zehraEmail||""});
+      }
+      if(!setup.zehraSeeded){
+        var hasZehra = setup.helpers.some(function(h){ return h && (h.phone||"").replace(/[^0-9]/g,"")==="14172887882"; });
+        if(!hasZehra) setup.helpers.push({name:"Zehra", phone:"14172887882", email:""});
+        setup.zehraSeeded = true;
+        try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){}
+      }
+      function helpers(){ return setup.helpers.filter(function(h){ return h && (h.name || h.phone || h.email); }); }
+      function firstHelper(){ var hs = helpers(); return hs.length ? hs[0] : {name:"Zee", phone:"14705790994", email:""}; }
+
+      function saveSetup(){ try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){} }
+      function digits(p){ return (p||"").replace(/[^0-9]/g,""); }
+      function fmtPhone(p){
+        var d = digits(p);
+        if(d.length===11 && d.charAt(0)==="1") return "+1 ("+d.slice(1,4)+") "+d.slice(4,7)+"-"+d.slice(7);
+        return p||"";
+      }
+      function openExternal(url){
+        /* Last-resort handoff only — every send/open button in this app is a
+           real link the user taps, because script-opened windows are silently
+           blocked inside app frames. If this fallback is ever used, the anchor
+           stays in the layout (some phone browsers ignore clicks on
+           display:none elements). */
+        var a = document.createElement("a");
+        a.href = url;
+        a.style.cssText = "position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden";
+        document.body.appendChild(a); a.click();
+        setTimeout(function(){ if(a.parentNode) a.parentNode.removeChild(a); }, 1500);
+      }
+      function waLinkTo(phone, text){ return "https://wa.me/"+digits(phone)+"?text="+encodeURIComponent(text); }
+      function waLink(text){ return waLinkTo(firstHelper().phone, text); }
+
+      /* ---------------- Panels ---------------- */
+      var homeEl = $("home");
+      function openPanel(id){
+        var panels = document.querySelectorAll(".panel");
+        for(var i=0;i<panels.length;i++) panels[i].classList.remove("active");
+        if(id){ homeEl.style.display="none"; $(id).classList.add("active"); }
+        else{ homeEl.style.display=""; }
+        window.scrollTo(0,0);
+      }
+      var openers = document.querySelectorAll("[data-open]");
+      for(var i=0;i<openers.length;i++){
+        (function(btn){ btn.addEventListener("click", function(){ openPanel(btn.getAttribute("data-open")); refreshSendLinks(); }); })(openers[i]);
+      }
+      var backs = document.querySelectorAll("[data-back]");
+      for(var j=0;j<backs.length;j++) backs[j].addEventListener("click", function(){ openPanel(null); });
+      $("bbHome").addEventListener("click", function(){ openPanel(null); });
+      $("bbStuck").addEventListener("click", function(){ openPanel("panel-stuck"); });
+      $("setupLink").addEventListener("click", function(e){ e.preventDefault(); fillSetupForm(); openPanel("panel-setup"); });
+
+      /* ---------------- Greeting: day, date, clock ---------------- */
+      function tickClock(){
+        var now = new Date();
+        $("todayLine").textContent = now.toLocaleDateString("en-CA",{weekday:"long", day:"numeric", month:"long", year:"numeric"});
+        $("clockLine").textContent = now.toLocaleTimeString("en-CA",{hour:"numeric", minute:"2-digit"});
+      }
+      tickClock(); setInterval(tickClock, 20000);
+
+      /* ---------------- Speech: listen (recognition) ---------------- */
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR){ document.body.classList.add("no-mic"); }
+      var activeRec = null;
+      function stopRec(btn){
+        if(activeRec){ try{ activeRec.stop(); }catch(e){} activeRec = null; }
+        if(btn){ btn.classList.remove("listening"); var s = btn.querySelector("[data-miclabel]"); if(s) s.textContent = btn.getAttribute("data-label"); }
+      }
+      var micBtns = document.querySelectorAll("[data-mic]");
+      for(var m=0;m<micBtns.length;m++){
+        (function(btn){
+          var labelSpan = btn.querySelector("span") || btn;
+          labelSpan.setAttribute("data-miclabel","1");
+          btn.setAttribute("data-label", labelSpan.textContent);
+          btn.addEventListener("click", function(){
+            if(activeRec){ stopRec(btn); return; }
+            var target = $(btn.getAttribute("data-target"));
+            var rec = new SR();
+            rec.lang = btn.getAttribute("data-lang") || "en-US";
+            rec.interimResults = false; rec.maxAlternatives = 1;
+            activeRec = rec;
+            btn.classList.add("listening");
+            labelSpan.textContent = (rec.lang==="ur-PK") ? "سن رہا ہوں… رک کر ٹھہریں" : "Listening… tap to stop";
+            rec.onresult = function(ev){
+              var said = ev.results[0][0].transcript || "";
+              if(target){
+                var cur = target.value;
+                target.value = cur ? (cur.replace(/\s+$/,"") + " " + said) : said;
+                target.focus();
+                refreshSendLinks();
+              }
+            };
+            rec.onend = function(){ if(activeRec===rec) activeRec=null; btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label"); };
+            rec.onerror = rec.onend;
+            try{ rec.start(); }catch(e){ rec.onend(); }
+          });
+        })(micBtns[m]);
+      }
+
+      /* ---------------- Speech: speak aloud ---------------- */
+      function speak(text, lang){
+        if(!("speechSynthesis" in window) || !text) return;
+        try{
+          speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(text);
+          if(lang) u.lang = lang;
+          u.rate = 0.95;
+          var vs = speechSynthesis.getVoices();
+          for(var i=0;i<vs.length;i++){
+            if(vs[i].lang && vs[i].lang.toLowerCase().indexOf((lang||"en").slice(0,2))===0){ u.voice = vs[i]; break; }
+          }
+          speechSynthesis.speak(u);
+        }catch(e){}
+      }
+      if("speechSynthesis" in window){ try{ speechSynthesis.getVoices(); }catch(e){} }
+
+      /* ---------------- Language feel of his words ---------------- */
+      function detectLang(t){
+        if(/[\u0600-\u06FF]/.test(t)) return "ur";
+        var w = " "+t.toLowerCase().replace(/[^a-z\s]/g," ")+" ";
+        var words = [" kya "," hai "," hain "," mera "," meri "," mujhe "," aap "," kaise "," kab "," kahan "," nahi "," acha "," theek "," ghar "," dawai "," khana "," chahiye "," karna "," batao "," aaj "," kal "," waqt "," tareekh "," din "," shukriya "," meharbani "," pani "," beta "," kardo "," hai? "];
+        var hits = 0;
+        for(var i=0;i<words.length;i++) if(w.indexOf(words[i])>=0) hits++;
+        return hits>=1 ? "roman" : "en";
+      }
+      function speakLangFor(kind){ return kind==="ur" ? "ur-PK" : (kind==="roman" ? "ur-PK" : "en-US"); }
+
+      /* ---------------- Ask a Question: instant answers ---------------- */
+      var lastAnswer = "", lastAnswerLang = "en-US", lastQuestion = "";
+      function dateParts(){
+        var now = new Date();
+        return {
+          dayLong: now.toLocaleDateString("en-GB",{weekday:"long"}),
+          dateLong: now.toLocaleDateString("en-GB",{day:"numeric", month:"long", year:"numeric"}),
+          time: now.toLocaleTimeString("en-US",{hour:"numeric", minute:"2-digit"})
+        };
+      }
+      function instantAnswer(q){
+        var kind = detectLang(q);
+        var low = q.toLowerCase();
+        var p = dateParts();
+        var asksDate = /date|day|today|tareekh|aaj|din|تاریخ|دن|آج/.test(low) || /[\u0600-\u06FF]/.test(q) && /(دن|تاریخ|آج)/.test(q);
+        var asksTime = /time|clock|waqt|وقت|بجے/.test(low) || /(وقت)/.test(q);
+        var asksHello = /^(salam|assalam|hello|hi|aoa)\b/.test(low) || /سلام/.test(q);
+        if(asksTime && !asksDate){
+          if(kind==="ur") return "اس وقت " + p.time + " بجے ہیں۔";
+          if(kind==="roman") return "Is waqt " + p.time + " baje hain.";
+          return "The time is " + p.time + ".";
+        }
+        if(asksDate){
+          if(kind==="ur") return "آج " + p.dayLong + " ہے، " + p.dateLong + "۔ وقت " + p.time + " ہے۔";
+          if(kind==="roman") return "Aaj " + p.dayLong + " hai, " + p.dateLong + ". Waqt " + p.time + " hai.";
+          return "Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ".";
+        }
+        if(asksHello){
+          if(kind==="ur") return "وعلیکم السلام! میں ٹھیک ہوں۔ آپ کیا پوچھنا چاہتے ہیں؟";
+          if(kind==="roman") return "Wa-Alaikum-Assalam! Main theek hoon. Aap kya poochna chahte hain?";
+          return "Wa-Alaikum-Assalam! I am well. What would you like to ask?";
+        }
+        return null;
+      }
+      $("talkGo").addEventListener("click", function(){
+        var q = $("talkText").value.trim();
+        var ansBox = $("talkAnswer"), sentBox = $("talkSent");
+        sentBox.classList.remove("show");
+        if(!q){ $("talkAnswerText").textContent = "First tap a microphone and speak, or type your question in the box."; ansBox.classList.add("show"); $("talkSendZee").style.display="none"; lastAnswer=""; return; }
+        lastQuestion = q;
+        var a = instantAnswer(q);
+        if(a){
+          lastAnswer = a; lastAnswerLang = speakLangFor(detectLang(q));
+          $("talkAnswerText").textContent = a;
+          $("talkSendZee").style.display = "none";
+        }else{
+          lastAnswer = "I cannot answer that one myself. Tap the yellow button below to send it to " + firstHelper().name + " on WhatsApp, and he will answer you there.";
+          lastAnswerLang = "en-US";
+          $("talkAnswerText").textContent = lastAnswer;
+          $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + q);
+          $("talkSendZee").style.display = "";
+        }
+        ansBox.classList.add("show");
+      });
+      $("talkListen").addEventListener("click", function(){ if(lastAnswer) speak(lastAnswer, lastAnswerLang); });
+      $("talkSendZee").addEventListener("click", function(){
+        var q = lastQuestion || $("talkText").value.trim();
+        $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + q);
+        $("talkSentText").textContent = "You asked: \u201C" + q + "\u201D";
+        $("talkSent").classList.add("show");
+      });
+
+      /* ---------------- Ask Zee for Help ---------------- */
+      $("askSend").addEventListener("click", function(e){
+        var t = $("askText").value.trim();
+        var note = $("askNote");
+        if(!t){ e.preventDefault(); note.textContent = "First tap a microphone and speak, or type what you need in the box."; note.classList.add("show"); return; }
+        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this. " + firstHelper().name + "'s answer will come on WhatsApp, and you can reply with your voice.";
+        note.classList.add("show");
+        $("askSend").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I need help: " + t);
+      });
+
+      /* ---------------- Rewrite document ---------------- */
+      $("docRead").addEventListener("click", function(){
+        var t = $("docText").value.trim();
+        var note = $("docNote");
+        if(!t){ note.textContent = "The box is empty. First put your document in the box — type it, paste it, or speak it."; note.classList.add("show"); return; }
+        note.classList.remove("show");
+        speak(t, speakLangFor(detectLang(t)));
+      });
+      $("docSend").addEventListener("click", function(e){
+        var t = $("docText").value.trim();
+        var note = $("docNote");
+        if(!t){ e.preventDefault(); note.textContent = "The box is empty. First put your document in the box — type it, paste it, or speak it."; note.classList.add("show"); return; }
+        var head = "Assalam-o-Alaikum " + firstHelper().name + ", please fix and rewrite this document for me:\n\n";
+        var body = t, partial = false;
+        if(head.length + t.length > 1500){ body = t.slice(0, 1500 - head.length); partial = true; }
+        note.textContent = partial
+          ? "Your document is very long, so only the first part is in WhatsApp. WhatsApp is opening — tap the green Send arrow to send this. " + firstHelper().name + " will ask you for the rest."
+          : "WhatsApp is opening. Tap the green Send arrow to send this, and " + firstHelper().name + " will fix it and send it back.";
+        note.classList.add("show");
+        $("docSend").href = waLink(head + body + (partial ? "\n\n(This was very long — sent in part.)" : ""));
+      });
+
+      /* ---------------- My Tasks (saved on this device) ---------------- */
+      var tasks = [];
+      try{ tasks = JSON.parse(localStorage.getItem("dadTasks")||"[]"); }catch(e){ tasks = []; }
+      if(!Array.isArray(tasks)) tasks = [];
+      function saveTasks(){ try{ localStorage.setItem("dadTasks", JSON.stringify(tasks)); }catch(e){} }
+      function renderTasks(){
+        var list = $("taskList"); list.innerHTML = "";
+        if(!tasks.length){
+          var d = document.createElement("div"); d.className = "empty-msg";
+          d.textContent = "No tasks yet. Add your first one above.";
+          list.appendChild(d); return;
+        }
+        tasks.forEach(function(task, idx){
+          var row = document.createElement("div");
+          row.className = "taskrow" + (task.done ? " done" : "");
+          var box = document.createElement("span"); box.className = "box"; box.textContent = task.done ? "\u2713" : "";
+          var txt = document.createElement("span"); txt.className = "ttext"; txt.textContent = task.text; txt.setAttribute("dir","auto");
+          var main = document.createElement("button");
+          main.type = "button"; main.style.cssText = "display:flex;align-items:center;gap:14px;flex:1;background:none;border:none;font:inherit;text-align:left;cursor:pointer;padding:0;min-height:52px;color:inherit";
+          main.appendChild(box); main.appendChild(txt);
+          main.setAttribute("aria-label", task.done ? "Mark not done: "+task.text : "Mark done: "+task.text);
+          main.addEventListener("click", function(){ task.done = !task.done; saveTasks(); renderTasks(); });
+          var del = document.createElement("button");
+          del.type = "button"; del.className = "del"; del.textContent = "\u2715"; del.setAttribute("aria-label","Remove task: "+task.text);
+          del.addEventListener("click", function(){ tasks.splice(idx,1); saveTasks(); renderTasks(); });
+          row.appendChild(main); row.appendChild(del);
+          list.appendChild(row);
+        });
+      }
+      $("taskAdd").addEventListener("click", function(){
+        var t = $("taskText").value.trim();
+        if(!t) return;
+        tasks.push({text:t, done:false});
+        $("taskText").value = "";
+        saveTasks(); renderTasks();
+      });
+      $("taskText").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); $("taskAdd").click(); } });
+      renderTasks();
+
+      /* ---------------- Email ---------------- */
+      var chosenTo = "";
+      function renderEmailChips(){
+        var wrap = $("emailChips"); wrap.innerHTML = "";
+        var people = helpers().filter(function(h){ return h.email; }).map(function(h){ return {name:h.name || h.email, email:h.email}; });
+        if(!people.length){
+          var s = document.createElement("span"); s.style.fontSize = "21px"; s.style.color = "var(--ink-soft)";
+          s.textContent = "Type the address in the box below.";
+          wrap.appendChild(s); return;
+        }
+        people.forEach(function(p){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip"; b.textContent = p.name;
+          b.setAttribute("aria-pressed", chosenTo===p.email ? "true" : "false");
+          b.addEventListener("click", function(){ chosenTo = p.email; $("emailTo").value = p.email; renderEmailChips(); });
+          wrap.appendChild(b);
+        });
+      }
+      $("emailTo").addEventListener("input", function(){ chosenTo = this.value.trim(); });
+      function emailParts(){
+        return { to: ($("emailTo").value.trim() || chosenTo), msg: $("emailMsg").value.trim() };
+      }
+      $("emailSend").addEventListener("click", function(e){
+        var p = emailParts(), note = $("emailNote");
+        if(!p.to){ e.preventDefault(); note.textContent = "First say who it is for — tap a name above, or type the email address."; note.classList.add("show"); return; }
+        if(!p.msg){ e.preventDefault(); note.textContent = "The message box is empty. Type what you want to say, or tap a microphone and speak it."; note.classList.add("show"); return; }
+        note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
+        note.classList.add("show");
+        $("emailSend").href = "mailto:" + encodeURIComponent(p.to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(p.msg);
+      });
+      $("emailAskZee").addEventListener("click", function(e){
+        var p = emailParts(), note = $("emailNote");
+        if(!p.msg){ e.preventDefault(); note.textContent = "The message box is empty. Type what you want to say, or tap a microphone and speak it."; note.classList.add("show"); return; }
+        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this, and " + firstHelper().name + " will send the email for you.";
+        note.classList.add("show");
+        $("emailAskZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", please send this email for me.\nTo: " + (p.to||"(I did not write the address)") + "\nMessage: " + p.msg);
+      });
+
+      /* ---------------- Health & Hospital ---------------- */
+      function bigLink(href, colorClass, label, sub){
+        var a = document.createElement("a");
+        a.className = "bigbtn solid " + colorClass; a.href = href; a.style.marginBottom = "16px";
+        if(/^https:/.test(href)){ a.target = "_blank"; a.rel = "noopener"; }
+        var t = document.createElement("span"); t.textContent = label;
+        var s = document.createElement("span"); s.className = "sub"; s.textContent = sub;
+        t.appendChild(s); a.appendChild(t);
+        return a;
+      }
+      function notReady(what){
+        var d = document.createElement("div"); d.className = "card";
+        var p = document.createElement("p"); p.style.margin = "0"; p.style.fontSize = "23px";
+        p.textContent = what + " is not set up yet. Ask " + firstHelper().name + " to set this up.";
+        d.appendChild(p); return d;
+      }
+      function renderHealth(){
+        var body = $("healthBody"); body.innerHTML = "";
+        if(setup.hospAddr){
+          body.appendChild(bigLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((setup.hospName? setup.hospName+" ":"") + setup.hospAddr), "bg-teal", "Directions to My Hospital", setup.hospName || setup.hospAddr));
+        } else body.appendChild(notReady("The hospital address"));
+        if(setup.docPhone){
+          body.appendChild(bigLink("tel:+" + digits(setup.docPhone), "bg-green", "Call My Doctor", (setup.docName? setup.docName+" — ":"") + fmtPhone(setup.docPhone)));
+        } else body.appendChild(notReady("The doctor's phone number"));
+        if(setup.pharmPhone){
+          body.appendChild(bigLink("tel:+" + digits(setup.pharmPhone), "bg-green", "Call My Pharmacy", (setup.pharmName? setup.pharmName+" — ":"") + fmtPhone(setup.pharmPhone)));
+        } else body.appendChild(notReady("The pharmacy phone number"));
+      }
+
+      /* ---------------- Password help ---------------- */
+      function renderPassword(){
+        var body = $("passwordBody"); body.innerHTML = "";
+        body.appendChild(bigLink("https://www.facebook.com/login/identify", "bg-blue", "Facebook — Get a New Password", "Tap, then follow the steps on that page"));
+        body.appendChild(bigLink("https://accounts.google.com/signin/recovery", "bg-teal", "Gmail — Get a New Password", "Tap, then follow the steps on that page"));
+        body.appendChild(bigLink("https://account.live.com/password/reset", "bg-teal", "Hotmail — Get a New Password", "Tap, then follow the steps on that page"));
+        var extra = (setup.emailReset || "").trim();
+        if(extra && extra !== "https://accounts.google.com/signin/recovery" && extra !== "https://account.live.com/password/reset"){
+          body.appendChild(bigLink(extra, "bg-blue", "My Email — Get a New Password", "Tap, then follow the steps on that page"));
+        }
+      }
+      /* Password help ("Ask Zee to Help Me") and Show My Screen are real
+         links in the page — no script opens them. The password-help link's
+         WhatsApp address is kept fresh by refreshSendLinks(); the screen
+         link points straight at anydesk://. */
+
+      /* ---------------- I Am Stuck ---------------- */
+      $("stuckMsgZee").addEventListener("click", function(){
+        var note = $("stuckNote");
+        $("stuckMsgZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I am stuck, please help me.");
+        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this. " + firstHelper().name + " will help you.";
+        note.classList.add("show");
+      });
+
+      /* ---------------- Home: calls, places, weather ---------------- */
+      function renderHelpers(){
+        var slot = $("helpersSlot"); slot.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!h.phone) return;
+          var a = document.createElement("a");
+          a.className = "bigbtn solid bg-green"; a.href = "tel:+" + digits(h.phone);
+          var ic = document.createElement("span"); ic.className = "ic";
+          ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+          var t = document.createElement("span"); t.textContent = "Call " + (h.name || "Family");
+          var s = document.createElement("span"); s.className = "sub"; s.textContent = fmtPhone(h.phone);
+          t.appendChild(s); a.appendChild(ic); a.appendChild(t);
+          slot.appendChild(a);
+        });
+      }
+      function applyHelperNames(){
+        var nm = firstHelper().name || "Zee";
+        var spans = document.querySelectorAll("[data-hname]");
+        for(var i=0;i<spans.length;i++) spans[i].textContent = nm;
+      }
+      function applySetupToHome(){
+        renderHelpers(); applyHelperNames();
+        var fh = firstHelper();
+        $("stuckCallZee").href = "tel:+" + digits(fh.phone);
+        $("screenCallZee").href = "tel:+" + digits(fh.phone);
+        var slot = $("placesSlot"); slot.innerHTML = "";
+        setup.places.forEach(function(pl){
+          if(!pl.name || !pl.url) return;
+          var url = pl.url; if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+          var a = document.createElement("a");
+          a.className = "bigbtn"; a.href = url; a.target = "_blank"; a.rel = "noopener";
+          var ic = document.createElement("span"); ic.className = "ic ic-blue";
+          ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>';
+          var t = document.createElement("span"); t.textContent = pl.name;
+          var s = document.createElement("span"); s.className = "sub"; s.textContent = "Tap to open";
+          t.appendChild(s); a.appendChild(ic); a.appendChild(t);
+          slot.appendChild(a);
+        });
+        var wb = $("weatherBtn");
+        if(setup.city){
+          wb.style.display = "";
+          $("weatherCity").textContent = "In " + setup.city;
+          wb.href = "https://www.google.com/search?q=" + encodeURIComponent("weather in " + setup.city);
+        } else wb.style.display = "none";
+        renderEmailChips(); renderHealth(); renderPassword(); renderWriteChips(); renderSendFileHelpers(); renderLocHelpers(); refreshSendLinks();
+      }
+
+      /* ---------------- Quick notifications (one tap, to the main helper) ---------------- */
+      var QUICK = {
+        fine: "I am fine, do not worry.",
+        call: "Please call me when you can.",
+        help: "I need help, please call me now.",
+        out: "I am going out now.",
+        home: "I am back home now."
+      };
+      /* The quick messages are real links in the page. refreshSendLinks()
+         keeps every standing link's address fresh: the five quick messages,
+         the I AM STUCK message and the password-help message all point at
+         the main helper, and refreshFormLinks() keeps the form-based send
+         links (Ask for Help, Write and Send, Email) carrying the words
+         currently in their boxes — so a tap always opens the right thing,
+         with no script-opened window anywhere. */
+      function refreshSendLinks(){
+        var links = document.querySelectorAll("[data-quicklink]");
+        for(var qi=0; qi<links.length; qi++){
+          links[qi].href = waLink(QUICK[links[qi].getAttribute("data-quicklink")] || "");
+        }
+        var sm = $("stuckMsgZee"); if(sm) sm.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I am stuck, please help me.");
+        var pa = $("passwordAskZee"); if(pa) pa.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I forgot my password and I need your help, please.");
+        refreshFormLinks();
+      }
+      function refreshFormLinks(){
+        var tq = lastQuestion || $("talkText").value.trim();
+        if(tq) $("talkSendZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I have a question: " + tq);
+        var at = $("askText").value.trim();
+        if(at) $("askSend").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I need help: " + at);
+        var wm = $("writeText").value.trim(), wt = writeTarget();
+        if(wm && digits(wt.phone)) $("writeWhats").href = waLinkTo(wt.phone, wm);
+        if(wm && wt.email) $("writeEmail").href = "mailto:" + encodeURIComponent(wt.email) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(wm);
+        var ep = emailParts();
+        if(ep.to && ep.msg) $("emailSend").href = "mailto:" + encodeURIComponent(ep.to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(ep.msg);
+        if(ep.msg) $("emailAskZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", please send this email for me.\nTo: " + (ep.to||"(I did not write the address)") + "\nMessage: " + ep.msg);
+      }
+      ["talkText","askText","docText","writeText","writeOtherPhone","writeOtherEmail","emailTo","emailMsg"].forEach(function(id){
+        var el = $(id); if(el) el.addEventListener("input", refreshFormLinks);
+      });
+
+      /* ---------------- Write and Send a Message ---------------- */
+      var writeSel = 0; /* index into helpers(), or -1 for someone else */
+      function renderWriteChips(){
+        var wrap = $("writeChips"); if(!wrap) return; wrap.innerHTML = "";
+        var hs = helpers();
+        if(writeSel >= hs.length) writeSel = hs.length ? 0 : -1;
+        hs.forEach(function(h, idx){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip"; b.textContent = h.name || h.phone || h.email;
+          b.setAttribute("aria-pressed", writeSel===idx ? "true" : "false");
+          b.addEventListener("click", function(){ writeSel = idx; renderWriteChips(); });
+          wrap.appendChild(b);
+        });
+        var other = document.createElement("button");
+        other.type = "button"; other.className = "chip"; other.textContent = "Someone else";
+        other.setAttribute("aria-pressed", writeSel===-1 ? "true" : "false");
+        other.addEventListener("click", function(){ writeSel = -1; renderWriteChips(); });
+        wrap.appendChild(other);
+        $("writeOther").style.display = writeSel===-1 ? "" : "none";
+        refreshFormLinks();
+      }
+      function writeTarget(){
+        if(writeSel===-1) return { phone: $("writeOtherPhone").value.trim(), email: $("writeOtherEmail").value.trim() };
+        var h = helpers()[writeSel] || {};
+        return { phone: h.phone || "", email: h.email || "" };
+      }
+      $("writeWhats").addEventListener("click", function(e){
+        var msg = $("writeText").value.trim(), note = $("writeNote"), t = writeTarget();
+        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
+        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for that person. Tap a family name above, or tap Someone else and write their number."; note.classList.add("show"); return; }
+        note.textContent = "WhatsApp is opening with your message ready. Tap the green Send arrow to send this.";
+        note.classList.add("show");
+        $("writeWhats").href = waLinkTo(t.phone, msg);
+      });
+      $("writeEmail").addEventListener("click", function(e){
+        var msg = $("writeText").value.trim(), note = $("writeNote"), t = writeTarget();
+        if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
+        if(!t.email){ e.preventDefault(); note.textContent = "I do not have an email address for that person. Tap a family name above, or tap Someone else and write their address."; note.classList.add("show"); return; }
+        note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
+        note.classList.add("show");
+        $("writeEmail").href = "mailto:" + encodeURIComponent(t.email) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(msg);
+      });
+
+      /* ---------------- Send My File or Photo ---------------- */
+      var sendFile = null;
+      $("sendFileInput").addEventListener("change", function(){
+        sendFile = (this.files || [])[0] || null;
+        $("sendFileName").textContent = sendFile ? sendFile.name : "";
+      });
+      function canShareFile(f){ return !!(navigator.canShare && f && navigator.canShare({files:[f]})); }
+      $("sendFileGo").addEventListener("click", function(){
+        var note = $("sendFileNote");
+        if(!sendFile){ note.textContent = "First tap the blue button above and pick your file or photo."; note.classList.add("show"); return; }
+        if(canShareFile(sendFile)){
+          navigator.share({files:[sendFile], title:sendFile.name}).catch(function(){});
+          note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
+          note.classList.add("show"); return;
+        }
+        note.textContent = "This cannot be sent from here. Tap ASK " + (firstHelper().name || "ZEE").toUpperCase() + " FOR HELP on the home screen and " + firstHelper().name + " will do this with you.";
+        note.classList.add("show");
+      });
+      function renderSendFileHelpers(){
+        var wrap = $("sendFileHelpers"); if(!wrap) return; wrap.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!h.phone) return;
+          var b = document.createElement("a");
+          b.className = "actionbtn bg-green"; b.textContent = "Open WhatsApp to " + (h.name || "Family");
+          b.href = waLinkTo(h.phone, "Assalam-o-Alaikum " + (h.name || "") + ", I want to send you a file.");
+          b.target = "_blank"; b.rel = "noopener";
+          wrap.appendChild(b);
+        });
+      }
+
+      /* ---------------- My Documents (kept on this device only) ---------------- */
+      var docs = [];
+      try{ docs = JSON.parse(localStorage.getItem("dadDocs")||"[]"); }catch(e){ docs = []; }
+      if(!Array.isArray(docs)) docs = [];
+      var docSel = -1;
+      function saveDocs(){ try{ localStorage.setItem("dadDocs", JSON.stringify(docs)); return true; }catch(e){ return false; } }
+      function renderDocs(){
+        var list = $("docsList"); list.innerHTML = "";
+        if(!docs.length){
+          var d = document.createElement("div"); d.className = "empty-msg";
+          d.textContent = "No documents yet. Tap ADD A DOCUMENT above to put the first one here.";
+          list.appendChild(d);
+        }
+        docs.forEach(function(doc, idx){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "docbtn"; b.textContent = doc.name; b.setAttribute("dir","auto");
+          b.addEventListener("click", function(){ selectDoc(idx); });
+          list.appendChild(b);
+        });
+        if(docSel >= docs.length){ docSel = -1; $("docActions").style.display = "none"; }
+      }
+      var docOpenUrl = null;
+      function selectDoc(idx){
+        docSel = idx;
+        if(docOpenUrl){ URL.revokeObjectURL(docOpenUrl); docOpenUrl = null; }
+        docOpenUrl = URL.createObjectURL(docToFile(docs[idx]));
+        $("docOpen").href = docOpenUrl;
+        $("docActionName").textContent = docs[idx].name;
+        $("docConfirm").style.display = "none";
+        $("docActionNote").classList.remove("show");
+        $("docActions").style.display = "";
+        $("docActions").scrollIntoView({behavior:"smooth", block:"center"});
+      }
+      function docToFile(doc){
+        var parts = (doc.data || "").split(",");
+        var mime = ((parts[0] || "").match(/:(.*?);/) || [])[1] || "application/octet-stream";
+        var bin = atob(parts[1] || ""), arr = new Uint8Array(bin.length);
+        for(var i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+        return new File([arr], doc.name, {type:mime});
+      }
+      $("docsInput").addEventListener("change", function(){
+        var files = Array.prototype.slice.call(this.files || []);
+        var note = $("docsNote");
+        this.value = "";
+        if(!files.length) return;
+        var pending = files.length, failed = false, tooBig = false;
+        function finish(){
+          renderDocs();
+          if(failed) note.textContent = "The shelf is full — that document could not be kept here. Ask " + firstHelper().name + " to help.";
+          else if(tooBig) note.textContent = "One file was too big for this shelf and was not added. The others are on the shelf below.";
+          else note.textContent = "Added. Your document is on the shelf below.";
+          note.classList.add("show");
+        }
+        files.forEach(function(f){
+          if(f.size > 1500*1024){ tooBig = true; if(--pending===0) finish(); return; }
+          var r = new FileReader();
+          r.onload = function(){
+            docs.push({name:f.name, data:r.result});
+            if(!saveDocs()){ docs.pop(); failed = true; }
+            if(--pending===0) finish();
+          };
+          r.onerror = function(){ failed = true; if(--pending===0) finish(); };
+          r.readAsDataURL(f);
+        });
+      });
+      /* OPEN IT is a real link: selectDoc() points it at the document, so
+         the tap itself opens it — no script-opened window. */
+      $("docShare").addEventListener("click", function(){
+        var note = $("docActionNote");
+        if(docSel<0 || !docs[docSel]) return;
+        var f = docToFile(docs[docSel]);
+        if(canShareFile(f)){
+          navigator.share({files:[f], title:f.name}).catch(function(){});
+          note.textContent = "Your phone is asking where to send it — tap WhatsApp, then tap the person.";
+        }else{
+          note.textContent = "This cannot be sent from here. Tap ASK " + (firstHelper().name || "ZEE").toUpperCase() + " FOR HELP on the home screen and " + firstHelper().name + " will do this with you.";
+        }
+        note.classList.add("show");
+      });
+      $("docRemove").addEventListener("click", function(){ $("docConfirm").style.display = ""; });
+      $("docRemoveNo").addEventListener("click", function(){ $("docConfirm").style.display = "none"; });
+      $("docRemoveYes").addEventListener("click", function(){
+        if(docSel<0) return;
+        docs.splice(docSel,1); docSel = -1;
+        saveDocs(); renderDocs();
+        $("docActions").style.display = "none";
+      });
+      renderDocs();
+
+      /* ---------------- Send My Location ---------------- */
+      function renderLocHelpers(){
+        var wrap = $("locHelpers"); if(!wrap) return; wrap.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!h.phone) return;
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "actionbtn bg-teal"; b.textContent = "Send to " + (h.name || "Family");
+          b.addEventListener("click", function(){ sendLocationTo(h); });
+          wrap.appendChild(b);
+        });
+      }
+      function sendLocationTo(h){
+        var note = $("locNote"), sendLink = $("locSendLink");
+        function fail(){
+          sendLink.style.display = "none";
+          note.textContent = "Your location is off. Tap I AM STUCK below and " + firstHelper().name + " will help.";
+          note.classList.add("show");
+        }
+        if(!("geolocation" in navigator)){ fail(); return; }
+        sendLink.style.display = "none";
+        note.textContent = "Finding where you are… please wait a moment.";
+        note.classList.add("show");
+        navigator.geolocation.getCurrentPosition(function(pos){
+          var link = "https://www.google.com/maps?q=" + pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
+          /* The send control is a real link the user taps himself — a window
+             opened from this (non-tap) callback is blocked on most phones. */
+          sendLink.href = waLinkTo(h.phone, "I am here: " + link);
+          sendLink.textContent = "TAP HERE TO SEND IT TO " + (h.name || "FAMILY").toUpperCase();
+          sendLink.style.display = "";
+          note.textContent = "Found you. Now tap the big green button above — WhatsApp opens, and you tap the green Send arrow there.";
+          note.classList.add("show");
+          sendLink.scrollIntoView({behavior:"smooth", block:"center"});
+        }, fail, {enableHighAccuracy:true, timeout:20000, maximumAge:60000});
+      }
+
+      /* ---------------- Setup form ---------------- */
+      var F = { city:"sCity", emailReset:"sEmailReset", hospName:"sHospName", hospAddr:"sHospAddr",
+                docName:"sDocName", docPhone:"sDocPhone", pharmName:"sPharmName", pharmPhone:"sPharmPhone" };
+      function helperRow(h){
+        var row = document.createElement("div");
+        row.style.cssText = "border:3px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:#FFFDF8";
+        function field(label, cls, val, type){
+          var l = document.createElement("label"); l.className = "flabel"; l.textContent = label;
+          var inp = document.createElement("input"); inp.type = type; inp.className = cls; inp.value = val || ""; inp.setAttribute("dir","ltr");
+          row.appendChild(l); row.appendChild(inp);
+        }
+        field("Name", "h-name", h.name, "text");
+        field("Phone — for calls and WhatsApp", "h-phone", h.phone, "tel");
+        field("Email", "h-email", h.email, "email");
+        var rm = document.createElement("button");
+        rm.type = "button"; rm.className = "actionbtn secondary"; rm.textContent = "Take This Person Off";
+        rm.addEventListener("click", function(){ if(row.parentNode) row.parentNode.removeChild(row); });
+        row.appendChild(rm);
+        return row;
+      }
+      function fillSetupForm(){
+        for(var k in F) $(F[k]).value = setup[k] || "";
+        var ed = $("helpersEditor"); ed.innerHTML = "";
+        var hs = helpers();
+        if(!hs.length) hs = [{name:"", phone:"", email:""}];
+        hs.forEach(function(h){ ed.appendChild(helperRow(h)); });
+        for(var i=0;i<4;i++){
+          var pl = setup.places[i] || {name:"", url:""};
+          $("sP"+(i+1)+"Name").value = pl.name || "";
+          $("sP"+(i+1)+"Url").value = pl.url || "";
+        }
+      }
+      $("addHelperBtn").addEventListener("click", function(){
+        $("helpersEditor").appendChild(helperRow({name:"", phone:"", email:""}));
+      });
+      $("setupSave").addEventListener("click", function(){
+        for(var k in F) setup[k] = $(F[k]).value.trim();
+        setup.helpers = [];
+        var rows = $("helpersEditor").children;
+        for(var r=0;r<rows.length;r++){
+          var nm = rows[r].querySelector(".h-name").value.trim();
+          var ph = rows[r].querySelector(".h-phone").value.trim();
+          var em = rows[r].querySelector(".h-email").value.trim();
+          if(nm || ph || em) setup.helpers.push({name:nm, phone:ph, email:em});
+        }
+        var fh = firstHelper();
+        setup.zeePhone = fh.phone || ""; setup.zeeEmail = fh.email || "";
+        setup.places = [];
+        for(var i=0;i<4;i++){
+          var n = $("sP"+(i+1)+"Name").value.trim(), u = $("sP"+(i+1)+"Url").value.trim();
+          if(n || u) setup.places.push({name:n, url:u});
+        }
+        saveSetup(); applySetupToHome();
+        $("setupSaved").classList.add("show");
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      applySetupToHome();
+
+      /* ---------------- Change a Document (all on this device) ---------------- */
+      function setStatus(id, msg, isErr){
+        var el = $(id); el.textContent = msg; el.className = "status" + (isErr ? " err" : "");
+      }
+      function pickedText(inputId, outId){
+        var inp = $(inputId);
+        var show = function(){
+          var n = inp.files ? inp.files.length : 0;
+          $(outId).textContent = n ? (n===1 ? "1 file picked: " + inp.files[0].name : n + " files picked.") : "";
+        };
+        inp.addEventListener("change", show);
+      }
+      pickedText("imgInput","imgPicked"); pickedText("pdfInput","pdfPicked"); pickedText("mergeInput","mergePicked");
+      function libsReady(needPdfJs){
+        if(typeof PDFLib === "undefined") return false;
+        if(needPdfJs && typeof pdfjsLib === "undefined") return false;
+        return true;
+      }
+      var LIB_MSG = "This needs the internet the first time it loads. Connect to the internet, wait a moment, and try again — or ask Zee.";
+
+      var lastImgUrl = null;
+      $("imgConvert").addEventListener("click", async function(){
+        var files = Array.prototype.slice.call($("imgInput").files || []);
+        if(!files.length){ setStatus("imgStatus","First tap Pick Photos and choose your photos.", true); return; }
+        if(!libsReady(false)){ setStatus("imgStatus", LIB_MSG, true); return; }
+        setStatus("imgStatus","Working… please wait.");
+        try{
+          var pdf = await PDFLib.PDFDocument.create();
+          for(var i=0;i<files.length;i++){
+            var f = files[i], img = null, buf = await f.arrayBuffer();
+            if(f.type === "image/png") img = await pdf.embedPng(buf);
+            else if(f.type === "image/jpeg" || f.type === "image/jpg") img = await pdf.embedJpg(buf);
+            else{
+              var bmp = await createImageBitmap(f);
+              var c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height;
+              c.getContext("2d").drawImage(bmp, 0, 0);
+              var blob = await new Promise(function(r){ c.toBlob(r, "image/png"); });
+              img = await pdf.embedPng(await blob.arrayBuffer());
+            }
+            var page = pdf.addPage([img.width, img.height]);
+            page.drawImage(img, {x:0, y:0, width:img.width, height:img.height});
+          }
+          var bytes = await pdf.save();
+          if(lastImgUrl) URL.revokeObjectURL(lastImgUrl);
+          lastImgUrl = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
+          var dl = $("imgDownload"); dl.href = lastImgUrl; dl.classList.add("show");
+          setStatus("imgStatus","Done — your PDF is ready. Tap the green button to save it.");
+          dl.scrollIntoView({behavior:"smooth", block:"center"});
+        }catch(e){ setStatus("imgStatus","Something went wrong with those photos. Try again, or ask Zee.", true); }
+      });
+
+      var pageUrls = [];
+      $("pdfConvert").addEventListener("click", async function(){
+        var file = ($("pdfInput").files || [])[0];
+        var holder = $("pagePhotos");
+        if(!file){ setStatus("pdfStatus","First tap Pick a PDF and choose your file.", true); return; }
+        if(!libsReady(true)){ setStatus("pdfStatus", LIB_MSG, true); return; }
+        setStatus("pdfStatus","Working… please wait.");
+        holder.innerHTML = "";
+        pageUrls.forEach(function(u){ URL.revokeObjectURL(u); }); pageUrls = [];
+        try{
+          pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+          var data = await file.arrayBuffer();
+          var pdf = await pdfjsLib.getDocument({data:data}).promise;
+          for(var pno=1; pno<=pdf.numPages; pno++){
+            var page = await pdf.getPage(pno);
+            var vp = page.getViewport({scale:2});
+            var c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+            await page.render({canvasContext:c.getContext("2d"), viewport:vp}).promise;
+            var blob = await new Promise(function(r){ c.toBlob(r, "image/png"); });
+            var url = URL.createObjectURL(blob); pageUrls.push(url);
+            var fig = document.createElement("figure");
+            var im = document.createElement("img"); im.src = url; im.alt = "Page " + pno + " of the PDF";
+            var a = document.createElement("a"); a.href = url; a.download = "page-" + pno + ".png";
+            a.textContent = "Save page " + pno;
+            fig.appendChild(im); fig.appendChild(a); holder.appendChild(fig);
+          }
+          setStatus("pdfStatus","Done — " + pdf.numPages + (pdf.numPages===1 ? " page is" : " pages are") + " ready below. Tap Save under each picture.");
+        }catch(e){ setStatus("pdfStatus","That file could not be read. Try another PDF, or ask Zee.", true); }
+      });
+
+      var lastMergeUrl = null;
+      $("mergeConvert").addEventListener("click", async function(){
+        var files = Array.prototype.slice.call($("mergeInput").files || []);
+        if(files.length < 2){ setStatus("mergeStatus","Pick two or more PDFs first.", true); return; }
+        if(!libsReady(false)){ setStatus("mergeStatus", LIB_MSG, true); return; }
+        setStatus("mergeStatus","Working… please wait.");
+        try{
+          var out = await PDFLib.PDFDocument.create();
+          for(var i=0;i<files.length;i++){
+            var src = await PDFLib.PDFDocument.load(await files[i].arrayBuffer());
+            var pages = await out.copyPages(src, src.getPageIndices());
+            pages.forEach(function(pg){ out.addPage(pg); });
+          }
+          var bytes = await out.save();
+          if(lastMergeUrl) URL.revokeObjectURL(lastMergeUrl);
+          lastMergeUrl = URL.createObjectURL(new Blob([bytes], {type:"application/pdf"}));
+          var dl = $("mergeDownload"); dl.href = lastMergeUrl; dl.classList.add("show");
+          setStatus("mergeStatus","Done — your joined PDF is ready. Tap the green button to save it.");
+          dl.scrollIntoView({behavior:"smooth", block:"center"});
+        }catch(e){ setStatus("mergeStatus","One of those files could not be read. Try again, or ask Zee.", true); }
+      });
+    })();
+    </script>
+  </body>
+</html>
