@@ -81,6 +81,12 @@
       .ic-plum{ background:#F6E4DF; color:var(--plum); }
 
       .emergency-strip{ margin-top:10px; }
+
+      /* ---------- I AM STUCK: one send button per helper ---------- */
+      .stuck-instruction{ font-size:21px; font-weight:700; margin:0 0 12px; grid-column:1 / -1; }
+      #stuckSendBtns{ display:grid; grid-template-columns:1fr; gap:12px; grid-column:1 / -1; }
+      #stuckSendBtns .bigbtn{ margin-bottom:0; }
+      #stuckSendBtns .bigbtn.opened{ background:var(--green-dark); }
       .setup-link-wrap{ text-align:center; margin-top:28px; }
       .setup-link{
         display:inline-block; padding:14px 18px; min-height:48px;
@@ -445,6 +451,8 @@
         #panel-stuck .backbtn, #panel-stuck h2, #panel-stuck .hint, #panel-stuck .note{ grid-column:1 / -1; }
         #panel-stuck .backbtn{ justify-self:start; margin-bottom:0; }
         #panel-stuck .bigbtn{ margin-bottom:0 !important; height:100%; }
+        #stuckSendBtns{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
+        #panel-stuck #stuckCallZee{ grid-column:1 / -1; }
 
         /* Message panel: the two send buttons sit side by side */
         #panel-message .card{ display:grid; grid-template-columns:1fr 1fr; column-gap:14px; align-items:start; }
@@ -893,7 +901,7 @@
         <p class="hint">For Zee and family — fill this in once. Everything saves on this device only and makes the big buttons work. Leave a box empty if it is not needed yet.</p>
         <div class="card">
           <p style="font-size:22px;font-weight:700;margin:0 0 4px">Family Helpers — who he can call and ask for help</p>
-          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The FIRST person in this list is the main helper: the "Ask for Help", "I AM STUCK" and quick-message buttons go to them. Add a sister or anyone else here and they get their own big Call button on the home screen, and appear everywhere a helper can be chosen. Take someone off with the button under their name.</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The FIRST person in this list is the main helper: the "Ask for Help" and quick-message buttons go to them. The "I AM STUCK" message buttons go to EVERYONE in this list — one button for each person, so he can send the same stuck message to all of them, one by one. Add a sister or anyone else here and they get their own big Call button on the home screen, and appear everywhere a helper can be chosen. Take someone off with the button under their name.</p>
           <div id="helpersEditor"></div>
           <button class="actionbtn secondary" id="addHelperBtn" type="button">+ Add Another Helper</button>
           <div class="setup-grid" style="margin-top:10px">
@@ -940,10 +948,8 @@
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
         </a>
-        <a class="bigbtn solid bg-amber" id="stuckMsgZee" href="https://wa.me/14705790994?text=Assalam-o-Alaikum%20Zee%2C%20I%20am%20stuck%2C%20please%20help%20me." target="_blank" rel="noopener">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-          <span>Send <span data-hname>Zee</span> a Message<span class="sub">WhatsApp opens — tap the green Send arrow</span></span>
-        </a>
+        <p class="stuck-instruction">Tap each name, one by one. Each tap opens WhatsApp — tap the green Send arrow. All three will get your message.</p>
+        <div id="stuckSendBtns"></div>
         <div class="note" id="stuckNote"></div>
       </section>
 
@@ -1827,13 +1833,40 @@
          WhatsApp address is kept fresh by refreshSendLinks(); the screen
          link points straight at anydesk://. */
 
-      /* ---------------- I Am Stuck ---------------- */
-      $("stuckMsgZee").addEventListener("click", function(){
-        var note = $("stuckNote");
-        $("stuckMsgZee").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I am stuck, please help me.");
-        note.textContent = "WhatsApp is opening. Tap the green Send arrow to send this. " + firstHelper().name + " will help you.";
-        note.classList.add("show");
-      });
+      /* ---------------- I Am Stuck ----------------
+         WhatsApp cannot send to three chats from one tap in a web page,
+         so there is one real send button for EVERY helper in the Family
+         Helpers list (anyone with a number gets one — nothing is
+         hard-coded), each carrying the same stuck message to that
+         person. After a tap the button is marked "OPENED FOR [NAME]":
+         honest wording, because the app knows WhatsApp was opened for
+         that person, not whether he pressed WhatsApp's Send arrow. */
+      function renderStuckHelpers(){
+        var wrap = $("stuckSendBtns"); if(!wrap) return; wrap.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!h.phone) return;
+          var name = h.name || "Family";
+          var a = document.createElement("a");
+          a.className = "bigbtn solid bg-amber"; a.target = "_blank"; a.rel = "noopener";
+          a.href = waLinkTo(h.phone, "Assalam-o-Alaikum " + name + ", I am stuck, please help me.");
+          var ic = document.createElement("span"); ic.className = "ic";
+          ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+          var t = document.createElement("span");
+          var label = document.createElement("span"); label.textContent = "SEND TO " + name.toUpperCase();
+          var s = document.createElement("span"); s.className = "sub"; s.textContent = "WhatsApp opens — tap the green Send arrow";
+          t.appendChild(label); t.appendChild(s);
+          a.appendChild(ic); a.appendChild(t);
+          a.addEventListener("click", function(){
+            a.classList.add("opened");
+            label.textContent = "✓ OPENED FOR " + name.toUpperCase();
+            s.textContent = "Opened for " + name + " — now come back and tap the next name";
+            var note = $("stuckNote");
+            note.textContent = "WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name, so all three get your message.";
+            note.classList.add("show");
+          });
+          wrap.appendChild(a);
+        });
+      }
 
       /* ---------------- Home: calls, places, weather ---------------- */
       function renderHelpers(){
@@ -1856,7 +1889,7 @@
         for(var i=0;i<spans.length;i++) spans[i].textContent = nm;
       }
       function applySetupToHome(){
-        renderHelpers(); applyHelperNames();
+        renderHelpers(); applyHelperNames(); renderStuckHelpers();
         var fh = firstHelper();
         $("stuckCallZee").href = "tel:+" + digits(fh.phone);
         $("screenCallZee").href = "tel:+" + digits(fh.phone);
@@ -1891,9 +1924,10 @@
         home: "I am back home now."
       };
       /* The quick messages are real links in the page. refreshSendLinks()
-         keeps every standing link's address fresh: the five quick messages,
-         the I AM STUCK message and the password-help message all point at
-         the main helper, and refreshFormLinks() keeps the form-based send
+         keeps every standing link's address fresh: the five quick messages
+         and the password-help message point at the main helper (the
+         I AM STUCK buttons are rendered per helper by
+         renderStuckHelpers()), and refreshFormLinks() keeps the form-based send
          links (Ask for Help, Write and Send, Email) carrying the words
          currently in their boxes — so a tap always opens the right thing,
          with no script-opened window anywhere. */
@@ -1902,7 +1936,6 @@
         for(var qi=0; qi<links.length; qi++){
           links[qi].href = waLink(QUICK[links[qi].getAttribute("data-quicklink")] || "");
         }
-        var sm = $("stuckMsgZee"); if(sm) sm.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I am stuck, please help me.");
         var pa = $("passwordAskZee"); if(pa) pa.href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I forgot my password and I need your help, please.");
         refreshFormLinks();
       }
