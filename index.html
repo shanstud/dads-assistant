@@ -41,30 +41,30 @@
       .wrap{ max-width:860px; margin:0 auto; padding:20px 16px 48px; }
 
       /* ---------- Greeting ---------- */
-      .greeting{ text-align:center; padding:14px 6px 4px; }
-      .greeting .salam{ font-size:clamp(27px,5.6vw,37px); font-weight:700; line-height:1.2; margin:0; }
-      .greeting .today{ font-size:clamp(19px,4vw,25px); color:var(--ink-soft); margin:8px 0 0; font-weight:700;}
-      .greeting .clock{ font-size:clamp(17px,3.6vw,21px); color:var(--ink-soft); margin:2px 0 0; }
+      .greeting{ text-align:center; padding:8px 6px 2px; }
+      .greeting .salam{ font-size:clamp(25px,5vw,33px); font-weight:700; line-height:1.2; margin:0; }
+      .greeting .today{ display:inline-block; font-size:clamp(18px,3.6vw,22px); color:var(--ink-soft); margin:4px 0 0; font-weight:700;}
+      .greeting .clock{ display:inline-block; font-size:clamp(16px,3.2vw,19px); color:var(--ink-soft); margin:4px 0 0 12px; }
 
       /* ---------- Big home buttons ---------- */
-      .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:22px; align-items:stretch; }
+      .grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; align-items:stretch; }
       @media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
       .grid > .bigbtn{ height:100%; }
       .bigbtn{
-        display:flex; align-items:center; gap:14px;
-        width:100%; min-height:88px;
-        padding:15px 18px;
-        border:none; border-radius:18px;
+        display:flex; align-items:center; gap:12px;
+        width:100%; min-height:68px;
+        padding:10px 14px;
+        border:none; border-radius:16px;
         background:var(--card); color:var(--ink);
-        font:inherit; font-size:23px; font-weight:700; text-align:left;
+        font:inherit; font-size:21px; font-weight:700; text-align:left; line-height:1.25;
         cursor:pointer; text-decoration:none;
         box-shadow:var(--shadow);
         border:3px solid var(--line);
       }
       .bigbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(32,48,42,.14); }
-      .bigbtn .ic{ flex:0 0 auto; width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; }
-      .bigbtn .ic svg{ width:30px; height:30px; }
-      .bigbtn .sub{ display:block; font-size:17px; font-weight:400; color:var(--ink-soft); margin-top:2px; }
+      .bigbtn .ic{ flex:0 0 auto; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+      .bigbtn .ic svg{ width:26px; height:26px; }
+      .bigbtn .sub{ display:block; font-size:17px; font-weight:400; color:var(--ink-soft); margin-top:1px; line-height:1.3; }
       .bigbtn.solid{ color:#fff; border-color:transparent; }
       .bigbtn.solid .sub{ color:rgba(255,255,255,.85); }
       .bigbtn.solid .ic{ background:rgba(255,255,255,.18); }
@@ -80,8 +80,8 @@
       .ic-blue{ background:#E2EDF9; color:var(--blue); }
       .ic-plum{ background:#F6E4DF; color:var(--plum); }
 
-      .emergency-strip{ margin-top:16px; }
-      .setup-link-wrap{ text-align:center; margin-top:44px; }
+      .emergency-strip{ margin-top:10px; }
+      .setup-link-wrap{ text-align:center; margin-top:28px; }
       .setup-link{
         display:inline-block; padding:14px 18px; min-height:48px;
         font-size:16px; color:var(--ink-soft); text-decoration:underline;
@@ -90,19 +90,19 @@
       /* ---------- Fixed bottom bar: HOME / I AM STUCK ---------- */
       .bottombar{
         position:fixed; left:0; right:0; bottom:0; z-index:50;
-        display:flex; gap:12px; padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+        display:flex; gap:10px; padding:9px 12px calc(9px + env(safe-area-inset-bottom));
         background:#FFF3DF; border-top:4px solid var(--amber);
         box-shadow:0 -6px 20px rgba(32,48,42,.15);
       }
       .bottombar button{
-        flex:1; min-height:64px; border:none; border-radius:14px; cursor:pointer;
+        flex:1; min-height:56px; border:none; border-radius:14px; cursor:pointer;
         font:inherit; font-size:22px; font-weight:700; color:#fff;
         display:flex; align-items:center; justify-content:center; gap:10px;
       }
       .bottombar button svg{ width:28px; height:28px; }
       .bottombar .bb-home{ background:var(--ink); }
       .bottombar .bb-stuck{ background:var(--red); }
-      body{ padding-bottom:100px; }
+      body{ padding-bottom:88px; }
 
       /* ---------- Panels ---------- */
       .panel{ display:none; }
@@ -112,14 +112,14 @@
         min-height:62px; padding:10px 20px;
         font:inherit; font-size:22px; font-weight:700;
         background:var(--ink); color:#fff; border:none; border-radius:14px;
-        cursor:pointer; margin-bottom:18px;
+        cursor:pointer; margin-bottom:14px;
       }
       .backbtn svg{ width:26px; height:26px; }
-      .panel h2{ font-size:clamp(25px,5.2vw,32px); margin:0 0 8px; line-height:1.2; }
-      .panel .hint{ font-size:19px; color:var(--ink-soft); margin:0 0 16px; }
+      .panel h2{ font-size:clamp(25px,5.2vw,32px); margin:0 0 6px; line-height:1.2; }
+      .panel .hint{ font-size:19px; color:var(--ink-soft); margin:0 0 12px; }
       .card{
         background:var(--card); border:3px solid var(--line); border-radius:18px;
-        padding:20px; margin-bottom:16px; box-shadow:var(--shadow);
+        padding:18px; margin-bottom:14px; box-shadow:var(--shadow);
       }
       .card h3{ font-size:23px; margin:0 0 6px; }
       .card p{ font-size:19px; margin:0 0 12px; }
@@ -153,6 +153,11 @@
       .micbtn svg{ width:25px; height:25px; color:var(--red); flex:0 0 auto; }
       .micbtn.listening{ background:#FBE3E0; border-color:var(--red); }
       .no-mic .micbtn, .no-mic .microw{ display:none !important; }
+      .micstatus{ display:none; font-size:20px; font-weight:700; margin-top:12px; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:12px 14px; }
+      .micstatus.show{ display:block; }
+      .micstatus.err{ background:#FBE3E0; border-color:var(--red); color:var(--red-dark); }
+      .mic-fallback{ display:none; font-size:19px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; margin-top:14px; }
+      .no-mic .mic-fallback{ display:block; }
 
       .answer{
         display:none; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:18px;
@@ -234,16 +239,16 @@
       [dir="rtl"]{ text-align:right; }
 
       /* ---------- Section heading inside the home grid ---------- */
-      .gridhead{ grid-column:1 / -1; display:flex; align-items:center; gap:14px; margin-top:12px; }
-      .gridhead .gh-label{ font-size:23px; font-weight:700; letter-spacing:.05em; white-space:nowrap; }
+      .gridhead{ grid-column:1 / -1; display:flex; align-items:center; gap:12px; margin-top:6px; }
+      .gridhead .gh-label{ font-size:21px; font-weight:700; letter-spacing:.05em; white-space:nowrap; }
       .gridhead::before, .gridhead::after{ content:""; flex:1; border-top:3px solid var(--line); }
       .span2{ grid-column:1 / -1; }
 
       /* ---------- Listen — hear your options (home) ---------- */
-      .hearwrap{ text-align:center; margin-top:14px; }
+      .hearwrap{ text-align:center; margin-top:8px; }
       .hearbtn{
         display:inline-flex; align-items:center; gap:10px;
-        min-height:54px; padding:10px 22px;
+        min-height:48px; padding:8px 20px;
         font:inherit; font-size:20px; font-weight:700;
         background:#E0F0F0; color:var(--teal); border:3px solid var(--teal); border-radius:999px; cursor:pointer;
       }
@@ -273,35 +278,35 @@
 
       /* ---------- Phone size: compact, fits the screen ---------- */
       @media (max-width:619px){
-        body{ font-size:18px; padding-bottom:88px; }
-        .wrap{ padding:12px 12px 32px; }
+        body{ font-size:18px; padding-bottom:78px; }
+        .wrap{ padding:10px 10px 28px; }
 
-        .greeting{ padding:8px 4px 2px; }
-        .greeting .salam{ font-size:25px; line-height:1.25; }
-        .greeting .today{ font-size:19px; margin-top:4px; }
-        .greeting .clock{ font-size:17px; }
+        .greeting{ padding:4px 2px 0; }
+        .greeting .salam{ font-size:24px; line-height:1.2; }
+        .greeting .today{ font-size:18px; margin-top:2px; }
+        .greeting .clock{ font-size:16px; margin-top:2px; margin-left:9px; }
 
-        .grid{ gap:10px; margin-top:12px; }
+        .grid{ grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
         .bigbtn{
-          min-height:78px; padding:12px 14px; gap:12px;
-          font-size:22px; border-radius:16px; border-width:2px;
+          min-height:68px; padding:9px 10px; gap:9px;
+          font-size:21px; border-radius:14px; border-width:2px; line-height:1.2;
         }
-        .bigbtn .ic{ width:44px; height:44px; border-radius:12px; }
-        .bigbtn .ic svg{ width:26px; height:26px; }
-        .bigbtn .sub{ font-size:17px; line-height:1.35; }
-        .emergency-strip{ margin-top:10px; }
-        .setup-link-wrap{ margin-top:28px; }
+        .bigbtn .ic{ width:36px; height:36px; border-radius:10px; }
+        .bigbtn .ic svg{ width:21px; height:21px; }
+        .bigbtn .sub{ font-size:17px; line-height:1.3; margin-top:2px; }
+        .emergency-strip{ margin-top:8px; }
+        .setup-link-wrap{ margin-top:22px; }
         .setup-link{ font-size:14px; padding:10px 12px; }
 
-        .bottombar{ gap:8px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); border-top-width:3px; }
-        .bottombar button{ min-height:56px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
+        .bottombar{ gap:8px; padding:7px 9px calc(7px + env(safe-area-inset-bottom)); border-top-width:3px; }
+        .bottombar button{ min-height:50px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
         .bottombar button svg{ width:24px; height:24px; }
 
-        .backbtn{ min-height:54px; padding:10px 16px; font-size:20px; border-radius:12px; margin-bottom:16px; gap:9px; }
+        .backbtn{ min-height:50px; padding:8px 14px; font-size:20px; border-radius:12px; margin-bottom:12px; gap:9px; }
         .backbtn svg{ width:24px; height:24px; }
         .panel h2{ font-size:24px; }
-        .panel .hint{ font-size:17px; margin-bottom:14px; }
-        .card{ padding:16px; margin-bottom:14px; border-radius:16px; border-width:2px; }
+        .panel .hint{ font-size:17px; margin-bottom:12px; }
+        .card{ padding:14px; margin-bottom:12px; border-radius:16px; border-width:2px; }
         .card h3{ font-size:21px; }
         .card p{ font-size:17px; margin-bottom:10px; }
 
@@ -311,11 +316,13 @@
         textarea{ min-height:110px; }
         label.flabel{ font-size:18px; margin:14px 0 6px; }
 
-        .actionbtn{ min-height:58px; padding:12px 16px; margin-top:10px; font-size:20px; border-radius:14px; gap:9px; }
+        .actionbtn{ min-height:54px; padding:10px 14px; margin-top:10px; font-size:20px; border-radius:14px; gap:9px; }
         .actionbtn svg{ width:25px; height:25px; }
         .microw{ gap:8px; margin-top:10px; }
         .micbtn{ flex-basis:150px; min-height:54px; padding:9px 12px; font-size:18px; border-radius:12px; border-width:2px; gap:7px; }
         .micbtn svg{ width:23px; height:23px; }
+        .micstatus{ font-size:18px; padding:10px 12px; }
+        .mic-fallback{ font-size:17px; padding:12px 14px; }
 
         .answer{ padding:16px; margin-top:14px; font-size:19px; border-radius:14px; }
         .note{ font-size:17px; padding:12px 14px; }
@@ -342,10 +349,10 @@
         .docbtn{ padding:13px 12px; gap:10px; font-size:19px; border-radius:12px; border-width:2px; margin-bottom:9px; }
         #docText{ min-height:140px !important; }
 
-        .gridhead{ margin-top:6px; gap:10px; }
-        .gridhead .gh-label{ font-size:19px; }
-        .hearwrap{ margin-top:8px; }
-        .hearbtn{ min-height:48px; font-size:17px; padding:8px 16px; }
+        .gridhead{ margin-top:2px; gap:9px; }
+        .gridhead .gh-label{ font-size:18px; }
+        .hearwrap{ margin-top:6px; }
+        .hearbtn{ min-height:44px; font-size:17px; padding:7px 15px; }
         .hearbtn svg{ width:22px; height:22px; }
         .voicemic{ width:102px; height:102px; }
         .voicemic svg{ width:46px; height:46px; }
@@ -375,6 +382,8 @@
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
             <span>VOICE HELP — Tap and Speak<span class="sub">Say what you want. I will show you one big button to finish it.</span></span>
           </button>
+
+          <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">CALL FAMILY</span></div>
 
           <span id="helpersSlot" style="display:contents"></span>
 
@@ -411,8 +420,6 @@
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
             <span>Quick Messages<span class="sub">I am fine · Going out · Home · My place</span></span>
           </button>
-
-          <span id="helpersMoreSlot" style="display:contents"></span>
 
           <button class="bigbtn solid bg-teal" data-open="panel-talk" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
@@ -1001,12 +1008,77 @@
       }
       tickClock(); setInterval(tickClock, 20000);
 
-      /* ---------------- Speech: listen (recognition) ---------------- */
+      /* ---------------- Speech: listen (recognition) ----------------
+         Every microphone on the page goes through here. Three rules:
+         1. Ask the browser for the microphone FIRST (getUserMedia), so the
+            Allow prompt actually appears and a blocked mic is detected
+            before recognition starts — recognition alone fails silently
+            when permission was never granted.
+         2. NEVER swallow an error: each failure is shown in big writing
+            next to the button AND read aloud, saying exactly what to do.
+         3. Show his words live as he speaks (interim results), so he can
+            see the microphone is hearing him. */
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if(!SR){ document.body.classList.add("no-mic"); }
-      var activeRec = null;
+      var inFrame = false;
+      try{ inFrame = window.self !== window.top; }catch(e){ inFrame = true; }
+
+      function micErrorMessage(err){
+        if(err === "not-allowed" || err === "service-not-allowed" || err === "denied"){
+          return inFrame
+            ? "The microphone is blocked in this window, so I cannot hear you here. Open this app from its own icon on the home screen or desktop instead — then tap ALLOW when it asks about the microphone."
+            : "The microphone is not allowed. When the computer asks, tap ALLOW. If it does not ask, tap the small microphone or lock picture at the top of the screen, next to the address, and choose Allow. Then tap the microphone here and speak again. You can also type in the box — typing always works.";
+        }
+        if(err === "audio-capture"){
+          return "I cannot find a microphone on this device. Check the microphone is plugged in or turned on — or type in the box instead, typing always works.";
+        }
+        if(err === "network"){
+          return "Voice needs the internet, and the internet is not answering right now. Check the connection, then tap the microphone and try again — or type in the box.";
+        }
+        if(err === "no-speech" || err === "no-result"){
+          return "I did not hear anything. Tap the microphone, wait for the words LISTENING — SPEAK NOW, then speak clearly, a little closer to the microphone.";
+        }
+        if(err === "aborted"){ return ""; }
+        return "The microphone stopped. Tap the microphone and try again — or type in the box, typing always works.";
+      }
+
+      /* Prime the microphone: resolves true when a mic is usable, or a
+         plain-language message string when it is blocked or missing. */
+      function primeMic(done){
+        if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ done(true); return; }
+        navigator.mediaDevices.getUserMedia({ audio:true }).then(function(stream){
+          try{ var tracks = stream.getTracks(); for(var i=0;i<tracks.length;i++) tracks[i].stop(); }catch(e){}
+          done(true);
+        }, function(err){
+          var name = (err && err.name) || "";
+          if(name === "NotAllowedError" || name === "PermissionDeniedError" || name === "SecurityError") done(micErrorMessage("not-allowed"));
+          else if(name === "NotFoundError" || name === "OverconstrainedError" || name === "NotReadableError") done(micErrorMessage("audio-capture"));
+          else done(true); /* unknown — let recognition itself try and report */
+        });
+      }
+
+      /* One status line per microphone row: created once, reused. */
+      function micStatusEl(btn){
+        var row = btn.parentNode;
+        while(row && !(row.className && (" " + row.className + " ").indexOf(" microw ") >= 0)) row = row.parentNode;
+        if(!row) return null;
+        var el = row.parentNode ? row.parentNode.querySelector(".micstatus") : null;
+        if(!el){
+          el = document.createElement("p");
+          el.className = "micstatus"; el.setAttribute("role", "status"); el.setAttribute("aria-live", "polite");
+          row.parentNode.insertBefore(el, row.nextSibling);
+        }
+        return el;
+      }
+      function micSay(btn, msg, isErr){
+        var el = micStatusEl(btn);
+        if(el){ el.textContent = msg; el.className = "micstatus show" + (isErr ? " err" : ""); }
+        if(msg) speak(msg, "en-US");
+      }
+
+      var activeRec = null, activeBtn = null;
       function stopRec(btn){
-        if(activeRec){ try{ activeRec.stop(); }catch(e){} activeRec = null; }
+        if(activeRec){ try{ activeRec.stop(); }catch(e){} }
         if(btn){ btn.classList.remove("listening"); var s = btn.querySelector("[data-miclabel]"); if(s) s.textContent = btn.getAttribute("data-label"); }
       }
       var micBtns = document.querySelectorAll("[data-mic]");
@@ -1015,28 +1087,73 @@
           var labelSpan = btn.querySelector("span") || btn;
           labelSpan.setAttribute("data-miclabel","1");
           btn.setAttribute("data-label", labelSpan.textContent);
+          /* If this browser has no voice at all, say so right where the
+             microphone would have been — never leave a silent gap. */
+          if(!SR){
+            var row0 = btn.parentNode;
+            while(row0 && !(row0.className && (" " + row0.className + " ").indexOf(" microw ") >= 0)) row0 = row0.parentNode;
+            if(row0 && row0.parentNode && !row0.parentNode.querySelector(".mic-fallback")){
+              var fb = document.createElement("p");
+              fb.className = "mic-fallback";
+              fb.textContent = "Voice does not work in this browser, so the microphone buttons are hidden. Typing in the box always works. For voice, open this app in Chrome or Edge from its own icon.";
+              row0.parentNode.insertBefore(fb, row0.nextSibling);
+            }
+          }
           btn.addEventListener("click", function(){
+            if(!SR) return;
             if(activeRec){ stopRec(btn); return; }
             var target = $(btn.getAttribute("data-target"));
-            var rec = new SR();
-            rec.lang = btn.getAttribute("data-lang") || "en-US";
-            rec.interimResults = false; rec.maxAlternatives = 1;
-            activeRec = rec;
-            btn.classList.add("listening");
-            labelSpan.textContent = (rec.lang==="ur-PK") ? "سن رہا ہوں… رک کر ٹھہریں" : "Listening… tap to stop";
-            rec.onresult = function(ev){
-              var said = ev.results[0][0].transcript || "";
-              if(target){
-                var cur = target.value;
-                target.value = cur ? (cur.replace(/\s+$/,"") + " " + said) : said;
-                target.focus();
-                refreshSendLinks();
-                if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview();
+            var lang = btn.getAttribute("data-lang") || "en-US";
+            micSay(btn, lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…", false);
+            primeMic(function(ready){
+              if(ready !== true){ micSay(btn, ready, true); return; }
+              var rec = new SR();
+              rec.lang = lang;
+              rec.interimResults = true; rec.maxAlternatives = 1;
+              activeRec = rec; activeBtn = btn;
+              var heard = false, failed = false;
+              var base = target ? (target.value ? target.value.replace(/\s+$/, "") + " " : "") : "";
+              var finalSoFar = "";
+              btn.classList.add("listening");
+              labelSpan.textContent = (lang === "ur-PK") ? "سن رہا ہوں… رک کر ٹھہریں" : "Listening… tap to stop";
+              micSay(btn, lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW. Your words will appear in the box as you speak.", false);
+              rec.onresult = function(ev){
+                var finals = "", interim = "";
+                for(var i = ev.resultIndex; i < ev.results.length; i++){
+                  var r = ev.results[i];
+                  if(r.isFinal) finals += r[0].transcript; else interim += r[0].transcript;
+                }
+                if(finals){ heard = true; finalSoFar += finals; }
+                if(target){
+                  target.value = base + finalSoFar + interim;
+                  if(finals){
+                    target.focus();
+                    refreshSendLinks();
+                    if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview();
+                  }
+                }
+              };
+              rec.onerror = function(ev){
+                failed = true;
+                var msg = micErrorMessage((ev && ev.error) || "");
+                if(activeRec === rec){ activeRec = null; activeBtn = null; }
+                btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
+                if(msg) micSay(btn, msg, true);
+              };
+              rec.onend = function(){
+                if(activeRec === rec){ activeRec = null; activeBtn = null; }
+                btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
+                if(target && finalSoFar){ target.focus(); refreshSendLinks(); if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview(); }
+                if(!failed && !heard && !finalSoFar) micSay(btn, micErrorMessage("no-speech"), true);
+                else if(!failed && (heard || finalSoFar)) micSay(btn, "I heard you. Your words are in the box — check them, then tap the big button below.", false);
+              };
+              try{ rec.start(); }
+              catch(e){
+                activeRec = null; activeBtn = null;
+                btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
+                micSay(btn, micErrorMessage(""), true);
               }
-            };
-            rec.onend = function(){ if(activeRec===rec) activeRec=null; btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label"); };
-            rec.onerror = rec.onend;
-            try{ rec.start(); }catch(e){ rec.onend(); }
+            });
           });
         })(micBtns[m]);
       }
@@ -1168,29 +1285,49 @@
       function startVoice(btn, lang){
         if(!SR) return;
         if(voiceRec){ try{ voiceRec.stop(); }catch(e){} return; }
-        var rec = new SR();
-        rec.lang = lang; rec.interimResults = false; rec.maxAlternatives = 1;
-        voiceRec = rec;
         setVoiceMic(btn);
-        voiceStatus(lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "Listening… speak now.");
-        rec.onresult = function(ev){
-          var said = ((ev.results[0][0].transcript) || "").trim();
-          if(said) handleVoice(said);
-          else voiceStatus("I did not hear anything. Tap the microphone and try again.");
-        };
-        rec.onend = function(){ if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); } };
-        rec.onerror = function(ev){
-          if(voiceRec !== rec) return;
-          voiceRec = null; setVoiceMic(null);
-          var err = (ev && ev.error) || "";
-          if(err === "not-allowed" || err === "service-not-allowed" || err === "network" || err === "audio-capture"){
-            voiceStatus("Voice is not working on this phone right now. Tap HOME below and use the big buttons instead.");
-            speak("Voice is not working on this phone right now. Tap HOME below and use the big buttons instead.", "en-US");
-          } else {
-            voiceStatus("I did not hear that. Tap the microphone and try again.");
+        voiceStatus(lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…");
+        primeMic(function(ready){
+          if(ready !== true){
+            setVoiceMic(null);
+            voiceStatus(ready);
+            speak(ready, "en-US");
+            return;
           }
-        };
-        try{ rec.start(); }catch(e){ voiceRec = null; setVoiceMic(null); }
+          var rec = new SR();
+          rec.lang = lang; rec.interimResults = true; rec.maxAlternatives = 1;
+          voiceRec = rec;
+          setVoiceMic(btn);
+          voiceStatus(lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW.");
+          var heard = false, failed = false;
+          rec.onresult = function(ev){
+            var finals = "", interim = "";
+            for(var i = ev.resultIndex; i < ev.results.length; i++){
+              var r = ev.results[i];
+              if(r.isFinal) finals += r[0].transcript; else interim += r[0].transcript;
+            }
+            var saidNow = (finals || interim).trim();
+            if(saidNow) voiceStatus((lang === "ur-PK" ? "سن رہا ہوں: " : "I can hear you: ") + "“" + saidNow + "”");
+            if(finals.trim()){ heard = true; handleVoice(finals.trim()); }
+          };
+          rec.onend = function(){
+            if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); }
+            if(!failed && !heard) voiceStatus(micErrorMessage("no-speech"));
+          };
+          rec.onerror = function(ev){
+            if(voiceRec !== rec) return;
+            failed = true;
+            voiceRec = null; setVoiceMic(null);
+            var msg = micErrorMessage((ev && ev.error) || "");
+            if(msg){ voiceStatus(msg); speak(msg, "en-US"); }
+          };
+          try{ rec.start(); }
+          catch(e){
+            voiceRec = null; setVoiceMic(null);
+            var m2 = micErrorMessage("");
+            voiceStatus(m2); speak(m2, "en-US");
+          }
+        });
       }
       $("voiceMicEn").addEventListener("click", function(){ startVoice(this, "en-US"); });
       $("voiceMicUr").addEventListener("click", function(){ startVoice(this, "ur-PK"); });
@@ -1626,8 +1763,7 @@
       /* ---------------- Home: calls, places, weather ---------------- */
       function renderHelpers(){
         var slot = $("helpersSlot"); slot.innerHTML = "";
-        var more = $("helpersMoreSlot"); if(more) more.innerHTML = "";
-        helpers().forEach(function(h, idx){
+        helpers().forEach(function(h){
           if(!h.phone) return;
           var a = document.createElement("a");
           a.className = "bigbtn solid bg-green"; a.href = "tel:+" + digits(h.phone);
@@ -1636,7 +1772,7 @@
           var t = document.createElement("span"); t.textContent = "Call " + (h.name || "Family");
           var s = document.createElement("span"); s.className = "sub"; s.textContent = fmtPhone(h.phone);
           t.appendChild(s); a.appendChild(ic); a.appendChild(t);
-          if(idx === 0 || !more) slot.appendChild(a); else more.appendChild(a);
+          slot.appendChild(a);
         });
       }
       function applyHelperNames(){
