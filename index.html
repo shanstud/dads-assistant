@@ -869,6 +869,10 @@
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Health &amp; Hospital</h2>
         <p class="hint">Your doctors, your medicines, your appointments, rides, and the way to your hospital.</p>
+        <a class="bigbtn solid bg-red" href="tel:911" style="margin-bottom:14px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span>EMERGENCY — CALL 911<span class="sub">Only for a real emergency</span></span>
+        </a>
         <h3 class="lochead">MY DOCTORS</h3>
         <div id="doctorsBody"></div>
         <h3 class="lochead">MY HOSPITAL &amp; PHARMACY</h3>
@@ -981,6 +985,7 @@
         <div class="card">
           <p style="font-size:22px;font-weight:700;margin:0 0 4px">Family Helpers — who he can call and ask for help</p>
           <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The FIRST person in this list is the main helper: the "Ask for Help" and quick-message buttons go to them. The "I AM STUCK" message buttons go to EVERYONE in this list — one button for each person, so he can send the same stuck message to all of them, one by one. Add a sister or anyone else here and they get their own big Call button on the home screen, and appear everywhere a helper can be chosen. Take someone off with the button under their name.</p>
+          <div class="note" id="setupPhoneWarn" role="alert"></div>
           <div id="helpersEditor"></div>
           <button class="actionbtn secondary" id="addHelperBtn" type="button">+ Add Another Helper</button>
           <div class="setup-grid" style="margin-top:10px">
@@ -1155,19 +1160,20 @@
       /* ONE phone normalization for every tel: and WhatsApp number in
          the app (helpers, doctors, pharmacy, hospital — all of them):
          strip to digits, remembering an explicit leading +.
-         10 digits → prepend "1" (Canada/US). 11 digits starting with
-         "1" → keep. An explicitly supplied full international number
-         (leading + with more digits) → keep exactly as supplied. */
+         Explicit international (leading +): the digits are kept exactly
+         as entered, only when their count is 8–15 — an explicit + always
+         wins over the local rules below. Local entry (no +): 10 digits
+         → prepend "1" (Canada/US); 11 digits starting with "1" → keep.
+         Anything else is not a callable number → "". */
       function normalizePhone(p){
         var raw = (p || "").toString().trim();
         var hasPlus = raw.charAt(0) === "+";
         var d = digits(raw);
         if(!d) return "";
-        if(hasPlus && d.length > 11) return d;
+        if(hasPlus) return (d.length >= 8 && d.length <= 15) ? d : "";
         if(d.length === 10) return "1" + d;
         if(d.length === 11 && d.charAt(0) === "1") return d;
-        if(hasPlus) return d;
-        return d;
+        return "";
       }
       function fmtPhone(p){
         var d = normalizePhone(p);
@@ -2581,6 +2587,21 @@
           var em = rows[r].querySelector(".h-email").value.trim();
           if(nm || ph || em) setup.helpers.push({name:nm, phone:ph, email:em});
         }
+        /* The FIRST helper is the main helper: HELP, WhatsApp and the
+           emergency-family buttons all use their number, so a save with
+           no valid phone for them must not go through. Other helpers may
+           be saved without a phone — their buttons simply do not render. */
+        var firstPhone = setup.helpers.length ? setup.helpers[0].phone : "";
+        if(!normalizePhone(firstPhone)){
+          var needMsg = "The main helper needs a phone number because HELP, WhatsApp and emergency-family buttons use it.";
+          var warn = $("setupPhoneWarn");
+          warn.textContent = needMsg;
+          warn.classList.add("show");
+          speak(needMsg, "en-US");
+          if(rows.length) rows[0].scrollIntoView({behavior:"smooth", block:"center"});
+          return;
+        }
+        $("setupPhoneWarn").classList.remove("show");
         var fh = firstHelper();
         setup.zeePhone = fh.phone || ""; setup.zeeEmail = fh.email || "";
         setup.doctors = [];
