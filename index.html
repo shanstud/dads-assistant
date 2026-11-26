@@ -221,6 +221,10 @@
       .savedmsg{ display:none; font-size:20px; font-weight:700; color:var(--green-dark); background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; margin-top:16px; }
       .savedmsg.show{ display:block; }
       .pickedname{ font-size:24px; font-weight:700; margin-top:14px; word-break:break-word; }
+      .doc-photo-preview{ display:none; width:100%; border:3px solid var(--line); border-radius:14px; margin-bottom:14px; }
+      .doc-photo-preview.show{ display:block; }
+      .doc-file-big{ display:none; font-size:26px; font-weight:700; word-break:break-word; background:#E2EDF9; border:3px solid var(--blue); border-radius:14px; padding:16px; margin-bottom:14px; }
+      .doc-file-big.show{ display:block; }
       .docbtn{
         display:flex; align-items:center; gap:14px; width:100%;
         background:var(--card); border:3px solid var(--line); border-radius:16px;
@@ -320,6 +324,7 @@
         .filepick svg{ width:25px; height:25px; }
         .picked{ font-size:17px; }
         .pickedname{ font-size:21px; }
+        .doc-file-big{ font-size:22px; padding:13px; }
         .pagephotos{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
         .pagephotos a{ font-size:16px; }
 
@@ -591,8 +596,11 @@
         </div>
         <div class="card">
           <h3>STEP 2 — SEE IT AND HEAR IT</h3>
-          <p>Check your document here, in big writing.</p>
+          <p>Check your document here, in big writing. If you picked a photo or file, it shows here too.</p>
+          <img class="doc-photo-preview" id="docPhotoPreview" alt="The photo you picked" />
+          <div class="doc-file-big" id="docFileBig"></div>
           <div id="docPreview" dir="auto" style="font-size:24px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:#FFFDF8;border:3px solid var(--line);border-radius:14px;padding:16px;min-height:80px">Nothing yet — do Step 1 first.</div>
+          <p id="docFileHearNote" style="display:none;font-size:19px;margin:12px 0 0">LISTEN reads only the words you typed or spoke — a photo or file cannot be read aloud. You can see it here, and it will be sent in Step 4.</p>
           <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read It to Me</button>
         </div>
         <div class="card">
@@ -610,6 +618,11 @@
           <p>Your document and your words from Step 3 go together. A person fixes it properly and sends it back.</p>
           <a class="actionbtn bg-teal" id="docEmail" href="#">SEND BY EMAIL</a>
           <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">SEND TO <span data-hname>Zee</span> — WhatsApp</a>
+          <div id="docFileSendWrap" style="display:none">
+            <hr class="divider" />
+            <p id="docFileSendHow" style="font-size:21px;font-weight:700;margin:0">First send your words above. Then tap this button and choose WhatsApp again — the photo itself will go.</p>
+            <button class="actionbtn bg-green" id="docSendFile" type="button">NOW SEND THE PHOTO</button>
+          </div>
           <div class="note" id="docNote"></div>
         </div>
       </section>
@@ -1374,29 +1387,65 @@
       /* ---------------- Rewrite document ---------------- */
       $("docRead").addEventListener("click", function(){
         var t = $("docText").value.trim();
+        var c = $("docChange").value.trim();
         var note = $("docNote");
-        if(!t){ note.textContent = "The box is empty. First put your document in the box — type it, paste it, or speak it."; note.classList.add("show"); return; }
+        if(!t && !c){
+          note.textContent = docPickedFile
+            ? "LISTEN reads only words you typed or spoke — a photo or file cannot be read aloud. You can see it in Step 2, and it will be sent in Step 4."
+            : "The box is empty. First put your document in the box — type it, paste it, or speak it.";
+          note.classList.add("show"); return;
+        }
         note.classList.remove("show");
-        speak(t, speakLangFor(detectLang(t)));
+        var toRead = t;
+        if(c) toRead = (toRead ? toRead + "\n\n" : "") + "What to change: " + c;
+        speak(toRead, speakLangFor(detectLang(toRead)));
       });
       var docPickedName = "";
+      var docPickedFile = null;
+      var docPhotoUrl = null;
+      function docIsImage(){ return !!(docPickedFile && docPickedFile.type.indexOf("image/") === 0); }
       function docFullText(){
         var d = $("docText").value.trim();
         var c = $("docChange").value.trim();
         var out = "Please fix this document for me.\n\nMY DOCUMENT:\n" + d;
         if(c) out += "\n\nWHAT TO CHANGE (my words, exactly):\n" + c;
-        if(docPickedName) out += "\n\n(I also picked this file: " + docPickedName + " — I will send the photo or file itself in WhatsApp as well.)";
+        if(docPickedName) out += "\n\n(I picked this file: " + docPickedName + ". I am sending the " + (docIsImage() ? "photo" : "file") + " itself to you as the next step, right after this message.)";
         return out;
       }
       function syncDocPreview(){
         var d = $("docText").value.trim();
         $("docPreview").textContent = d || "Nothing yet — do Step 1 first.";
       }
+      function syncDocFileUI(){
+        var f = docPickedFile, isImg = docIsImage();
+        var img = $("docPhotoPreview"), big = $("docFileBig");
+        if(docPhotoUrl){ URL.revokeObjectURL(docPhotoUrl); docPhotoUrl = null; }
+        if(f && isImg){
+          docPhotoUrl = URL.createObjectURL(f);
+          img.src = docPhotoUrl;
+          img.classList.add("show");
+          big.classList.remove("show"); big.textContent = "";
+        }else{
+          img.classList.remove("show"); img.removeAttribute("src");
+          if(f){ big.textContent = "Your file: " + f.name; big.classList.add("show"); }
+          else{ big.classList.remove("show"); big.textContent = ""; }
+        }
+        $("docFileHearNote").style.display = f ? "" : "none";
+        $("docFileSendWrap").style.display = f ? "" : "none";
+        if(f){
+          $("docFileSendHow").textContent = isImg
+            ? "First send your words above. Then tap this button and choose WhatsApp again — the photo itself will go."
+            : "First send your words above. Then tap this button and choose WhatsApp again — the file itself will go.";
+          $("docSendFile").textContent = isImg ? "NOW SEND THE PHOTO" : "NOW SEND THE FILE";
+        }
+      }
       $("docText").addEventListener("input", syncDocPreview);
       $("docFileInput").addEventListener("change", function(){
         var f = (this.files || [])[0];
+        docPickedFile = f || null;
         docPickedName = f ? f.name : "";
         $("docFilePicked").textContent = f ? ("You picked: " + f.name) : "";
+        syncDocFileUI();
         if(f && (f.type === "text/plain" || /\.txt$/i.test(f.name))){
           var r = new FileReader();
           r.onload = function(){ $("docText").value = String(r.result || ""); syncDocPreview(); };
@@ -1412,6 +1461,7 @@
         note.textContent = partial
           ? "Your document is very long, so only the first part is in WhatsApp. WhatsApp is opening — tap the green Send arrow to send this. " + firstHelper().name + " will ask you for the rest."
           : "WhatsApp is opening. Tap the green Send arrow to send this, and a person will fix it properly and send it back.";
+        if(docPickedFile) note.textContent += " Then come back here and tap the green NOW SEND THE " + (docIsImage() ? "PHOTO" : "FILE") + " button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
         note.classList.add("show");
         $("docSend").href = waLink(full);
       });
@@ -1420,8 +1470,27 @@
         var note = $("docNote");
         if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
         note.textContent = "Your mail app is opening with your document and your words filled in. Tap Send there — a person will fix it properly and send it back.";
+        if(docPickedFile) note.textContent += " Then come back here and tap the green NOW SEND THE " + (docIsImage() ? "PHOTO" : "FILE") + " button below, so the " + (docIsImage() ? "photo" : "file") + " itself goes too.";
         note.classList.add("show");
         $("docEmail").href = "mailto:" + encodeURIComponent(firstHelper().email || "") + "?subject=" + encodeURIComponent("Please fix my document") + "&body=" + encodeURIComponent(docFullText());
+      });
+      /* Step 4, second send: the picked photo/file itself, via the share sheet. */
+      $("docSendFile").addEventListener("click", function(){
+        var note = $("docNote");
+        var f = docPickedFile;
+        var what = docIsImage() ? "photo" : "file";
+        if(!f){ note.textContent = "First pick a photo or file in Step 1."; note.classList.add("show"); return; }
+        if(canShareFile(f)){
+          navigator.share({files:[f], title:f.name}).catch(function(err){
+            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap the button if you want to try again.";
+            else note.textContent = "That did not work. Tap I AM STUCK or use Send My File or Photo.";
+            note.classList.add("show");
+          });
+          note.textContent = "Your phone is asking where to send it — choose WhatsApp again, then tap the person. The " + what + " itself will go.";
+          note.classList.add("show"); return;
+        }
+        note.textContent = "This device cannot send the " + what + " from here, so nothing was sent. Go back to the home screen and use Send My File or Photo, or tap I AM STUCK.";
+        note.classList.add("show");
       });
 
       /* ---------------- My Tasks (saved on this device) ---------------- */
