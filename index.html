@@ -396,10 +396,107 @@
         .voice-said, .voice-reply{ font-size:19px; padding:12px 14px; }
         .voice-examples{ font-size:17px; }
       }
+
+      /* ---------- Desktop: use the whole window, no scrolling ----------
+         Wide screens lay everything out across the full window — up to
+         4 big buttons in a row — so the whole home screen is visible at
+         once. Buttons keep their full desktop size (or bigger): the fit
+         comes from the window's WIDTH, never from smaller targets, so a
+         finger tap and a mouse click get exactly the same big button. */
+      @media (min-width:1024px){
+        .wrap{ max-width:1400px; padding:12px 26px 26px; }
+
+        /* Header on one line: name, day, clock, listen button */
+        .greeting{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px 26px; padding:2px 4px 0; text-align:left; }
+        .greeting .salam{ font-size:34px; }
+        .greeting .today{ margin:0; }
+        .greeting .clock{ margin:0; }
+        .hearwrap{ margin:0; }
+        .hearbtn{ min-height:52px; padding:10px 22px; }
+
+        /* Home grid: 4 across. The three family Call buttons plus
+           I NEED HELP share one row; the two DOCUMENTS buttons split
+           their row in half. */
+        .grid{ grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-top:10px; }
+        .bigbtn{ min-height:78px; padding:11px 15px; }
+        .span-half{ grid-column:span 2; }
+        .gridhead{ margin-top:0; }
+        .gridhead .gh-label{ font-size:20px; }
+        .setup-link-wrap{ margin-top:14px; }
+
+        /* Panels use the width too, so they need little or no scrolling */
+        #panel-convert.active{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; align-items:start; }
+        #panel-convert .backbtn, #panel-convert h2, #panel-convert .hint{ grid-column:1 / -1; }
+        #panel-convert .backbtn{ justify-self:start; margin-bottom:0; }
+        #panel-convert .card{ margin-bottom:0; }
+
+        #panel-voice.active{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+        #panel-voice .backbtn, #panel-voice h2, #panel-voice .hint{ grid-column:1 / -1; }
+        #panel-voice .backbtn{ justify-self:start; margin-bottom:0; }
+        #panel-voice .card{ margin-bottom:0; }
+
+        #panel-screen.active{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+        #panel-screen .backbtn, #panel-screen h2, #panel-screen .hint{ grid-column:1 / -1; }
+        #panel-screen .backbtn{ justify-self:start; margin-bottom:0; }
+        #panel-screen .card{ margin-bottom:0; }
+        #panel-screen > .bigbtn{ grid-column:1 / -1; }
+
+        #panel-stuck.active{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:stretch; }
+        #panel-stuck .backbtn, #panel-stuck h2, #panel-stuck .hint, #panel-stuck .note{ grid-column:1 / -1; }
+        #panel-stuck .backbtn{ justify-self:start; margin-bottom:0; }
+        #panel-stuck .bigbtn{ margin-bottom:0 !important; height:100%; }
+
+        /* Message panel: the two send buttons sit side by side */
+        #panel-message .card{ display:grid; grid-template-columns:1fr 1fr; column-gap:14px; align-items:start; }
+        #panel-message .card > *{ grid-column:1 / -1; min-width:0; }
+        #panel-message #msgWhats, #panel-message #msgEmail{ grid-column:auto; }
+
+        #taskList{ display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+        #taskList .taskrow{ margin-bottom:0; }
+        #taskList .empty-msg{ grid-column:1 / -1; }
+
+        #docsList{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; align-items:start; }
+        #docsList .docbtn{ margin-bottom:0; }
+        #docsList .empty-msg{ grid-column:1 / -1; }
+
+        #healthBody, #passwordBody{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; align-items:stretch; }
+        #healthBody .bigbtn, #passwordBody .bigbtn{ margin-bottom:0 !important; height:100%; }
+        #healthBody .card, #passwordBody .card{ margin-bottom:0; }
+
+        #locHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+        #locHelpers .actionbtn{ margin-top:0; }
+        #sendFileHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+        #sendFileHelpers .actionbtn{ margin-top:0; }
+      }
+
+      /* ---------- Mouse-first: a clear hover state on every control,
+         plus a strong focus ring for keyboard users. Every action in
+         this app is a plain click on a real button or link — nothing
+         needs a swipe, drag, or any other gesture. ---------- */
+      @media (hover:hover) and (pointer:fine){
+        .bigbtn:hover{ border-color:var(--amber); filter:brightness(1.05); box-shadow:0 5px 0 rgba(32,48,42,.16), 0 14px 28px rgba(32,48,42,.14); }
+        .bigbtn.solid:hover{ border-color:rgba(255,255,255,.7); }
+        .actionbtn:hover{ filter:brightness(1.08); }
+        .actionbtn.secondary:hover{ border-color:var(--amber); background:#FDF3E0; filter:none; }
+        .micbtn:hover{ background:#FBEED3; border-color:var(--red); }
+        .chip:hover{ background:var(--green); color:#fff; }
+        .backbtn:hover{ background:#31453C; }
+        .bottombar button:hover{ filter:brightness(1.14); }
+        .hearbtn:hover{ background:var(--teal); color:#fff; }
+        .filepick:hover{ background:#CBDEF5; }
+        .taskrow:hover{ border-color:var(--green); }
+        .docbtn:hover{ border-color:var(--blue); background:#F4F9FF; }
+        .voicemic:hover{ filter:brightness(1.1); }
+        .setup-link:hover{ color:var(--ink); }
+      }
+      button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible{
+        outline:4px solid #F2C14E; outline-offset:2px;
+      }
     </style>
   </head>
   <body>
-    <div id="watchBanner" role="alert"><span id="watchBannerName">YOUR FAMILY</span> IS WATCHING YOUR SCREEN</div>
+    <div id="watchBanner" role="alert">YOUR SCREEN IS BEING WATCHED</div>
+    <button class="actionbtn bg-red" id="screenStop" type="button" style="display:none">STOP SHOWING MY SCREEN</button>
     <div class="wrap">
 
       <!-- ================= HOME ================= -->
@@ -425,17 +522,17 @@
 
           <a class="bigbtn solid bg-amber" data-quicklink="help" href="https://wa.me/14705790994?text=I%20need%20help%2C%20please%20call%20me%20now." target="_blank" rel="noopener">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
-            <span>I NEED HELP<span class="sub">Message <span data-hname>Zee</span> on WhatsApp</span></span>
+            <span>I NEED HELP<span class="sub">WhatsApp opens — tap the green Send arrow</span></span>
           </a>
 
           <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">DOCUMENTS</span></div>
 
-          <button class="bigbtn solid bg-amber" data-open="panel-rewrite" type="button">
+          <button class="bigbtn solid bg-amber span-half" data-open="panel-rewrite" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
             <span>Fix My Document<span class="sub">4 easy steps — a person fixes it for you</span></span>
           </button>
 
-          <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
+          <button class="bigbtn solid bg-plum span-half" data-open="panel-docs" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
             <span>MY PAPERS<span class="sub">Your papers, kept here — and send a photo or file</span></span>
           </button>
@@ -511,10 +608,10 @@
         <h2>Quick Messages</h2>
         <p class="hint">Tap one. WhatsApp opens to <span data-hname>Zee</span> with the words ready — tap the green Send arrow there.</p>
         <div class="grid" style="margin-top:6px">
-          <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>I AM FINE</span></a>
-          <a class="bigbtn solid bg-blue" data-quicklink="call" href="https://wa.me/14705790994?text=Please%20call%20me%20when%20you%20can." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>PLEASE CALL ME</span></a>
-          <a class="bigbtn solid bg-plum" data-quicklink="out" href="https://wa.me/14705790994?text=I%20am%20going%20out%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span><span>I AM GOING OUT</span></a>
-          <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>I AM HOME NOW</span></a>
+          <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>I AM FINE<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
+          <a class="bigbtn solid bg-blue" data-quicklink="call" href="https://wa.me/14705790994?text=Please%20call%20me%20when%20you%20can." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>PLEASE CALL ME<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
+          <a class="bigbtn solid bg-plum" data-quicklink="out" href="https://wa.me/14705790994?text=I%20am%20going%20out%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span><span>I AM GOING OUT<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
+          <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>I AM HOME NOW<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
           <button class="bigbtn solid bg-teal span2" data-open="panel-location" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span><span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span></button>
         </div>
       </section>
@@ -588,6 +685,7 @@
         <h2>Fix My Document</h2>
         <p class="hint">One step at a time. A person fixes your document properly at the other end and sends it back — this app does not change your words by itself.</p>
         <p id="wizStepLabel" style="font-size:24px;font-weight:700;text-align:center;background:#E0F0F0;border:3px solid var(--teal);border-radius:14px;padding:10px;margin:0 0 14px">STEP 1 OF 4</p>
+        <div class="note" id="wizWarn" role="alert"></div>
         <div class="card wizstep" data-step="1">
           <h3>STEP 1 — PUT YOUR DOCUMENT</h3>
           <p>Speak it, type it, paste it — or pick a photo or file of it.</p>
@@ -602,8 +700,8 @@
           <div class="picked" id="docFilePicked"></div>
         </div>
         <div class="card wizstep" data-step="2">
-          <h3>STEP 2 — SEE IT AND HEAR IT</h3>
-          <p>Check your document here, in big writing. If you picked a photo or file, it shows here too.</p>
+          <h3>STEP 2 — CHECK WHAT YOU PICKED</h3>
+          <p>A photo is shown below. For other files, you will see the file name. LISTEN only reads words you typed or spoke.</p>
           <img class="doc-photo-preview" id="docPhotoPreview" alt="The photo you picked" />
           <div class="doc-file-big" id="docFileBig"></div>
           <div id="docPreview" dir="auto" style="font-size:24px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:#FFFDF8;border:3px solid var(--line);border-radius:14px;padding:16px;min-height:80px">Nothing yet — do Step 1 first.</div>
@@ -614,6 +712,7 @@
           <h3>STEP 3 — SAY WHAT TO CHANGE</h3>
           <p>Say or type what you want changed — for example “change the date to Friday” or “make it polite”. Your words are kept exactly as you say them.</p>
           <p>Any paper can be checked — a will, a letter, a form, anything. Just send its photo in Step 1, and say what you need. Say: <b>“Please check this paper”</b> — or <b>“Please fix this letter”</b> — or <b>“This is my will, please read it and tell me if it is all right.”</b></p>
+          <button class="actionbtn bg-amber" id="docJustCheck" type="button" style="font-size:26px;min-height:84px;margin-bottom:14px">JUST CHECK THIS PAPER</button>
           <label class="flabel" for="docChange">What should change?</label>
           <textarea id="docChange" dir="auto" placeholder="For example: change the date to Friday, and make it polite…"></textarea>
           <div class="microw">
@@ -724,7 +823,7 @@
         <div id="passwordBody"></div>
         <a class="bigbtn solid bg-amber" id="passwordAskZee" href="https://wa.me/14705790994?text=Assalam-o-Alaikum%20Zee%2C%20I%20forgot%20my%20password%20and%20I%20need%20your%20help%2C%20please." target="_blank" rel="noopener" style="margin-top:4px">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg></span>
-          <span>Ask <span data-hname>Zee</span> to Help Me<span class="sub">If the code is confusing, tap this</span></span>
+          <span>Ask <span data-hname>Zee</span> to Help Me<span class="sub">WhatsApp opens — tap the green Send arrow</span></span>
         </a>
       </section>
 
@@ -824,7 +923,7 @@
             <div><label class="flabel" for="sP4Url">Place 4 — web address</label><input type="url" id="sP4Url" dir="ltr" placeholder="https://…" /></div>
           </div>
           <hr class="divider" />
-          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Remote help:</b> the SHOW MY SCREEN screen now has two routes. Route 1 is built into this app (computer only): he taps START, chooses Entire screen, and family watches live in this same app from the link he sends — view only, nobody can click for him, and nothing is recorded or stored. Route 2 is AnyDesk: install AnyDesk (free) once on his phone and computer, turn on unattended access, and keep the password with family only — never write it in this app. After that one-time setup, family can connect and help from anywhere, with control; on some phones he may be asked to tap Allow. This app never sees or stores that password.</p>
+          <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Remote help:</b> the SHOW MY SCREEN screen now has two routes. Route 1 is built into this app (computer only): he taps START, chooses Entire screen, and family watches live in this same app from the link he sends — view only, nobody can click for him. This app does not record or save the screen video. A connection service is used to connect the two browsers; the live screen is sent using WebRTC. Route 2 is AnyDesk: install AnyDesk (free) once on his phone and computer, turn on unattended access, and keep the password with family only — never write it in this app. After that one-time setup, family can connect and help from anywhere, with control; on some phones he may be asked to tap Allow. This app never sees or stores that password.</p>
           <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>His documents:</b> Copies on this shelf live only on this device — they are not a backup. For the real collection, put his documents in Google Drive or OneDrive once (they then appear on his new computer and phone by themselves), and use AnyDesk file transfer to pull anything else from his old computer. This app cannot collect files from his computer by itself — no web page can.</p>
           <p style="font-size:19px;color:var(--ink-soft);margin:0 0 8px"><b>Where is he — family location:</b> This web app cannot watch his location in the background or send automatic leaving-home alerts — no web page can. The automatic leaving-home and coming-home alerts will come with the Android version of this same app (the family's own app — no third-party service). Until then, his in-app way is the SEND MY LOCATION button (one tap prepares a WhatsApp message with his position to the helper he picks, while the app is open) and the I AM GOING OUT / I AM HOME NOW buttons.</p>
           <button class="actionbtn bg-green" id="setupSave" type="button">Save Setup</button>
@@ -843,7 +942,7 @@
         </a>
         <a class="bigbtn solid bg-amber" id="stuckMsgZee" href="https://wa.me/14705790994?text=Assalam-o-Alaikum%20Zee%2C%20I%20am%20stuck%2C%20please%20help%20me." target="_blank" rel="noopener">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-          <span>Send <span data-hname>Zee</span> a Message<span class="sub">It says: I am stuck, please help me</span></span>
+          <span>Send <span data-hname>Zee</span> a Message<span class="sub">WhatsApp opens — tap the green Send arrow</span></span>
         </a>
         <div class="note" id="stuckNote"></div>
       </section>
@@ -857,6 +956,7 @@
         <div class="card">
           <h3>SHOW MY SCREEN — IN THIS APP (computer only)</h3>
           <p><b>Step 1.</b> Tap the big START button below. The computer will ask which screen. Choose <b>“Entire screen”</b>, then tap <b>Share</b>.</p>
+          <p>This app does not record or save the screen video. A connection service is used to connect the two browsers; the live screen is sent using WebRTC.</p>
           <button class="actionbtn bg-teal" id="screenStart" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> START — CHOOSE MY SCREEN</button>
           <div class="status" id="screenStatus" role="status" aria-live="polite"></div>
           <p id="screenElapsed" style="display:none;font-size:21px;font-weight:700;margin:10px 0 0"></p>
@@ -867,9 +967,8 @@
             <p style="font-size:21px;margin:0"><b>Step 2.</b> Send the link to whoever will watch — <span data-hname>Zee</span>, Amreen or Zehra. Tap their name and WhatsApp will open with the link ready:</p>
             <div class="screen-code" id="screenCode"></div>
             <div id="screenSendBtns"></div>
-            <p style="font-size:19px;margin:10px 0 0">WhatsApp will open. Tap the green Send arrow.</p>
+            <p style="font-size:19px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
           </div>
-          <button class="actionbtn bg-red" id="screenStop" type="button" style="display:none">STOP SHOWING MY SCREEN</button>
         </div>
 
         <div class="card">
@@ -970,6 +1069,10 @@
       /* ---------------- Panels ---------------- */
       var homeEl = $("home");
       function openPanel(id){
+        if((id === null || id === "panel-stuck") && typeof scr !== "undefined" && scr && (scr.stream || scr.peer || scr.watching) && typeof screenCleanup === "function"){
+          screenCleanup("You stopped showing your screen. Nothing is being shown now.");
+          if(typeof speak === "function") speak("You stopped showing your screen.", "en-US");
+        }
         var panels = document.querySelectorAll(".panel");
         for(var i=0;i<panels.length;i++) panels[i].classList.remove("active");
         if(id){ homeEl.style.display="none"; $(id).classList.add("active"); if(id === "panel-rewrite" && typeof showWizStep === "function") showWizStep(1); }
@@ -1254,8 +1357,8 @@
       $("msgEmail").addEventListener("click", function(e){
         var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
         if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        var to = (t.email || "").trim() || (firstHelper().email || "").trim();
-        if(!to){ e.preventDefault(); note.textContent = "No email address is saved for " + (t.name || "that person") + " yet. WhatsApp above works — or ask " + firstHelper().name + " to add the email address in Family Setup."; note.classList.add("show"); return; }
+        var to = (t.email || "").trim();
+        if(!to){ e.preventDefault(); var nm = t.name || "that person"; var emsg = "I do not have " + nm + "'s email address. Send it on WhatsApp instead, or ask Zee to add " + nm + "'s email."; note.textContent = emsg; note.classList.add("show"); speak(emsg, "en-US"); return; }
         note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
         note.classList.add("show");
         $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(msg);
@@ -1575,12 +1678,13 @@
         $("docFileSendWrap").style.display = f ? "" : "none";
         if(f){
           $("docFileSendHow").textContent = isImg
-            ? "First send your message above (SEND 1 OF 2). Then tap this button and choose WhatsApp again — the photo itself will go."
-            : "First send your message above (SEND 1 OF 2). Then tap this button and choose WhatsApp again — the file itself will go.";
+            ? "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the photo itself will go."
+            : "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the file itself will go.";
           $("docSendFile").textContent = isImg ? "SEND 2 OF 2 — SEND MY PHOTO" : "SEND 2 OF 2 — SEND MY FILE";
-          $("docEmail").textContent = "SEND 1 OF 2 — SEND MY MESSAGE";
-          $("docSend").textContent = "SEND 1 OF 2 — SEND MY MESSAGE";
+          $("docEmail").style.display = "none";
+          $("docSend").textContent = "SEND 1 OF 2 — MESSAGE ZEE ON WHATSAPP";
         }else{
+          $("docEmail").style.display = "";
           $("docEmail").textContent = "SEND BY EMAIL";
           $("docSend").textContent = "SEND TO " + (firstHelper().name || "Zee") + " — WhatsApp";
         }
@@ -1807,8 +1911,9 @@
         if(!mm) return;
         var mt = msgTarget();
         if(digits(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
-        var mto = (mt.email || "").trim() || (firstHelper().email || "").trim();
+        var mto = (mt.email || "").trim();
         if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from Wazir Ali") + "&body=" + encodeURIComponent(mm);
+        else $("msgEmail").href = "#";
       }
       ["msgText","docText"].forEach(function(id){
         var el = $(id); if(el) el.addEventListener("input", refreshFormLinks);
@@ -2157,7 +2262,25 @@
         if(wizStep === 2 && typeof syncDocPreview === "function") syncDocPreview();
         window.scrollTo(0, 0);
       }
-      $("wizNext").addEventListener("click", function(){ showWizStep(wizStep + 1); });
+      $("wizNext").addEventListener("click", function(){
+        if(wizStep === 1){
+          var hasText = $("docText").value.trim().length > 0;
+          var hasFile = !!docPickedFile;
+          if(!hasText && !hasFile){
+            var wmsg = "First put your document here. Speak it, type it, or pick a photo.";
+            var warn = $("wizWarn"); if(warn){ warn.textContent = wmsg; warn.classList.add("show"); }
+            speak(wmsg, "en-US");
+            return;
+          }
+        }
+        var warn2 = $("wizWarn"); if(warn2){ warn2.textContent = ""; warn2.classList.remove("show"); }
+        showWizStep(wizStep + 1);
+      });
+      var justCheckBtn = $("docJustCheck");
+      if(justCheckBtn) justCheckBtn.addEventListener("click", function(){
+        $("docChange").value = "Please check this paper and tell me if anything needs fixing.";
+        $("docChange").focus();
+      });
       $("wizBack").addEventListener("click", function(){ showWizStep(wizStep - 1); });
       showWizStep(1);
 
@@ -2168,7 +2291,7 @@
          browser-to-browser over WebRTC. View only: the watcher can never
          click or control anything. Every failure is said out loud in plain
          words, never swallowed. */
-      var scr = { peer:null, stream:null, call:null, code:"", watching:false, sentTo:"", startedAt:0, timer:null };
+      var scr = { peer:null, stream:null, call:null, code:"", watching:false, startedAt:0, timer:null };
       function screenSetStatus(msg, isErr){
         var el = $("screenStatus"); if(!el) return;
         el.textContent = msg; el.className = "status" + (isErr ? " err" : "");
@@ -2192,26 +2315,23 @@
           a.className = "actionbtn bg-green"; a.target = "_blank"; a.rel = "noopener";
           a.textContent = "SEND TO " + (h.name || "FAMILY").toUpperCase();
           a.href = waLinkTo(phone, "I am showing my screen. Tap this link to watch: " + url);
-          (function(name){ a.addEventListener("click", function(){ scr.sentTo = name; }); })(h.name || "");
           wrap.appendChild(a);
         });
       }
       function screenSetWatching(){
         if(scr.watching) return;
         scr.watching = true;
-        $("watchBannerName").textContent = scr.sentTo ? scr.sentTo.toUpperCase() : "YOUR FAMILY";
         $("watchBanner").classList.add("show");
         document.body.classList.add("screen-live");
-        var nm = scr.sentTo || "Your family";
-        screenSetStatus(nm + " is watching your screen now.", false);
-        speak(nm + " is watching your screen now.", "en-US");
+        screenSetStatus("Someone connected and can now see your screen.", false);
+        speak("Someone connected and can now see your screen.", "en-US");
       }
       function screenCleanup(msg){
         if(scr.timer){ clearInterval(scr.timer); scr.timer = null; }
         if(scr.call){ try{ scr.call.close(); }catch(e){} scr.call = null; }
         if(scr.stream){ try{ scr.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} scr.stream = null; }
         if(scr.peer){ try{ scr.peer.destroy(); }catch(e){} scr.peer = null; }
-        scr.watching = false; scr.code = ""; scr.sentTo = "";
+        scr.watching = false; scr.code = "";
         $("watchBanner").classList.remove("show");
         document.body.classList.remove("screen-live");
         var pv = $("screenPreview"); pv.classList.remove("show"); try{ pv.srcObject = null; }catch(e){}
@@ -2295,7 +2415,7 @@
           speak("Your screen is ready. Send the link, or read the code out loud.", "en-US");
         }, function(err){
           var msg = (err && err.name === "NotAllowedError")
-            ? "You tapped Cancel, so nothing is being shown. Tap START when you are ready."
+            ? "Screen sharing was cancelled or not allowed. If you did not tap Cancel, use AnyDesk below or call Zee."
             : "The computer did not share the screen. Tap START, choose Entire screen, then tap Share.";
           screenCleanup("");
           screenSetStatus(msg, true);
