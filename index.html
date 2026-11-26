@@ -35,35 +35,35 @@
         background:var(--bg);
         color:var(--ink);
         font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,Arial,sans-serif;
-        font-size:20px;
+        font-size:19px;
         line-height:1.45;
       }
       .wrap{ max-width:860px; margin:0 auto; padding:20px 16px 48px; }
 
       /* ---------- Greeting ---------- */
       .greeting{ text-align:center; padding:14px 6px 4px; }
-      .greeting .salam{ font-size:clamp(30px,6.5vw,44px); font-weight:700; line-height:1.2; margin:0; }
-      .greeting .today{ font-size:clamp(22px,4.8vw,30px); color:var(--ink-soft); margin:10px 0 0; font-weight:700;}
-      .greeting .clock{ font-size:clamp(20px,4.4vw,26px); color:var(--ink-soft); margin:2px 0 0; }
+      .greeting .salam{ font-size:clamp(27px,5.6vw,37px); font-weight:700; line-height:1.2; margin:0; }
+      .greeting .today{ font-size:clamp(19px,4vw,25px); color:var(--ink-soft); margin:8px 0 0; font-weight:700;}
+      .greeting .clock{ font-size:clamp(17px,3.6vw,21px); color:var(--ink-soft); margin:2px 0 0; }
 
       /* ---------- Big home buttons ---------- */
-      .grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:26px; }
+      .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:22px; }
       @media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
       .bigbtn{
-        display:flex; align-items:center; gap:16px;
-        width:100%; min-height:104px;
-        padding:18px 20px;
-        border:none; border-radius:20px;
+        display:flex; align-items:center; gap:14px;
+        width:100%; min-height:88px;
+        padding:15px 18px;
+        border:none; border-radius:18px;
         background:var(--card); color:var(--ink);
-        font:inherit; font-size:26px; font-weight:700; text-align:left;
+        font:inherit; font-size:23px; font-weight:700; text-align:left;
         cursor:pointer; text-decoration:none;
         box-shadow:var(--shadow);
         border:3px solid var(--line);
       }
       .bigbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(32,48,42,.14); }
-      .bigbtn .ic{ flex:0 0 auto; width:58px; height:58px; border-radius:16px; display:flex; align-items:center; justify-content:center; }
-      .bigbtn .ic svg{ width:34px; height:34px; }
-      .bigbtn .sub{ display:block; font-size:19px; font-weight:400; color:var(--ink-soft); margin-top:2px; }
+      .bigbtn .ic{ flex:0 0 auto; width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center; }
+      .bigbtn .ic svg{ width:30px; height:30px; }
+      .bigbtn .sub{ display:block; font-size:17px; font-weight:400; color:var(--ink-soft); margin-top:2px; }
       .bigbtn.solid{ color:#fff; border-color:transparent; }
       .bigbtn.solid .sub{ color:rgba(255,255,255,.85); }
       .bigbtn.solid .ic{ background:rgba(255,255,255,.18); }
@@ -94,86 +94,86 @@
         box-shadow:0 -6px 20px rgba(32,48,42,.15);
       }
       .bottombar button{
-        flex:1; min-height:78px; border:none; border-radius:16px; cursor:pointer;
-        font:inherit; font-size:26px; font-weight:700; color:#fff;
+        flex:1; min-height:64px; border:none; border-radius:14px; cursor:pointer;
+        font:inherit; font-size:22px; font-weight:700; color:#fff;
         display:flex; align-items:center; justify-content:center; gap:10px;
       }
-      .bottombar button svg{ width:32px; height:32px; }
+      .bottombar button svg{ width:28px; height:28px; }
       .bottombar .bb-home{ background:var(--ink); }
       .bottombar .bb-stuck{ background:var(--red); }
-      body{ padding-bottom:118px; }
+      body{ padding-bottom:100px; }
 
       /* ---------- Panels ---------- */
       .panel{ display:none; }
       .panel.active{ display:block; }
       .backbtn{
         display:flex; align-items:center; gap:12px;
-        min-height:76px; padding:12px 22px;
-        font:inherit; font-size:26px; font-weight:700;
-        background:var(--ink); color:#fff; border:none; border-radius:16px;
-        cursor:pointer; margin-bottom:22px;
+        min-height:62px; padding:10px 20px;
+        font:inherit; font-size:22px; font-weight:700;
+        background:var(--ink); color:#fff; border:none; border-radius:14px;
+        cursor:pointer; margin-bottom:18px;
       }
-      .backbtn svg{ width:30px; height:30px; }
-      .panel h2{ font-size:clamp(28px,6vw,38px); margin:0 0 8px; line-height:1.2; }
-      .panel .hint{ font-size:21px; color:var(--ink-soft); margin:0 0 20px; }
+      .backbtn svg{ width:26px; height:26px; }
+      .panel h2{ font-size:clamp(25px,5.2vw,32px); margin:0 0 8px; line-height:1.2; }
+      .panel .hint{ font-size:19px; color:var(--ink-soft); margin:0 0 16px; }
       .card{
-        background:var(--card); border:3px solid var(--line); border-radius:20px;
-        padding:22px; margin-bottom:20px; box-shadow:var(--shadow);
+        background:var(--card); border:3px solid var(--line); border-radius:18px;
+        padding:20px; margin-bottom:16px; box-shadow:var(--shadow);
       }
-      .card h3{ font-size:26px; margin:0 0 6px; }
-      .card p{ font-size:21px; margin:0 0 14px; }
+      .card h3{ font-size:23px; margin:0 0 6px; }
+      .card p{ font-size:19px; margin:0 0 12px; }
 
       textarea, input[type="text"], input[type="tel"], input[type="email"], input[type="url"]{
-        width:100%; font:inherit; font-size:23px; color:var(--ink);
+        width:100%; font:inherit; font-size:21px; color:var(--ink);
         background:#FFFDF8; border:3px solid #C9BBA3; border-radius:14px;
-        padding:16px; min-height:60px;
+        padding:14px; min-height:54px;
       }
-      textarea{ min-height:150px; resize:vertical; }
+      textarea{ min-height:130px; resize:vertical; }
       textarea:focus, input:focus{ outline:4px solid #F2C14E; outline-offset:1px; border-color:var(--amber); }
-      label.flabel{ display:block; font-size:23px; font-weight:700; margin:18px 0 8px; }
+      label.flabel{ display:block; font-size:21px; font-weight:700; margin:16px 0 8px; }
       label.flabel:first-child{ margin-top:0; }
 
       .actionbtn{
         display:flex; align-items:center; justify-content:center; gap:12px;
-        width:100%; min-height:84px; padding:16px 20px; margin-top:14px;
-        font:inherit; font-size:26px; font-weight:700;
-        border:none; border-radius:18px; cursor:pointer; text-decoration:none;
+        width:100%; min-height:70px; padding:14px 18px; margin-top:14px;
+        font:inherit; font-size:23px; font-weight:700;
+        border:none; border-radius:16px; cursor:pointer; text-decoration:none;
         color:#fff; box-shadow:var(--shadow); text-align:center;
       }
-      .actionbtn svg{ width:32px; height:32px; flex:0 0 auto; }
+      .actionbtn svg{ width:28px; height:28px; flex:0 0 auto; }
       .actionbtn.secondary{ background:var(--card); color:var(--ink); border:3px solid var(--line); box-shadow:none; }
       .microw{ display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
       .micbtn{
         flex:1 1 200px; display:flex; align-items:center; justify-content:center; gap:10px;
-        min-height:72px; padding:12px 16px;
-        font:inherit; font-size:23px; font-weight:700;
+        min-height:62px; padding:12px 16px;
+        font:inherit; font-size:20px; font-weight:700;
         background:#FDF3E0; color:var(--ink); border:3px solid var(--amber); border-radius:16px; cursor:pointer;
       }
-      .micbtn svg{ width:28px; height:28px; color:var(--red); flex:0 0 auto; }
+      .micbtn svg{ width:25px; height:25px; color:var(--red); flex:0 0 auto; }
       .micbtn.listening{ background:#FBE3E0; border-color:var(--red); }
       .no-mic .micbtn, .no-mic .microw{ display:none !important; }
 
       .answer{
         display:none; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:18px;
-        padding:20px; margin-top:18px; font-size:25px;
+        padding:18px; margin-top:18px; font-size:22px;
       }
       .answer.show{ display:block; }
       .answer .listenbtn{ margin-top:14px; }
-      .note{ font-size:21px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; margin-top:14px; display:none; }
+      .note{ font-size:19px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; margin-top:14px; display:none; }
       .note.show{ display:block; }
-      .status{ font-size:22px; font-weight:700; margin-top:14px; min-height:30px; }
+      .status{ font-size:20px; font-weight:700; margin-top:14px; min-height:30px; }
       .status.err{ color:var(--red); }
 
       /* file pick */
       .filepick{
         display:flex; align-items:center; justify-content:center; gap:12px;
-        width:100%; min-height:84px; padding:16px;
-        font-size:25px; font-weight:700; text-align:center;
+        width:100%; min-height:70px; padding:16px;
+        font-size:22px; font-weight:700; text-align:center;
         background:#E2EDF9; color:var(--blue); border:3px dashed var(--blue); border-radius:18px; cursor:pointer;
       }
-      .filepick svg{ width:32px; height:32px; }
+      .filepick svg{ width:28px; height:28px; }
       input[type="file"]{ position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
-      .picked{ font-size:21px; margin-top:10px; color:var(--ink-soft); }
+      .picked{ font-size:19px; margin-top:10px; color:var(--ink-soft); }
       .downloadbtn{ display:none; }
       .downloadbtn.show{ display:flex; }
       .pagephotos{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; margin-top:16px; }
@@ -188,45 +188,83 @@
         padding:16px; margin-bottom:12px; text-align:left; font:inherit; cursor:pointer;
       }
       .taskrow .box{
-        flex:0 0 auto; width:46px; height:46px; border-radius:12px;
+        flex:0 0 auto; width:40px; height:40px; border-radius:12px;
         border:4px solid var(--green); display:flex; align-items:center; justify-content:center;
-        color:#fff; font-size:30px; font-weight:700;
+        color:#fff; font-size:26px; font-weight:700;
       }
       .taskrow.done .box{ background:var(--green); }
-      .taskrow .ttext{ flex:1; font-size:25px; font-weight:700; word-break:break-word; }
+      .taskrow .ttext{ flex:1; font-size:22px; font-weight:700; word-break:break-word; }
       .taskrow.done .ttext{ text-decoration:line-through; color:var(--ink-soft); }
       .taskrow .del{
-        flex:0 0 auto; width:52px; height:52px; border-radius:12px; border:none;
-        background:#F6E4DF; color:var(--red); font-size:26px; font-weight:700; cursor:pointer;
+        flex:0 0 auto; width:48px; height:48px; border-radius:12px; border:none;
+        background:#F6E4DF; color:var(--red); font-size:23px; font-weight:700; cursor:pointer;
       }
-      .empty-msg{ font-size:23px; color:var(--ink-soft); text-align:center; padding:22px 0; }
+      .empty-msg{ font-size:20px; color:var(--ink-soft); text-align:center; padding:22px 0; }
 
-      .steps{ font-size:25px; line-height:1.7; margin:0 0 6px; padding-left:8px; list-style:none; }
+      .steps{ font-size:22px; line-height:1.7; margin:0 0 6px; padding-left:8px; list-style:none; }
       .steps li{ margin-bottom:10px; }
       .steps b{
         display:inline-flex; align-items:center; justify-content:center;
-        width:44px; height:44px; border-radius:50%; background:var(--teal); color:#fff;
-        font-size:24px; margin-right:12px; vertical-align:middle;
+        width:38px; height:38px; border-radius:50%; background:var(--teal); color:#fff;
+        font-size:20px; margin-right:12px; vertical-align:middle;
       }
       .chips{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
       .chip{
-        min-height:64px; padding:12px 22px; font:inherit; font-size:23px; font-weight:700;
+        min-height:54px; padding:10px 18px; font:inherit; font-size:20px; font-weight:700;
         background:#E3F2E8; color:var(--green-dark); border:3px solid var(--green); border-radius:999px; cursor:pointer;
       }
       .chip[aria-pressed="true"]{ background:var(--green); color:#fff; }
       .divider{ border:none; border-top:3px solid var(--line); margin:26px 0; }
       .setup-grid{ display:grid; grid-template-columns:1fr; gap:4px; }
       @media (min-width:620px){ .setup-grid{ grid-template-columns:1fr 1fr; gap:4px 20px; } }
-      .savedmsg{ display:none; font-size:23px; font-weight:700; color:var(--green-dark); background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; margin-top:16px; }
+      .savedmsg{ display:none; font-size:20px; font-weight:700; color:var(--green-dark); background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; margin-top:16px; }
       .savedmsg.show{ display:block; }
-      .pickedname{ font-size:28px; font-weight:700; margin-top:14px; word-break:break-word; }
+      .pickedname{ font-size:24px; font-weight:700; margin-top:14px; word-break:break-word; }
       .docbtn{
         display:flex; align-items:center; gap:14px; width:100%;
         background:var(--card); border:3px solid var(--line); border-radius:16px;
-        padding:18px 16px; margin-bottom:12px; text-align:left; font:inherit;
-        font-size:25px; font-weight:700; cursor:pointer; word-break:break-word; color:var(--ink);
+        padding:15px 14px; margin-bottom:12px; text-align:left; font:inherit;
+        font-size:22px; font-weight:700; cursor:pointer; word-break:break-word; color:var(--ink);
       }
       [dir="rtl"]{ text-align:right; }
+
+      /* ---------- Section heading inside the home grid ---------- */
+      .gridhead{ grid-column:1 / -1; display:flex; align-items:center; gap:14px; margin-top:12px; }
+      .gridhead .gh-label{ font-size:23px; font-weight:700; letter-spacing:.05em; white-space:nowrap; }
+      .gridhead::before, .gridhead::after{ content:""; flex:1; border-top:3px solid var(--line); }
+      .span2{ grid-column:1 / -1; }
+
+      /* ---------- Listen — hear your options (home) ---------- */
+      .hearwrap{ text-align:center; margin-top:14px; }
+      .hearbtn{
+        display:inline-flex; align-items:center; gap:10px;
+        min-height:54px; padding:10px 22px;
+        font:inherit; font-size:20px; font-weight:700;
+        background:#E0F0F0; color:var(--teal); border:3px solid var(--teal); border-radius:999px; cursor:pointer;
+      }
+      .hearbtn svg{ width:26px; height:26px; }
+
+      /* ---------- Voice Mode ---------- */
+      .voicemic-wrap{ display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin:10px 0 4px; }
+      .voicemic-col{ text-align:center; }
+      .voicemic{
+        width:128px; height:128px; border-radius:50%; border:none; cursor:pointer;
+        background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center;
+        box-shadow:var(--shadow);
+      }
+      .voicemic svg{ width:58px; height:58px; }
+      .voicemic.listening{ background:var(--red); animation:voicepulse 1.2s ease-in-out infinite; }
+      @keyframes voicepulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); } }
+      @media (prefers-reduced-motion: reduce){ .voicemic.listening{ animation:none; } }
+      .voicemic-label{ font-size:21px; font-weight:700; margin-top:10px; }
+      .voice-status{ font-size:22px; font-weight:700; margin:16px 0 0; text-align:center; }
+      .voice-said{ font-size:23px; margin-top:14px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; }
+      .voice-reply{ font-size:23px; margin-top:14px; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; }
+      .voice-examples{ font-size:21px; line-height:1.6; margin:0; padding-left:24px; }
+      .voice-examples li{ margin-bottom:6px; }
+      .voice-nomic{ display:none; }
+      .no-mic .voicemic-wrap{ display:none; }
+      .no-mic .voice-nomic{ display:block; }
 
       /* ---------- Phone size: compact, fits the screen ---------- */
       @media (max-width:619px){
@@ -234,24 +272,24 @@
         .wrap{ padding:12px 12px 32px; }
 
         .greeting{ padding:8px 4px 2px; }
-        .greeting .salam{ font-size:27px; line-height:1.25; }
-        .greeting .today{ font-size:19px; margin-top:6px; }
+        .greeting .salam{ font-size:25px; line-height:1.25; }
+        .greeting .today{ font-size:19px; margin-top:4px; }
         .greeting .clock{ font-size:17px; }
 
-        .grid{ gap:10px; margin-top:16px; }
+        .grid{ gap:8px; margin-top:10px; }
         .bigbtn{
-          min-height:70px; padding:11px 14px; gap:12px;
-          font-size:20px; border-radius:16px; border-width:2px;
+          min-height:64px; padding:10px 14px; gap:12px;
+          font-size:19px; border-radius:16px; border-width:2px;
         }
-        .bigbtn .ic{ width:44px; height:44px; border-radius:12px; }
-        .bigbtn .ic svg{ width:26px; height:26px; }
+        .bigbtn .ic{ width:40px; height:40px; border-radius:12px; }
+        .bigbtn .ic svg{ width:24px; height:24px; }
         .bigbtn .sub{ font-size:15px; line-height:1.3; }
         .emergency-strip{ margin-top:10px; }
         .setup-link-wrap{ margin-top:28px; }
         .setup-link{ font-size:14px; padding:10px 12px; }
 
         .bottombar{ gap:8px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); border-top-width:3px; }
-        .bottombar button{ min-height:54px; font-size:19px; border-radius:12px; gap:7px; white-space:nowrap; }
+        .bottombar button{ min-height:50px; font-size:18px; border-radius:12px; gap:7px; white-space:nowrap; }
         .bottombar button svg{ width:24px; height:24px; }
 
         .backbtn{ min-height:54px; padding:10px 16px; font-size:20px; border-radius:12px; margin-bottom:16px; gap:9px; }
@@ -297,6 +335,18 @@
         .savedmsg{ font-size:18px; padding:12px 14px; }
         .docbtn{ padding:13px 12px; gap:10px; font-size:19px; border-radius:12px; border-width:2px; margin-bottom:9px; }
         #docText{ min-height:140px !important; }
+
+        .gridhead{ margin-top:6px; gap:10px; }
+        .gridhead .gh-label{ font-size:19px; }
+        .hearwrap{ margin-top:8px; }
+        .hearbtn{ min-height:48px; font-size:17px; padding:8px 16px; }
+        .hearbtn svg{ width:22px; height:22px; }
+        .voicemic{ width:102px; height:102px; }
+        .voicemic svg{ width:46px; height:46px; }
+        .voicemic-label{ font-size:17px; margin-top:8px; }
+        .voice-status{ font-size:18px; }
+        .voice-said, .voice-reply{ font-size:19px; padding:12px 14px; }
+        .voice-examples{ font-size:17px; }
       }
     </style>
   </head>
@@ -309,9 +359,17 @@
           <p class="salam">Assalam-o-Alaikum,<br />Wazir Ali</p>
           <p class="today" id="todayLine">Today</p>
           <p class="clock" id="clockLine"></p>
+          <div class="hearwrap">
+            <button class="hearbtn" id="hearHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Listen — Hear Your Options</button>
+          </div>
         </div>
 
         <div class="grid" id="homeGrid">
+          <button class="bigbtn solid bg-plum span2" data-open="panel-voice" id="voiceOpenBtn" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
+            <span>VOICE MODE — Just Talk<span class="sub">Tap, then speak — no typing. Say “Call Zee” or “Fix my document”</span></span>
+          </button>
+
           <span id="helpersSlot" style="display:contents"></span>
 
           <a class="bigbtn solid bg-teal" data-quicklink="fine" href="https://wa.me/14705790994?text=I%20am%20fine%2C%20do%20not%20worry." target="_blank" rel="noopener">
@@ -344,6 +402,28 @@
             <span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span>
           </button>
 
+          <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">DOCUMENTS</span></div>
+
+          <button class="bigbtn solid bg-amber" data-open="panel-rewrite" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
+            <span>Fix My Document<span class="sub">Send your letter to <span data-hname>Zee</span> — he fixes it for you</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+            <span>Change a Document<span class="sub">Photos into a PDF · PDF into photos · join PDFs together</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+            <span>My Documents<span class="sub">Your important papers, kept here</span></span>
+          </button>
+
+          <button class="bigbtn solid bg-teal" data-open="panel-sendfile" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
+            <span>Send My File or Photo<span class="sub">Send a document or a picture</span></span>
+          </button>
+
           <button class="bigbtn solid bg-teal" data-open="panel-talk" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
             <span>Ask a Question<span class="sub">Tap, speak, done — بولیں یا لکھیں</span></span>
@@ -357,26 +437,6 @@
           <button class="bigbtn solid bg-teal" data-open="panel-write" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
             <span>Write and Send a Message<span class="sub">Speak once — send on WhatsApp or email</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-blue" data-open="panel-sendfile" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
-            <span>Send My File or Photo<span class="sub">Send a document or a picture</span></span>
-          </button>
-
-          <button class="bigbtn solid bg-plum" data-open="panel-docs" type="button">
-            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
-            <span>My Documents<span class="sub">Your important papers, kept here</span></span>
-          </button>
-
-          <button class="bigbtn" data-open="panel-rewrite" type="button">
-            <span class="ic ic-plum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
-            <span>Ask <span data-hname>Zee</span> to Fix My Document<span class="sub">A person fixes your letter properly</span></span>
-          </button>
-
-          <button class="bigbtn" data-open="panel-convert" type="button">
-            <span class="ic ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
-            <span>Change a Document<span class="sub">Turn photos into a PDF file</span></span>
           </button>
 
           <button class="bigbtn" data-open="panel-email" type="button">
@@ -457,6 +517,44 @@
         </div>
       </section>
 
+      <!-- ================= VOICE MODE ================= -->
+      <section class="panel" id="panel-voice" aria-label="Voice mode">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Voice Mode</h2>
+        <p class="hint">Tap a big microphone and just speak — no typing, like talking to a person. Simple things I answer myself, out loud. Anything else, I help you send to <span data-hname>Zee</span>.</p>
+        <div class="card">
+          <div class="voicemic-wrap">
+            <div class="voicemic-col">
+              <button class="voicemic" id="voiceMicEn" type="button" aria-label="Speak English"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
+              <div class="voicemic-label">Speak English</div>
+            </div>
+            <div class="voicemic-col">
+              <button class="voicemic" id="voiceMicUr" type="button" aria-label="Speak Urdu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></button>
+              <div class="voicemic-label" lang="ur">اردو بولیں</div>
+            </div>
+          </div>
+          <p class="note voice-nomic">Voice does not work in this browser. Do not worry — tap HOME below and use the big buttons instead.</p>
+          <p class="voice-status" id="voiceStatus">Tap a microphone, then speak.</p>
+          <div class="voice-said" id="voiceSaid" dir="auto" style="display:none"></div>
+          <div class="voice-reply" id="voiceReply" dir="auto" style="display:none"></div>
+          <a class="actionbtn bg-green" id="voiceAction" href="#" style="display:none"></a>
+          <button class="actionbtn secondary" id="voiceHear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Hear the Instructions</button>
+        </div>
+        <div class="card">
+          <h3>Things you can say</h3>
+          <ul class="voice-examples">
+            <li>“Call <span data-hname>Zee</span>” — or call anyone in the family</li>
+            <li>“I am fine” · “Please call me” · “I need help”</li>
+            <li>“I am going out” · “I am home now”</li>
+            <li>“Send my location”</li>
+            <li>“Fix my document” · “Change a document” · “My documents”</li>
+            <li>“Send an email” · “My tasks” · “I forgot my password”</li>
+            <li>“What is the time?” · “What is the date?”</li>
+            <li><span lang="ur">“مجھے مدد چاہیے”</span> · <span lang="ur">“زی کو کال کرو”</span></li>
+          </ul>
+        </div>
+      </section>
+
       <!-- ================= ASK ZEE ================= -->
       <section class="panel" id="panel-ask" aria-label="Ask Zee for help">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
@@ -477,7 +575,7 @@
       <!-- ================= REWRITE ================= -->
       <section class="panel" id="panel-rewrite" aria-label="Rewrite my document">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Ask <span data-hname>Zee</span> to Fix My Document</h2>
+        <h2>Fix My Document</h2>
         <p class="hint">Put your letter or document in the big box — type it, paste it, or speak it. Then listen to it, or send it to <span data-hname>Zee</span> — a person will fix it properly and send it back.</p>
         <div class="card">
           <label class="flabel" for="docText">Your document</label>
@@ -743,7 +841,7 @@
       <section class="panel" id="panel-stuck" aria-label="I am stuck">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Do not worry.</h2>
-        <p class="hint" style="font-size:25px;color:var(--ink)">Nothing is broken. Tap HOME below to start again, or call <span data-hname>Zee</span> — he will help you.</p>
+        <p class="hint" style="font-size:22px;color:var(--ink)">Nothing is broken. Tap HOME below to start again, or call <span data-hname>Zee</span> — he will help you.</p>
         <a class="bigbtn solid bg-green" href="tel:+14705790994" id="stuckCallZee" style="margin-bottom:16px">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
@@ -1003,6 +1101,230 @@
         note.classList.add("show");
         $("askSend").href = waLink("Assalam-o-Alaikum " + firstHelper().name + ", I need help: " + t);
       });
+
+      /* ---------------- Listen: hear your options (home) ---------------- */
+      $("hearHome").addEventListener("click", function(){
+        var p = dateParts();
+        var names = helpers().map(function(h){ return h.name; }).filter(Boolean);
+        var who = names.length ? ("You can call " + names.join(", ") + ". ") : "";
+        speak("Assalam-o-Alaikum, Wazir Ali. Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Mode and just speak. For papers and letters, look for the word Documents on the screen.", "en-US");
+      });
+
+      /* ---------------- Voice Mode: tap, speak, done ---------------- */
+      var voiceRec = null;
+      function voiceStatus(t){ $("voiceStatus").textContent = t; }
+      function setVoiceMic(btn){
+        var btns = [$("voiceMicEn"), $("voiceMicUr")];
+        for(var i=0;i<btns.length;i++) btns[i].classList.remove("listening");
+        if(btn) btn.classList.add("listening");
+      }
+      function voiceActionShow(label, href, external, colorClass){
+        var a = $("voiceAction");
+        a.textContent = label; a.href = href;
+        a.className = "actionbtn " + (colorClass || "bg-green");
+        if(external){ a.target = "_blank"; a.rel = "noopener"; }
+        else{ a.removeAttribute("target"); a.removeAttribute("rel"); }
+        a.style.display = "";
+      }
+      function startVoice(btn, lang){
+        if(!SR) return;
+        if(voiceRec){ try{ voiceRec.stop(); }catch(e){} return; }
+        var rec = new SR();
+        rec.lang = lang; rec.interimResults = false; rec.maxAlternatives = 1;
+        voiceRec = rec;
+        setVoiceMic(btn);
+        voiceStatus(lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "Listening… speak now.");
+        rec.onresult = function(ev){
+          var said = ((ev.results[0][0].transcript) || "").trim();
+          if(said) handleVoice(said);
+          else voiceStatus("I did not hear anything. Tap the microphone and try again.");
+        };
+        rec.onend = function(){ if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); } };
+        rec.onerror = function(){
+          if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); voiceStatus("I did not hear that. Tap the microphone and try again."); }
+        };
+        try{ rec.start(); }catch(e){ voiceRec = null; setVoiceMic(null); }
+      }
+      $("voiceMicEn").addEventListener("click", function(){ startVoice(this, "en-US"); });
+      $("voiceMicUr").addEventListener("click", function(){ startVoice(this, "ur-PK"); });
+      $("voiceHear").addEventListener("click", function(){
+        speak("Tap a microphone and just speak. You can say: call " + firstHelper().name + ". I am fine. I need help. Fix my document. Change a document. Or ask: what is the time?", "en-US");
+        voiceStatus("Tap a microphone, then speak.");
+      });
+      $("voiceOpenBtn").addEventListener("click", function(){
+        setTimeout(function(){ speak("Voice mode. Tap a big microphone and just speak.", "en-US"); }, 400);
+      });
+
+      function handleVoice(said){
+        var saidEl = $("voiceSaid");
+        saidEl.textContent = "\u201C" + said + "\u201D"; saidEl.style.display = "";
+        var replyEl = $("voiceReply"); replyEl.style.display = "none";
+        $("voiceAction").style.display = "none";
+        var kind = detectLang(said);
+        var low = " " + said.toLowerCase().replace(/[^a-z0-9\s]/g, " ") + " ";
+        var fh = firstHelper();
+        var fhName = fh.name || "Zee";
+        function say(t){
+          replyEl.textContent = t; replyEl.style.display = "";
+          speak(t, speakLangFor(kind));
+          voiceStatus("Tap a microphone to say something else.");
+        }
+        function act(label, href, external, colorClass, spoken){ voiceActionShow(label, href, external, colorClass); say(spoken); }
+        function go(panelId, spoken){ say(spoken); setTimeout(function(){ openPanel(panelId); refreshSendLinks(); }, 1000); }
+        function has(){ for(var i=0;i<arguments.length;i++){ if(low.indexOf(" " + arguments[i] + " ") >= 0 || low.indexOf(arguments[i]) >= 0) return true; } return false; }
+
+        /* ---- Urdu words ---- */
+        if(/[\u0600-\u06FF]/.test(said)){
+          if(said.indexOf("مدد") >= 0){
+            act("SEND TO " + fhName.toUpperCase(), waLink("I need help, please call me now."), true, "bg-amber",
+              "ٹھیک ہے۔ بڑا پیلا بٹن دبائیں — آپ کی بات واٹس ایپ پر " + fhName + " کو چلی جائے گی۔");
+            return;
+          }
+          if(said.indexOf("کال") >= 0 || said.indexOf("فون") >= 0){
+            act("TAP TO CALL " + fhName.toUpperCase(), "tel:+" + digits(fh.phone), false, "bg-green",
+              "ٹھیک ہے۔ " + fhName + " کو کال کرنے کے لیے بڑا سبز بٹن دبائیں۔");
+            return;
+          }
+          if(said.indexOf("دستاویز") >= 0 || said.indexOf("کاغذ") >= 0){
+            if(said.indexOf("درست") >= 0 || said.indexOf("ٹھیک کر") >= 0){
+              go("panel-rewrite", "ٹھیک ہے، دستاویز درست کرنے والا صفحہ کھل رہا ہے۔");
+            } else {
+              go("panel-docs", "ٹھیک ہے، آپ کی دستاویزات کھل رہی ہیں۔");
+            }
+            return;
+          }
+          if(said.indexOf("ٹھیک ہوں") >= 0){
+            act("SEND: I AM FINE", waLink("I am fine, do not worry."), true, "bg-teal",
+              "ٹھیک ہے۔ بڑا بٹن دبائیں، یہ بات واٹس ایپ پر چلی جائے گی۔");
+            return;
+          }
+          if(said.indexOf("باہر") >= 0){
+            act("SEND: I AM GOING OUT", waLink("I am going out now."), true, "bg-plum",
+              "ٹھیک ہے۔ بڑا بٹن دبائیں، یہ بات واٹس ایپ پر چلی جائے گی۔");
+            return;
+          }
+          if(said.indexOf("گھر") >= 0){
+            act("SEND: I AM HOME NOW", waLink("I am back home now."), true, "bg-green",
+              "ٹھیک ہے۔ بڑا بٹن دبائیں، یہ بات واٹس ایپ پر چلی جائے گی۔");
+            return;
+          }
+          var ua = instantAnswer(said);
+          if(ua){ say(ua); return; }
+          act("SEND THIS TO " + fhName.toUpperCase(), waLink("Assalam-o-Alaikum " + fhName + ", I have a question: " + said), true, "bg-amber",
+            "یہ میں خود نہیں کر سکتا۔ بڑا پیلا بٹن دبائیں — آپ کی بات " + fhName + " کو بھیج دی جائے گی، وہ مدد کرے گا۔");
+          return;
+        }
+
+        /* ---- English / Roman Urdu words ---- */
+        if(has("call me")){
+          act("SEND TO " + fhName.toUpperCase(), waLink("Please call me when you can."), true, "bg-blue",
+            "Tap the big button. Your message goes to " + fhName + " on WhatsApp: please call me.");
+          return;
+        }
+        if(has("call", "phone", "ring")){
+          var target = fh;
+          var hs = helpers();
+          for(var i=0;i<hs.length;i++){
+            if(hs[i].name && low.indexOf(hs[i].name.toLowerCase()) >= 0){ target = hs[i]; break; }
+          }
+          if(target.phone){
+            act("TAP TO CALL " + (target.name || "FAMILY").toUpperCase(), "tel:+" + digits(target.phone), false, "bg-green",
+              "Tap the big green button to call " + (target.name || "your family") + " now.");
+          } else say("I do not have a phone number for that person yet. Ask " + fhName + " to set it up.");
+          return;
+        }
+        if(has("fine", "theek")){
+          act("SEND: I AM FINE", waLink("I am fine, do not worry."), true, "bg-teal",
+            "Tap the big button. It tells " + fhName + " on WhatsApp: I am fine, do not worry.");
+          return;
+        }
+        if(has("stuck")){
+          go("panel-stuck", "Do not worry. I am opening the help page. You can call " + fhName + " from there.");
+          return;
+        }
+        if(has("help", "madad")){
+          act("SEND: I NEED HELP", waLink("I need help, please call me now."), true, "bg-amber",
+            "Tap the big yellow button. It tells " + fhName + " on WhatsApp: I need help, please call me now.");
+          return;
+        }
+        if(has("going out", "going outside", "leaving")){
+          act("SEND: I AM GOING OUT", waLink("I am going out now."), true, "bg-plum",
+            "Tap the big button. It tells " + fhName + " on WhatsApp: I am going out now.");
+          return;
+        }
+        if(has("back home", "am home", "came home", "reached home")){
+          act("SEND: I AM HOME NOW", waLink("I am back home now."), true, "bg-green",
+            "Tap the big button. It tells " + fhName + " on WhatsApp: I am back home now.");
+          return;
+        }
+        if(has("location", "where am i")){
+          go("panel-location", "Opening Send My Location. Tap the name of the person there, and your place will be found.");
+          return;
+        }
+        if(has("rewrite") || (has("fix") && has("document", "letter", "paper"))){
+          go("panel-rewrite", "Opening Fix My Document. Speak or type your letter there, then send it to " + fhName + " — he will fix it for you.");
+          return;
+        }
+        if(has("convert") || has("pdf") || (has("change") && has("document", "photo", "picture"))){
+          go("panel-convert", "Opening Change a Document. There you can turn photos into a PDF, a PDF into photos, or join PDFs together.");
+          return;
+        }
+        if(has("document", "documents", "papers", "paper")){
+          go("panel-docs", "Opening My Documents — your important papers, kept on this device.");
+          return;
+        }
+        if(has("send") && has("file", "photo", "picture")){
+          go("panel-sendfile", "Opening Send My File or Photo. Pick your file there, then tap Send It.");
+          return;
+        }
+        if(has("email", "mail")){
+          go("panel-email", "Opening Send an Email. Three easy steps: who it is for, what you want to say, then send.");
+          return;
+        }
+        if(has("message", "write")){
+          go("panel-write", "Opening Write and Send a Message. Say your message once, then choose who it is for.");
+          return;
+        }
+        if(has("task", "tasks", "remember", "reminder")){
+          go("panel-tasks", "Opening My Tasks — your list of things to remember.");
+          return;
+        }
+        if(has("doctor", "hospital", "pharmacy", "health", "medicine", "sick", "unwell")){
+          go("panel-health", "Opening Health and Hospital — your doctor, your pharmacy, and the way to your hospital.");
+          return;
+        }
+        if(has("password")){
+          go("panel-password", "Opening I Forgot My Password. Do not worry — follow the steps there, or ask " + fhName + " to help.");
+          return;
+        }
+        if(has("facebook")){
+          act("OPEN FACEBOOK", "https://www.facebook.com", true, "bg-blue", "Tap the big button to open Facebook.");
+          return;
+        }
+        if(has("screen", "anydesk")){
+          go("panel-screen", "Opening Show My Screen. Tap the big button there and AnyDesk will open, so " + fhName + " can help you.");
+          return;
+        }
+        if(has("weather")){
+          if(setup.city){
+            act("SEE THE WEATHER", "https://www.google.com/search?q=" + encodeURIComponent("weather in " + setup.city), true, "bg-blue",
+              "Tap the big button to see today's weather in " + setup.city + ".");
+          } else say("The weather is not set up yet. Ask " + fhName + " to set it up.");
+          return;
+        }
+        if(has("go home", "start again", "main screen")){
+          go(null, "Going back to the home screen.");
+          return;
+        }
+        if(has("question", "ask")){
+          go("panel-talk", "Opening Ask a Question. Tap a microphone there and speak your question.");
+          return;
+        }
+        var a = instantAnswer(said);
+        if(a){ say(a); return; }
+        act("SEND THIS TO " + fhName.toUpperCase(), waLink("Assalam-o-Alaikum " + fhName + ", I have a question: " + said), true, "bg-amber",
+          "I cannot do that one myself. Tap the yellow button to send your words to " + fhName + " on WhatsApp, and he will help you.");
+      }
 
       /* ---------------- Rewrite document ---------------- */
       $("docRead").addEventListener("click", function(){
