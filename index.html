@@ -87,6 +87,11 @@
       #stuckSendBtns{ display:grid; grid-template-columns:1fr; gap:12px; grid-column:1 / -1; }
       #stuckSendBtns .bigbtn{ margin-bottom:0; }
       #stuckSendBtns .bigbtn.opened{ background:var(--green-dark); }
+
+      /* ---------- Section headings + location panel groups ---------- */
+      .lochead{ font-size:24px; margin:22px 0 10px; }
+      #locOutBtns, #locHomeBtns{ display:grid; grid-template-columns:1fr; gap:12px; }
+      #locHelpers .bigbtn.opened, #locOutBtns .bigbtn.opened, #locHomeBtns .bigbtn.opened{ background:var(--green-dark); }
       .setup-link-wrap{ text-align:center; margin-top:28px; }
       .setup-link{
         display:inline-block; padding:14px 18px; min-height:48px;
@@ -392,6 +397,7 @@
 
         .gridhead{ margin-top:2px; gap:9px; }
         .gridhead .gh-label{ font-size:18px; }
+        .lochead{ font-size:21px; margin:18px 0 8px; }
         .hearwrap{ margin-top:6px; }
         .hearbtn{ min-height:44px; font-size:17px; padding:7px 15px; }
         .hearbtn svg{ width:22px; height:22px; }
@@ -473,6 +479,14 @@
 
         #locHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
         #locHelpers .actionbtn{ margin-top:0; }
+        #locOutBtns, #locHomeBtns{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+
+        /* Desktop home: MORE THINGS collapses into ONE big button that
+           opens its own panel, so the home screen always fits without
+           scrolling. Below 1024px the button stays hidden and the
+           MORE THINGS heading + inline buttons remain as they are. */
+        #moreThingsBtn{ display:flex !important; }
+        #moreHead{ display:none; }
         #sendFileHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
         #sendFileHelpers .actionbtn{ margin-top:0; }
       }
@@ -545,56 +559,62 @@
             <span>MY PAPERS<span class="sub">Your papers, kept here — and send a photo or file</span></span>
           </button>
 
-          <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">MORE THINGS</span></div>
+          <div class="gridhead" id="moreHead" role="heading" aria-level="2"><span class="gh-label">MORE THINGS</span></div>
 
-          <button class="bigbtn solid bg-teal" data-open="panel-quick" type="button">
+          <span id="moreHomeWrap" style="display:contents">
+          <button class="bigbtn solid bg-teal" data-open="panel-quick" id="moreQuick" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
             <span>Quick Messages<span class="sub">I am fine · Going out · Home · My place</span></span>
           </button>
 
-          <button class="bigbtn solid bg-amber" data-open="panel-message" type="button">
+          <button class="bigbtn solid bg-amber" data-open="panel-message" id="moreMessage" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
             <span>ASK OR MESSAGE FAMILY<span class="sub">Speak or type what you need</span></span>
           </button>
 
-          <button class="bigbtn solid bg-blue" data-open="panel-convert" type="button">
+          <button class="bigbtn solid bg-blue" data-open="panel-convert" id="moreConvert" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
             <span>Change My File<span class="sub">Photos into a PDF · PDF into photos · join PDFs</span></span>
           </button>
 
-          <button class="bigbtn" data-open="panel-tasks" type="button">
+          <button class="bigbtn" data-open="panel-tasks" id="moreTasks" type="button">
             <span class="ic ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span>
             <span>My Tasks<span class="sub">Things to remember</span></span>
           </button>
 
-          <button class="bigbtn" data-open="panel-health" type="button">
+          <button class="bigbtn solid bg-green" data-open="panel-groceries" id="moreGroceries" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span>
+            <span>GROCERIES<span class="sub">I need some things</span></span>
+          </button>
+
+          <button class="bigbtn" data-open="panel-health" id="moreHealth" type="button">
             <span class="ic" style="background:#FBE3E0;color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h6.27"/></svg></span>
-            <span>Health &amp; Hospital<span class="sub">Doctor, pharmacy, directions</span></span>
+            <span>Health &amp; Hospital<span class="sub">Doctors, medicines, appointments, rides</span></span>
           </button>
 
-          <button class="bigbtn" data-open="panel-screen" type="button">
+          <button class="bigbtn" data-open="panel-screen" id="moreScreen" type="button">
             <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
-            <span>Show My Screen to <span data-hname>Zee</span><span class="sub"><span data-hname>Zee</span> watches your screen in this app — or use AnyDesk</span></span>
+            <span>SHOW MY SCREEN TO FAMILY<span class="sub">A family member can watch and help</span></span>
           </button>
 
-          <a class="bigbtn solid bg-blue" href="https://www.facebook.com" target="_blank" rel="noopener">
+          <a class="bigbtn solid bg-blue" href="https://www.facebook.com" id="moreFacebook" target="_blank" rel="noopener">
             <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
             <span>Facebook<span class="sub">Open Facebook</span></span>
           </a>
 
-          <a class="bigbtn solid bg-blue" href="https://mail.google.com" target="_blank" rel="noopener">
+          <a class="bigbtn solid bg-blue" href="https://mail.google.com" id="moreGmail" target="_blank" rel="noopener">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
             <span>My Email — Gmail<span class="sub">Tap to open your letters</span></span>
           </a>
 
-          <a class="bigbtn solid bg-teal" href="https://outlook.live.com/mail" target="_blank" rel="noopener">
+          <a class="bigbtn solid bg-teal" href="https://outlook.live.com/mail" id="moreHotmail" target="_blank" rel="noopener">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
             <span>My Email — Hotmail<span class="sub">Tap to open your letters</span></span>
           </a>
 
           <span id="placesSlot" style="display:contents"></span>
 
-          <button class="bigbtn" data-open="panel-password" type="button">
+          <button class="bigbtn" data-open="panel-password" id="morePassword" type="button">
             <span class="ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg></span>
             <span>I Forgot My Password<span class="sub">Get a new one, step by step</span></span>
           </button>
@@ -603,6 +623,12 @@
             <span class="ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></span>
             <span>Today's Weather<span class="sub" id="weatherCity"></span></span>
           </a>
+          </span>
+
+          <button class="bigbtn solid bg-teal span2" data-open="panel-more" id="moreThingsBtn" type="button" style="display:none">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+            <span>MORE THINGS — CLICK HERE<span class="sub">All the other things, on one screen</span></span>
+          </button>
         </div>
 
         <div class="setup-link-wrap">
@@ -622,6 +648,14 @@
           <a class="bigbtn solid bg-green" data-quicklink="home" href="https://wa.me/14705790994?text=I%20am%20back%20home%20now." target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>I AM HOME NOW<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
           <button class="bigbtn solid bg-teal span2" data-open="panel-location" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span><span>Send My Location<span class="sub">Tell family where you are, on WhatsApp</span></span></button>
         </div>
+      </section>
+
+      <!-- ================= MORE THINGS (desktop home opens this) ================= -->
+      <section class="panel" id="panel-more" aria-label="More things">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>More Things</h2>
+        <p class="hint">Everything else, all on this one screen. Tap what you need.</p>
+        <div class="grid" id="moreGrid" style="margin-top:6px"></div>
       </section>
 
       <!-- ================= ASK OR MESSAGE FAMILY ================= -->
@@ -646,6 +680,31 @@
           <a class="actionbtn bg-green" id="msgWhats" href="#" target="_blank" rel="noopener">SEND ON WHATSAPP</a>
           <a class="actionbtn bg-teal" id="msgEmail" href="#">SEND BY EMAIL</a>
           <div class="note" id="msgNote"></div>
+        </div>
+      </section>
+
+      <!-- ================= GROCERIES ================= -->
+      <section class="panel" id="panel-groceries" aria-label="Groceries">
+        <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
+        <h2>Groceries</h2>
+        <p class="hint">Say or type the things you need from the shop. Then send your list to family — they will get them for you.</p>
+        <a class="bigbtn solid bg-blue" id="grocShop" href="#" target="_blank" rel="noopener" style="display:none;margin-bottom:14px">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.6-7.4"/><path d="m4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg></span>
+          <span>OPEN MY SHOP<span class="sub">Your grocery shop's page</span></span>
+        </a>
+        <p class="note show" id="grocNoShop">Your family can add your shop's link in Family Setup — then a big OPEN MY SHOP button will appear here.</p>
+        <div class="card">
+          <label class="flabel" for="grocText">What do you need?</label>
+          <textarea id="grocText" dir="auto" placeholder="For example: milk, bread, eggs…"></textarea>
+          <div class="microw">
+            <button class="micbtn" type="button" data-mic data-target="grocText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
+            <button class="micbtn" type="button" data-mic data-target="grocText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
+          </div>
+          <label class="flabel">Who should get the list?</label>
+          <div class="chips" id="grocChips"></div>
+          <a class="actionbtn bg-green" id="grocWhats" href="#" target="_blank" rel="noopener">SEND MY LIST ON WHATSAPP</a>
+          <p style="font-size:19px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
+          <div class="note" id="grocNote"></div>
         </div>
       </section>
 
@@ -682,6 +741,7 @@
             <li>“Fix my document” · “Change a document” · “My documents”</li>
             <li>“Send an email” · “My tasks” · “I forgot my password”</li>
             <li>“What is the time?” · “What is the date?”</li>
+            <li>“Groceries” · “I need a ride” · “My medicines” · “My appointments”</li>
             <li><span lang="ur">“مجھے مدد چاہیے”</span> · <span lang="ur">“زی کو کال کرو”</span></li>
           </ul>
         </div>
@@ -808,8 +868,21 @@
       <section class="panel" id="panel-health" aria-label="Health and hospital">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Health &amp; Hospital</h2>
-        <p class="hint">Your doctor, your pharmacy, and the way to your hospital.</p>
+        <p class="hint">Your doctors, your medicines, your appointments, rides, and the way to your hospital.</p>
+        <h3 class="lochead">MY DOCTORS</h3>
+        <div id="doctorsBody"></div>
         <div id="healthBody"></div>
+        <h3 class="lochead">MY MEDICINES</h3>
+        <div id="medsBody"></div>
+        <button class="actionbtn bg-teal" id="medsListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read My Medicines</button>
+        <div class="note show">This list is for remembering. Always follow your doctor's words first.</div>
+        <h3 class="lochead">MY APPOINTMENTS</h3>
+        <div id="apptsBody"></div>
+        <button class="actionbtn bg-teal" id="apptsListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read My Appointments</button>
+        <div class="note show">This app shows your appointments here, but it cannot ring or remind you by itself. Your family will help you keep track.</div>
+        <h3 class="lochead">GET A RIDE</h3>
+        <div id="rideBody"></div>
+        <div class="note show">Uber opens. Check the place name, then tap Confirm in Uber. Or call family instead.</div>
         <a class="bigbtn solid bg-red" href="tel:911" style="margin-top:8px">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>EMERGENCY — Call 911<span class="sub">Only for a real emergency</span></span>
@@ -888,10 +961,15 @@
       <section class="panel" id="panel-location" aria-label="Send my location">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Send My Location</h2>
-        <p class="hint">Tap the name of the person. This app asks your phone where you are, then a big green button appears — tap it, WhatsApp opens with a map of your place ready, and you tap the green Send arrow there.</p>
+        <p class="hint">Tap each name, one by one. Each tap opens WhatsApp — tap the green Send arrow. Then all three will know.</p>
+        <h3 class="lochead">SEND MY LOCATION</h3>
         <div id="locHelpers"></div>
-        <a class="actionbtn bg-green" id="locSendLink" href="#" target="_blank" rel="noopener" style="display:none">SEND MY LOCATION</a>
+        <h3 class="lochead">I AM GOING OUT</h3>
+        <div id="locOutBtns"></div>
+        <h3 class="lochead">I AM HOME NOW</h3>
+        <div id="locHomeBtns"></div>
         <div class="note" id="locNote"></div>
+        <div class="note show">This app cannot watch where you are by itself, and it cannot send messages by itself when you leave home. Automatic going-out and coming-home messages come with the family's own Android version of this app. Until then, these buttons are how you tell everyone.</div>
       </section>
 
       <!-- ================= SETUP ================= -->
@@ -907,6 +985,7 @@
           <div class="setup-grid" style="margin-top:10px">
             <div><label class="flabel" for="sCity">His city (for weather)</label><input type="text" id="sCity" placeholder="e.g. Toronto" /></div>
             <div><label class="flabel" for="sEmailReset">Extra password-help page (optional)</label><input type="url" id="sEmailReset" dir="ltr" /></div>
+            <div><label class="flabel" for="sGroceryLink">Grocery shop link (optional)</label><input type="url" id="sGroceryLink" dir="ltr" placeholder="https://…" /></div>
           </div>
           <hr class="divider" />
           <div class="setup-grid">
@@ -917,6 +996,21 @@
             <div><label class="flabel" for="sPharmName">Pharmacy name</label><input type="text" id="sPharmName" /></div>
             <div><label class="flabel" for="sPharmPhone">Pharmacy phone</label><input type="tel" id="sPharmPhone" dir="ltr" /></div>
           </div>
+          <hr class="divider" />
+          <p style="font-size:22px;font-weight:700;margin:0 0 4px">His Doctors — everyone he sees</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">Each doctor gets a big CALL button and a DIRECTIONS button on the Health &amp; Hospital screen, and a RIDE button if the address is filled in. Add as many as he has — heart doctor, family doctor, eye doctor, anyone.</p>
+          <div id="doctorsEditor"></div>
+          <button class="actionbtn secondary" id="addDoctorBtn" type="button">+ Add Another Doctor</button>
+          <hr class="divider" />
+          <p style="font-size:22px;font-weight:700;margin:0 0 4px">His Medicines</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">The medicine name and when he takes it, in plain words — "Morning", "Night", "With food". The list is only for remembering; the doctor's words always come first.</p>
+          <div id="medsEditor"></div>
+          <button class="actionbtn secondary" id="addMedBtn" type="button">+ Add Another Medicine</button>
+          <hr class="divider" />
+          <p style="font-size:22px;font-weight:700;margin:0 0 4px">His Appointments</p>
+          <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">One line each, in plain words — for example "Tuesday 10 am — Dr. Khan, heart check". The app shows them on the Health &amp; Hospital screen and can read them aloud, but it cannot ring or remind by itself.</p>
+          <div id="apptsEditor"></div>
+          <button class="actionbtn secondary" id="addApptBtn" type="button">+ Add Another Appointment</button>
           <hr class="divider" />
           <p style="font-size:22px;font-weight:700;margin:0 0 4px">My Places — his regular websites</p>
           <p style="font-size:20px;color:var(--ink-soft);margin:0 0 8px">Each one becomes a big button on the home screen. Examples: his email inbox page, a news site, YouTube, his bank.</p>
@@ -954,10 +1048,10 @@
       </section>
 
       <!-- ================= SHOW MY SCREEN ================= -->
-      <section class="panel" id="panel-screen" aria-label="Show my screen to Zee">
+      <section class="panel" id="panel-screen" aria-label="Show my screen to family">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Show My Screen to <span data-hname>Zee</span></h2>
-        <p class="hint">Two ways. The first way is easiest: <span data-hname>Zee</span> watches your screen from inside this app and talks you through it. He can see your screen, but he cannot click or control anything.</p>
+        <h2>Show My Screen to Family</h2>
+        <p class="hint">Two ways to get help. The first way is easiest: a family member can watch your screen and talk you through it. They cannot click or control anything.</p>
 
         <div class="card">
           <h3>SHOW MY SCREEN — IN THIS APP (computer only)</h3>
@@ -967,10 +1061,10 @@
           <div class="status" id="screenStatus" role="status" aria-live="polite"></div>
           <p id="screenElapsed" style="display:none;font-size:21px;font-weight:700;margin:10px 0 0"></p>
           <video class="screen-video" id="screenPreview" autoplay muted playsinline></video>
-          <p id="screenPreviewLabel" style="display:none;font-size:21px;font-weight:700;margin:12px 0 0">This is what <span data-hname>Zee</span> will see.</p>
+          <p id="screenPreviewLabel" style="display:none;font-size:21px;font-weight:700;margin:12px 0 0">This is what your family can see.</p>
           <div id="screenStep2" style="display:none">
             <hr class="divider" />
-            <p style="font-size:21px;margin:0"><b>Step 2.</b> Send the link to whoever will watch — <span data-hname>Zee</span>, Amreen or Zehra. Tap their name and WhatsApp will open with the link ready:</p>
+            <p style="font-size:21px;margin:0"><b>Step 2.</b> Send the link to whoever will watch. Tap their name and WhatsApp will open with the link ready:</p>
             <div class="screen-code" id="screenCode"></div>
             <div id="screenSendBtns"></div>
             <p style="font-size:19px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
@@ -1027,6 +1121,7 @@
         zeePhone:"14705790994", amreenPhone:"16475350684", zehraPhone:"14172887882",
         zeeEmail:"shanstud@hotmail.com", amreenEmail:"", zehraEmail:"",
         helpers:[],
+        doctors:[], medicines:[], appointments:[], groceryLink:"",
         city:"", emailReset:"https://accounts.google.com/signin/recovery",
         hospName:"", hospAddr:"", docName:"", docPhone:"", pharmName:"", pharmPhone:"",
         places:[]
@@ -1036,6 +1131,9 @@
       catch(e){ setup = Object.assign({}, DEFAULTS); }
       if(!Array.isArray(setup.places)) setup.places = [];
       if(!Array.isArray(setup.helpers)) setup.helpers = [];
+      if(!Array.isArray(setup.doctors)) setup.doctors = [];
+      if(!Array.isArray(setup.medicines)) setup.medicines = [];
+      if(!Array.isArray(setup.appointments)) setup.appointments = [];
       if(!setup.helpers.length){
         if(setup.zeePhone || setup.zeeEmail) setup.helpers.push({name:"Zee", phone:setup.zeePhone||"", email:setup.zeeEmail||""});
         if(setup.amreenPhone || setup.amreenEmail) setup.helpers.push({name:"Amreen", phone:setup.amreenPhone||"", email:setup.amreenEmail||""});
@@ -1048,6 +1146,9 @@
         try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){}
       }
       function helpers(){ return setup.helpers.filter(function(h){ return h && (h.name || h.phone || h.email); }); }
+      function doctorsList(){ return (setup.doctors || []).filter(function(d){ return d && (d.name || d.whatfor || d.phone || d.address); }); }
+      function medsList(){ return (setup.medicines || []).filter(function(m){ return m && (m.name || m.when); }); }
+      function apptsList(){ return (setup.appointments || []).filter(function(a){ return a && a.text; }); }
       function firstHelper(){ var hs = helpers(); return hs.length ? hs[0] : {name:"Zee", phone:"14705790994", email:""}; }
 
       function saveSetup(){ try{ localStorage.setItem("dadSetup", JSON.stringify(setup)); }catch(e){} }
@@ -1597,7 +1698,23 @@
           go("panel-tasks", "Opening My Tasks — your list of things to remember.");
           return;
         }
-        if(has("doctor", "hospital", "pharmacy", "health", "medicine", "sick", "unwell")){
+        if(has("groceries", "grocery")){
+          go("panel-groceries", "Opening Groceries. Say the things you need from the shop, then send your list to " + fhName + " on WhatsApp.");
+          return;
+        }
+        if(has("ride", "uber", "taxi") && (low.indexOf(" ride ") >= 0 || low.indexOf(" uber ") >= 0 || low.indexOf(" taxi ") >= 0)){
+          go("panel-health", "Opening Doctor and Hospital. Look for GET A RIDE — tap the ride button for where you want to go, and Uber will open.");
+          return;
+        }
+        if(has("appointment", "appointments")){
+          go("panel-health", "Opening Doctor and Hospital. Your appointments are listed there — tap LISTEN to hear them read aloud.");
+          return;
+        }
+        if(has("medicine", "medicines", "medication", "dawai")){
+          go("panel-health", "Opening Doctor and Hospital. Your medicines are listed there — tap LISTEN to hear them read aloud.");
+          return;
+        }
+        if(has("doctor", "hospital", "pharmacy", "health", "sick", "unwell")){
           go("panel-health", "Opening Health and Hospital — your doctor, your pharmacy, and the way to your hospital.");
           return;
         }
@@ -1666,6 +1783,16 @@
         var d = $("docText").value.trim();
         $("docPreview").textContent = d || "Nothing yet — do Step 1 first.";
       }
+      /* SEND BY EMAIL on Step 4 exists only when it can actually work:
+         with a photo/file picked, the road is WhatsApp-only; and for a
+         text-only document the button is hidden entirely when the main
+         helper has no email saved — no dead path. Re-checked every time
+         Step 4 is shown and whenever setup changes. */
+      function syncDocEmailVisibility(){
+        var em = $("docEmail"); if(!em) return;
+        var hasEmail = ((firstHelper().email || "").trim() !== "");
+        em.style.display = (!docPickedFile && hasEmail) ? "" : "none";
+      }
       function syncDocFileUI(){
         var f = docPickedFile, isImg = docIsImage();
         var img = $("docPhotoPreview"), big = $("docFileBig");
@@ -1687,13 +1814,12 @@
             ? "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the photo itself will go."
             : "First tap SEND 1 OF 2 above — MESSAGE ZEE ON WHATSAPP. Then tap this button and choose WhatsApp again — the file itself will go.";
           $("docSendFile").textContent = isImg ? "SEND 2 OF 2 — SEND MY PHOTO" : "SEND 2 OF 2 — SEND MY FILE";
-          $("docEmail").style.display = "none";
           $("docSend").textContent = "SEND 1 OF 2 — MESSAGE ZEE ON WHATSAPP";
         }else{
-          $("docEmail").style.display = "";
           $("docEmail").textContent = "SEND BY EMAIL";
           $("docSend").textContent = "SEND TO " + (firstHelper().name || "Zee") + " — WhatsApp";
         }
+        syncDocEmailVisibility();
       }
       $("docText").addEventListener("input", syncDocPreview);
       $("docFileInput").addEventListener("change", function(){
@@ -1817,6 +1943,137 @@
         } else body.appendChild(notReady("The pharmacy phone number"));
       }
 
+      /* ---------------- My Doctors, Medicines, Appointments, Rides ---------------- */
+      function actLink(href, colorClass, label){
+        var a = document.createElement("a");
+        a.className = "actionbtn " + colorClass; a.href = href;
+        if(/^https:/.test(href)){ a.target = "_blank"; a.rel = "noopener"; }
+        a.textContent = label;
+        return a;
+      }
+      function renderDoctors(){
+        var body = $("doctorsBody"); if(!body) return; body.innerHTML = "";
+        var ds = doctorsList();
+        if(!ds.length){
+          var d = document.createElement("div"); d.className = "card";
+          var p = document.createElement("p"); p.style.margin = "0"; p.style.fontSize = "23px";
+          p.textContent = "No doctors saved yet. Ask " + firstHelper().name + " to add them in Family Setup.";
+          d.appendChild(p); body.appendChild(d); return;
+        }
+        ds.forEach(function(doc){
+          var card = document.createElement("div"); card.className = "card";
+          var h = document.createElement("h3"); h.textContent = doc.name || "Doctor"; h.setAttribute("dir","auto");
+          card.appendChild(h);
+          if(doc.whatfor){
+            var p = document.createElement("p"); p.textContent = doc.whatfor; p.setAttribute("dir","auto");
+            card.appendChild(p);
+          }
+          if(doc.phone) card.appendChild(actLink("tel:+" + digits(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
+          if(doc.address) card.appendChild(actLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((doc.name ? doc.name + " " : "") + doc.address), "bg-blue", "DIRECTIONS"));
+          body.appendChild(card);
+        });
+      }
+      function renderMeds(){
+        var body = $("medsBody"); if(!body) return; body.innerHTML = "";
+        var ms = medsList();
+        var listen = $("medsListen"); if(listen) listen.style.display = ms.length ? "" : "none";
+        if(!ms.length){
+          var d = document.createElement("div"); d.className = "empty-msg";
+          d.textContent = "No medicines saved yet. Ask " + firstHelper().name + " to add them in Family Setup.";
+          body.appendChild(d); return;
+        }
+        ms.forEach(function(m){
+          var row = document.createElement("div"); row.className = "taskrow"; row.style.cursor = "default";
+          var t = document.createElement("span"); t.className = "ttext"; t.setAttribute("dir","auto");
+          t.textContent = m.name + (m.when ? " — " + m.when : "");
+          row.appendChild(t); body.appendChild(row);
+        });
+      }
+      function renderAppts(){
+        var body = $("apptsBody"); if(!body) return; body.innerHTML = "";
+        var as = apptsList();
+        var listen = $("apptsListen"); if(listen) listen.style.display = as.length ? "" : "none";
+        if(!as.length){
+          var d = document.createElement("div"); d.className = "empty-msg";
+          d.textContent = "No appointments saved yet. Ask " + firstHelper().name + " to add them in Family Setup.";
+          body.appendChild(d); return;
+        }
+        as.forEach(function(a){
+          var row = document.createElement("div"); row.className = "taskrow"; row.style.cursor = "default";
+          var t = document.createElement("span"); t.className = "ttext"; t.setAttribute("dir","auto");
+          t.textContent = a.text;
+          row.appendChild(t); body.appendChild(row);
+        });
+      }
+      function renderRide(){
+        var body = $("rideBody"); if(!body) return; body.innerHTML = "";
+        var any = false;
+        if(setup.hospAddr){
+          body.appendChild(bigLink("https://m.uber.com/ul/?action=setPickup&dropoff[formatted_address]=" + encodeURIComponent(setup.hospAddr), "bg-blue", "RIDE TO THE HOSPITAL", setup.hospName || setup.hospAddr));
+          any = true;
+        }
+        doctorsList().forEach(function(doc){
+          if(!doc.address) return;
+          body.appendChild(bigLink("https://m.uber.com/ul/?action=setPickup&dropoff[formatted_address]=" + encodeURIComponent(doc.address), "bg-blue", "RIDE TO " + (doc.name || "DOCTOR").toUpperCase(), doc.whatfor || doc.address));
+          any = true;
+        });
+        if(!any){
+          var d = document.createElement("div"); d.className = "card";
+          var p = document.createElement("p"); p.style.margin = "0"; p.style.fontSize = "23px";
+          p.textContent = "No ride places saved yet. Ask " + firstHelper().name + " to add the hospital address or a doctor's address in Family Setup.";
+          d.appendChild(p); body.appendChild(d);
+        }
+      }
+      $("medsListen").addEventListener("click", function(){
+        var ms = medsList();
+        if(!ms.length){ speak("No medicines are saved yet.", "en-US"); return; }
+        speak("Your medicines. " + ms.map(function(m){ return m.name + (m.when ? ", " + m.when : ""); }).join(". ") + ".", "en-US");
+      });
+      $("apptsListen").addEventListener("click", function(){
+        var as = apptsList();
+        if(!as.length){ speak("No appointments are saved yet.", "en-US"); return; }
+        speak("Your appointments. " + as.map(function(a){ return a.text; }).join(". ") + ".", "en-US");
+      });
+
+      /* ---------------- Groceries ---------------- */
+      var grocSel = 0;
+      function grocTarget(){
+        var hs = helpers();
+        if(typeof grocSel !== "number" || grocSel < 0 || grocSel >= hs.length) grocSel = 0;
+        return hs[grocSel] || firstHelper();
+      }
+      function renderGroceries(){
+        var wrap = $("grocChips"); if(wrap){
+          wrap.innerHTML = "";
+          var hs = helpers();
+          if(typeof grocSel !== "number" || grocSel < 0 || grocSel >= hs.length) grocSel = 0;
+          hs.forEach(function(h, idx){
+            var b = document.createElement("button");
+            b.type = "button"; b.className = "chip"; b.textContent = h.name || h.phone || h.email;
+            b.setAttribute("aria-pressed", grocSel === idx ? "true" : "false");
+            b.addEventListener("click", function(){ grocSel = idx; renderGroceries(); });
+            wrap.appendChild(b);
+          });
+        }
+        var link = (setup.groceryLink || "").trim();
+        var shop = $("grocShop"), noShop = $("grocNoShop");
+        if(!shop || !noShop) return;
+        if(link){
+          if(!/^https?:\/\//i.test(link)) link = "https://" + link;
+          shop.href = link; shop.style.display = ""; noShop.style.display = "none";
+        }else{
+          shop.style.display = "none"; noShop.style.display = "";
+        }
+      }
+      $("grocWhats").addEventListener("click", function(e){
+        var list = $("grocText").value.trim(), note = $("grocNote"), t = grocTarget();
+        if(!list){ e.preventDefault(); note.textContent = "First say what you need — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
+        if(!digits(t.phone)){ e.preventDefault(); note.textContent = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.classList.add("show"); return; }
+        note.textContent = "WhatsApp will open. Tap the green Send arrow to send your list.";
+        note.classList.add("show");
+        $("grocWhats").href = waLinkTo(t.phone, "I need these things from the shop:\n" + list);
+      });
+
       /* ---------------- Password help ---------------- */
       function renderPassword(){
         var body = $("passwordBody"); body.innerHTML = "";
@@ -1913,6 +2170,8 @@
           wb.href = "https://www.google.com/search?q=" + encodeURIComponent("weather in " + setup.city);
         } else wb.style.display = "none";
         renderMsgChips(); renderHealth(); renderPassword(); renderSendFileHelpers(); renderLocHelpers(); refreshSendLinks();
+        renderDoctors(); renderMeds(); renderAppts(); renderRide(); renderGroceries();
+        if(typeof syncDocEmailVisibility === "function") syncDocEmailVisibility();
       }
 
       /* ---------------- Quick notifications (one tap, to the main helper) ---------------- */
@@ -2079,43 +2338,98 @@
       });
       renderDocs();
 
-      /* ---------------- Send My Location ---------------- */
-      function renderLocHelpers(){
-        var wrap = $("locHelpers"); if(!wrap) return; wrap.innerHTML = "";
-        helpers().forEach(function(h){
-          if(!h.phone) return;
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "actionbtn bg-teal"; b.textContent = "Send to " + (h.name || "Family");
-          b.addEventListener("click", function(){ sendLocationTo(h); });
-          wrap.appendChild(b);
-        });
+      /* ---------------- Send My Location: all three sections, one big
+         button per helper, exactly like I AM STUCK. WhatsApp cannot send
+         to three chats from one tap, so he taps each name in turn and
+         every tapped button honestly marks itself "✓ OPENED FOR [NAME]"
+         — the app knows WhatsApp was opened for that person, not whether
+         he pressed WhatsApp's Send arrow. The location buttons are real
+         anchors: the first tap finds his position and only then points
+         the anchor at the WhatsApp link and follows it; if the position
+         cannot be found, nothing opens and the failure is said plainly. */
+      var locPos = null, locPosAt = 0;
+      function locNoteSay(msg){
+        var note = $("locNote");
+        if(note){ note.textContent = msg; note.classList.add("show"); }
       }
-      function sendLocationTo(h){
-        var note = $("locNote"), sendLink = $("locSendLink");
+      function locMarkOpened(a, name){
+        a.classList.add("opened");
+        if(a._label) a._label.textContent = "\u2713 OPENED FOR " + name.toUpperCase();
+        if(a._sub) a._sub.textContent = "Opened for " + name + " — now come back and tap the next name";
+      }
+      function locBtn(labelText, colorClass){
+        var a = document.createElement("a");
+        a.className = "bigbtn solid " + colorClass; a.target = "_blank"; a.rel = "noopener";
+        var ic = document.createElement("span"); ic.className = "ic";
+        ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
+        var t = document.createElement("span");
+        var label = document.createElement("span"); label.textContent = labelText;
+        var s = document.createElement("span"); s.className = "sub"; s.textContent = "WhatsApp opens — tap the green Send arrow";
+        t.appendChild(label); t.appendChild(s);
+        a.appendChild(ic); a.appendChild(t);
+        a._label = label; a._sub = s;
+        return a;
+      }
+      function locSendPosition(h, a){
+        var name = h.name || "Family";
         function fail(){
-          sendLink.style.display = "none";
-          note.textContent = "Your location is off. Tap I AM STUCK below and " + firstHelper().name + " will help.";
-          note.classList.add("show");
+          var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. Tap I AM STUCK below and " + firstHelper().name + " will help.";
+          locNoteSay(msg); speak(msg, "en-US");
         }
         if(!("geolocation" in navigator)){ fail(); return; }
-        sendLink.style.display = "none";
-        note.textContent = "Finding where you are… please wait a moment.";
-        note.classList.add("show");
-        navigator.geolocation.getCurrentPosition(function(pos){
+        function usePos(pos){
           var link = "https://www.google.com/maps?q=" + pos.coords.latitude.toFixed(6) + "," + pos.coords.longitude.toFixed(6);
-          /* The send control is a real link the user taps himself — a window
-             opened from this (non-tap) callback is blocked on most phones. */
-          sendLink.href = waLinkTo(h.phone, "I am here: " + link);
-          sendLink.textContent = "TAP HERE TO SEND IT TO " + (h.name || "FAMILY").toUpperCase();
-          sendLink.style.display = "";
-          note.textContent = "Found you. Now tap the big green button above — WhatsApp opens, and you tap the green Send arrow there.";
-          note.classList.add("show");
-          sendLink.scrollIntoView({behavior:"smooth", block:"center"});
+          a.href = waLinkTo(h.phone, "I am here: " + link);
+          a.setAttribute("data-wa", "1");
+          locMarkOpened(a, name);
+          locNoteSay("Found you. WhatsApp is opening for " + name + " — tap the green Send arrow there. Then come back and tap the next name.");
+          a.click();
+        }
+        if(locPos && (Date.now() - locPosAt) < 60000){ usePos(locPos); return; }
+        locNoteSay("Finding where you are… please wait a moment.");
+        navigator.geolocation.getCurrentPosition(function(pos){
+          locPos = pos; locPosAt = Date.now();
+          usePos(pos);
         }, fail, {enableHighAccuracy:true, timeout:20000, maximumAge:60000});
+      }
+      function renderLocHelpers(){
+        var wrap = $("locHelpers"), out = $("locOutBtns"), homeB = $("locHomeBtns");
+        if(!wrap) return;
+        wrap.innerHTML = ""; if(out) out.innerHTML = ""; if(homeB) homeB.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!h.phone) return;
+          var name = h.name || "Family";
+          var a = locBtn("SEND MY LOCATION TO " + name.toUpperCase(), "bg-teal");
+          a.href = "#";
+          a.addEventListener("click", function(e){
+            if(a.getAttribute("data-wa")){ locMarkOpened(a, name); return; }
+            e.preventDefault();
+            locSendPosition(h, a);
+          });
+          wrap.appendChild(a);
+          if(out){
+            var b = locBtn("I AM GOING OUT — SEND TO " + name.toUpperCase(), "bg-plum");
+            b.href = waLinkTo(h.phone, "I am going out now.");
+            b.addEventListener("click", function(){
+              locMarkOpened(b, name);
+              locNoteSay("WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name.");
+            });
+            out.appendChild(b);
+          }
+          if(homeB){
+            var c = locBtn("I AM HOME NOW — SEND TO " + name.toUpperCase(), "bg-green");
+            c.href = waLinkTo(h.phone, "I am back home now.");
+            c.addEventListener("click", function(){
+              locMarkOpened(c, name);
+              locNoteSay("WhatsApp is opening for " + name + ". Tap the green Send arrow to send this. Then come back here and tap the next name.");
+            });
+            homeB.appendChild(c);
+          }
+        });
       }
 
       /* ---------------- Setup form ---------------- */
-      var F = { city:"sCity", emailReset:"sEmailReset", hospName:"sHospName", hospAddr:"sHospAddr",
+      var F = { city:"sCity", emailReset:"sEmailReset", groceryLink:"sGroceryLink", hospName:"sHospName", hospAddr:"sHospAddr",
                 docName:"sDocName", docPhone:"sDocPhone", pharmName:"sPharmName", pharmPhone:"sPharmPhone" };
       function helperRow(h){
         var row = document.createElement("div");
@@ -2134,12 +2448,55 @@
         row.appendChild(rm);
         return row;
       }
+      function listRow(build){
+        var row = document.createElement("div");
+        row.style.cssText = "border:3px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:#FFFDF8";
+        function field(label, cls, val, type){
+          var l = document.createElement("label"); l.className = "flabel"; l.textContent = label;
+          var inp = document.createElement("input"); inp.type = type || "text"; inp.className = cls; inp.value = val || ""; inp.setAttribute("dir","auto");
+          row.appendChild(l); row.appendChild(inp);
+        }
+        build(field);
+        var rm = document.createElement("button");
+        rm.type = "button"; rm.className = "actionbtn secondary"; rm.textContent = "Take This Off";
+        rm.addEventListener("click", function(){ if(row.parentNode) row.parentNode.removeChild(row); });
+        row.appendChild(rm);
+        return row;
+      }
+      function doctorRow(d){
+        return listRow(function(field){
+          field("Doctor's name", "d-name", d.name);
+          field("What for — e.g. Heart doctor", "d-what", d.whatfor);
+          field("Phone", "d-phone", d.phone, "tel");
+          field("Address", "d-addr", d.address);
+        });
+      }
+      function medRow(m){
+        return listRow(function(field){
+          field("Medicine name", "m-name", m.name);
+          field("When — e.g. Morning, Night, With food", "m-when", m.when);
+        });
+      }
+      function apptRow(a){
+        return listRow(function(field){
+          field("Appointment — e.g. Tuesday 10 am — Dr. Khan, heart check", "a-text", a.text);
+        });
+      }
       function fillSetupForm(){
         for(var k in F) $(F[k]).value = setup[k] || "";
         var ed = $("helpersEditor"); ed.innerHTML = "";
         var hs = helpers();
         if(!hs.length) hs = [{name:"", phone:"", email:""}];
         hs.forEach(function(h){ ed.appendChild(helperRow(h)); });
+        var edD = $("doctorsEditor"); edD.innerHTML = "";
+        var dl = doctorsList(); if(!dl.length) dl = [{name:"", whatfor:"", phone:"", address:""}];
+        dl.forEach(function(d){ edD.appendChild(doctorRow(d)); });
+        var edM = $("medsEditor"); edM.innerHTML = "";
+        var ml = medsList(); if(!ml.length) ml = [{name:"", when:""}];
+        ml.forEach(function(m){ edM.appendChild(medRow(m)); });
+        var edA = $("apptsEditor"); edA.innerHTML = "";
+        var al = apptsList(); if(!al.length) al = [{text:""}];
+        al.forEach(function(a){ edA.appendChild(apptRow(a)); });
         for(var i=0;i<4;i++){
           var pl = setup.places[i] || {name:"", url:""};
           $("sP"+(i+1)+"Name").value = pl.name || "";
@@ -2148,6 +2505,15 @@
       }
       $("addHelperBtn").addEventListener("click", function(){
         $("helpersEditor").appendChild(helperRow({name:"", phone:"", email:""}));
+      });
+      $("addDoctorBtn").addEventListener("click", function(){
+        $("doctorsEditor").appendChild(doctorRow({name:"", whatfor:"", phone:"", address:""}));
+      });
+      $("addMedBtn").addEventListener("click", function(){
+        $("medsEditor").appendChild(medRow({name:"", when:""}));
+      });
+      $("addApptBtn").addEventListener("click", function(){
+        $("apptsEditor").appendChild(apptRow({text:""}));
       });
       $("setupSave").addEventListener("click", function(){
         for(var k in F) setup[k] = $(F[k]).value.trim();
@@ -2161,6 +2527,28 @@
         }
         var fh = firstHelper();
         setup.zeePhone = fh.phone || ""; setup.zeeEmail = fh.email || "";
+        setup.doctors = [];
+        var drows = $("doctorsEditor").children;
+        for(var dr=0; dr<drows.length; dr++){
+          var dn = drows[dr].querySelector(".d-name").value.trim();
+          var dw = drows[dr].querySelector(".d-what").value.trim();
+          var dp = drows[dr].querySelector(".d-phone").value.trim();
+          var da = drows[dr].querySelector(".d-addr").value.trim();
+          if(dn || dw || dp || da) setup.doctors.push({name:dn, whatfor:dw, phone:dp, address:da});
+        }
+        setup.medicines = [];
+        var mrows = $("medsEditor").children;
+        for(var mr=0; mr<mrows.length; mr++){
+          var mn = mrows[mr].querySelector(".m-name").value.trim();
+          var mw = mrows[mr].querySelector(".m-when").value.trim();
+          if(mn || mw) setup.medicines.push({name:mn, when:mw});
+        }
+        setup.appointments = [];
+        var arows = $("apptsEditor").children;
+        for(var ar=0; ar<arows.length; ar++){
+          var at = arows[ar].querySelector(".a-text").value.trim();
+          if(at) setup.appointments.push({text:at});
+        }
         setup.places = [];
         for(var i=0;i<4;i++){
           var n = $("sP"+(i+1)+"Name").value.trim(), u = $("sP"+(i+1)+"Url").value.trim();
@@ -2293,6 +2681,7 @@
         $("wizBack").style.display = wizStep === 1 ? "none" : "";
         $("wizNext").style.display = wizStep === 4 ? "none" : "";
         if(wizStep === 2 && typeof syncDocPreview === "function") syncDocPreview();
+        if(wizStep === 4 && typeof syncDocEmailVisibility === "function") syncDocEmailVisibility();
         window.scrollTo(0, 0);
       }
       $("wizNext").addEventListener("click", function(){
@@ -2317,6 +2706,35 @@
       $("wizBack").addEventListener("click", function(){ showWizStep(wizStep - 1); });
       showWizStep(1);
 
+      /* ---------------- Desktop: MORE THINGS lives in its own panel ----------------
+         At 1024px and wider, the MORE THINGS buttons move out of the home
+         grid into panel-more (opened by the single MORE THINGS — CLICK
+         HERE button), so the whole home screen fits the window with no
+         scrolling. Below 1024px they move back and nothing changes.
+         The nodes themselves move, so every id, link and listener the
+         buttons already have keeps working in both places. */
+      var moreWrapEl = $("moreHomeWrap"), moreGridEl = $("moreGrid");
+      var moreHomeOrder = moreWrapEl ? Array.prototype.slice.call(moreWrapEl.children) : [];
+      var morePanelOrder = ["moreQuick","moreMessage","moreConvert","moreTasks","moreGroceries","moreHealth","moreScreen","moreFacebook","moreGmail","moreHotmail","morePassword","weatherBtn","placesSlot"];
+      var moreDesktopState = null;
+      function layoutMore(){
+        if(!moreWrapEl || !moreGridEl || !window.matchMedia) return;
+        var desk = window.matchMedia("(min-width:1024px)").matches;
+        if(desk === moreDesktopState) return;
+        moreDesktopState = desk;
+        if(desk){
+          morePanelOrder.forEach(function(id){ var el = $(id); if(el) moreGridEl.appendChild(el); });
+        }else{
+          moreHomeOrder.forEach(function(el){ moreWrapEl.appendChild(el); });
+        }
+      }
+      if(window.matchMedia){
+        var moreMq = window.matchMedia("(min-width:1024px)");
+        if(moreMq.addEventListener) moreMq.addEventListener("change", layoutMore);
+        else if(moreMq.addListener) moreMq.addListener(layoutMore);
+      }
+      layoutMore();
+
       /* ---------------- Show My Screen: in-app viewing (computer only) ----------------
          Dad shares his screen from this panel; a family member watches in
          this same app's viewer mode (?watch=CODE). PeerJS (free cloud) only
@@ -2324,7 +2742,7 @@
          browser-to-browser over WebRTC. View only: the watcher can never
          click or control anything. Every failure is said out loud in plain
          words, never swallowed. */
-      var scr = { peer:null, stream:null, call:null, code:"", watching:false, startedAt:0, timer:null };
+      var scr = { peer:null, stream:null, call:null, code:"", watching:false, startedAt:0, timer:null, ending:false };
       function screenSetStatus(msg, isErr){
         var el = $("screenStatus"); if(!el) return;
         el.textContent = msg; el.className = "status" + (isErr ? " err" : "");
@@ -2360,6 +2778,10 @@
         speak("Someone connected and can now see your screen.", "en-US");
       }
       function screenCleanup(msg){
+        /* ending=true first: closing the call below fires its close
+           handlers, and they must not mistake our own stop for the
+           watcher leaving. */
+        scr.ending = true;
         if(scr.timer){ clearInterval(scr.timer); scr.timer = null; }
         if(scr.call){ try{ scr.call.close(); }catch(e){} scr.call = null; }
         if(scr.stream){ try{ scr.stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} scr.stream = null; }
@@ -2381,6 +2803,7 @@
       });
       $("screenStart").addEventListener("click", function(){
         if(scr.peer || scr.stream) return;
+        scr.ending = false;
         var fhName = firstHelper().name || "Zee";
         if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){
           var m1 = "Screen viewing in this app works on the computer. On this phone, use AnyDesk below.";
@@ -2408,21 +2831,46 @@
           }
         });
         peer.on("call", function(call){
+          /* One watcher at a time: while a media call is already active,
+             any further incoming call is closed at once, unanswered. */
+          if(scr.call || scr.watching){
+            try{ call.close(); }catch(e){}
+            return;
+          }
           if(scr.stream){
             scr.call = call;
+            var goneDone = false;
+            function watcherGone(){
+              if(goneDone || scr.ending) return;
+              goneDone = true;
+              screenCleanup("The person stopped watching. Your screen is no longer being shown.");
+              speak("The person stopped watching. Your screen is no longer being shown.", "en-US");
+            }
             try{ call.answer(scr.stream); }catch(e){}
             if(call.on){
+              /* The session counts as WATCHED only when the accepted
+                 media connection itself reaches connected/completed. */
               call.on("iceStateChanged", function(state){
                 if(state === "connected" || state === "completed") screenSetWatching();
+                else if(state === "disconnected" || state === "failed" || state === "closed") watcherGone();
               });
+              call.on("close", watcherGone);
+              call.on("error", watcherGone);
             }
+            try{
+              var pc = call.peerConnection;
+              if(pc && pc.addEventListener){
+                pc.addEventListener("iceconnectionstatechange", function(){
+                  var st = pc.iceConnectionState;
+                  if(st === "connected" || st === "completed") screenSetWatching();
+                  else if(st === "disconnected" || st === "failed" || st === "closed") watcherGone();
+                });
+              }
+            }catch(e){}
           }else{
-            screenSetStatus(fhName + " is trying to watch. Tap START — CHOOSE MY SCREEN first.", true);
+            screenSetStatus("Your family is trying to watch. Tap START — CHOOSE MY SCREEN first.", true);
             try{ call.close(); }catch(e){}
           }
-        });
-        peer.on("connection", function(conn){
-          if(conn && conn.on) conn.on("open", function(){ if(scr.stream) screenSetWatching(); });
         });
         navigator.mediaDevices.getDisplayMedia({ video:true }).then(function(stream){
           if(failed){ try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){} return; }
