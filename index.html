@@ -1820,6 +1820,31 @@
         });
         refreshFormLinks();
       }
+      /* ---------------- The Brain (online AI, when reachable) ---------------- */
+      var BRAIN_URL = "https://dads-brain.pages.dev/chat";
+      var brainHistory = [];
+      function askBrain(q){
+        var ctrl = ("AbortController" in window) ? new AbortController() : null;
+        var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 20000) : null;
+        var msgs = brainHistory.concat([{role:"user", content:q}]);
+        return fetch(BRAIN_URL, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({messages: msgs}),
+          signal: ctrl ? ctrl.signal : undefined
+        }).then(function(r){
+          if(timer) clearTimeout(timer);
+          if(!r.ok) throw new Error("brain " + r.status);
+          return r.json();
+        }).then(function(d){
+          if(d && d.reply){
+            brainHistory = msgs.concat([{role:"assistant", content:d.reply}]).slice(-10);
+            return d.reply;
+          }
+          throw new Error("empty reply");
+        });
+      }
+      var msgBusy = false;
       $("msgGo").addEventListener("click", function(){
         var q = $("msgText").value.trim();
         var ansBox = $("msgAnswer");
@@ -1828,13 +1853,29 @@
         var a = instantAnswer(q);
         if(a){
           lastAnswer = a; lastAnswerLang = speakLangFor(detectLang(q));
-        }else{
+          $("msgAnswerText").textContent = lastAnswer;
+          ansBox.classList.add("show");
+          speak(lastAnswer, lastAnswerLang);
+          return;
+        }
+        if(msgBusy) return;
+        msgBusy = true;
+        $("msgAnswerText").textContent = "Let me think for a moment...";
+        ansBox.classList.add("show");
+        askBrain(q).then(function(reply){
+          msgBusy = false;
+          lastAnswer = reply; lastAnswerLang = speakLangFor(detectLang(q));
+          $("msgAnswerText").textContent = lastAnswer;
+          ansBox.classList.add("show");
+          speak(lastAnswer, lastAnswerLang);
+        }).catch(function(){
+          msgBusy = false;
           lastAnswer = "I cannot answer that one myself. Pick a name below, then tap SEND ON WHATSAPP or SEND BY EMAIL, and they will answer you.";
           lastAnswerLang = "en-US";
-        }
-        $("msgAnswerText").textContent = lastAnswer;
-        ansBox.classList.add("show");
-        speak(lastAnswer, lastAnswerLang);
+          $("msgAnswerText").textContent = lastAnswer;
+          ansBox.classList.add("show");
+          speak(lastAnswer, lastAnswerLang);
+        });
       });
       $("msgListen").addEventListener("click", function(){ if(lastAnswer) speak(lastAnswer, lastAnswerLang); });
       $("msgWhats").addEventListener("click", function(e){
