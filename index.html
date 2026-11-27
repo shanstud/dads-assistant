@@ -1443,6 +1443,11 @@
           screenCleanup("You stopped showing your screen. Nothing is being shown now.");
           if(typeof speak === "function") speak("You stopped showing your screen.", "en-US");
         }
+        /* Leaving the location session — HOME, I AM STUCK, Go
+           Back, any other panel — retires its generation, so a
+           geolocation answer still in flight lands silently: no
+           cache write, no button or note change, no speech. */
+        if(id !== "panel-location" && typeof retireLocSession === "function") retireLocSession();
         /* A new location panel session starts clean: no OPENED marks
            and no prepared links carried over from last time. */
         if(id === "panel-location" && typeof renderLocHelpers === "function") renderLocHelpers();
@@ -2154,91 +2159,134 @@
           }
           return count === 1 ? found : null;
         }
-        /* Was a doctor NAMED in this request? Returns the spoken
-           name when the request names someone ("call doctor Khan",
-           "ڈاکٹر خان کو کال کرو") and "" when the request is generic
-           ("call my doctor") — so GENERIC and NAMED doctor requests
-           are handled differently, and a named-but-unresolved doctor
-           is never silently replaced by a different, callable one.
-           Returns null when a name was attempted but cannot be
-           extracted reliably — the caller then gives the neutral
-           "I could not catch the doctor's name" explanation instead
-           of inventing a name. Roman Urdu GRAMMAR words (ko, karo,
-           ka, ki, se…) are parsed as grammar, never as a name. The
-           WHOLE request is considered: an unresolved name BEFORE
-           the title ("Khan doctor ko call karo", "خان ڈاکٹر کو کال
-           کرو") is a NAMED request too (→ null), so the sole saved
-           doctor is never offered for it; the generic single-doctor
-           shortcut applies only when no name appears anywhere. */
+        /* Was a doctor NAMED in this request? Decided STRUCTURALLY,
+           over tokens taken from the ORIGINAL utterance with every
+           script preserved (splitting on anything that is not a
+           letter or a number) — an Urdu name can never vanish
+           before analysis the way it did when the tokens came from
+           the Latin-only string. Returns:
+             ""    — the request is a GENERIC doctor request: its
+                     ENTIRE token sequence is consumed by one of
+                     the recognized generic command templates
+                     below, so the single-doctor shortcut may fire.
+             "xyz" — a NAMED request whose name was extracted
+                     cleanly from the name position (the word right
+                     after the title); the caller reports it not
+                     found and opens Health.
+             null  — a name was attempted but the structure is
+                     unrecognized or ambiguous: an unexplained word
+                     ANYWHERE (before the title, after a courtesy
+                     word, stranded after grammar), a grammar word
+                     sitting in the name position ("call Dr Wali",
+                     "call Dr Ho" — such a word may BE the name, so
+                     it is never silently consumed as grammar), or
+                     scripts mixed inside the naming construction
+                     ("doctor خان کو کال کرو"). The caller gives the
+                     neutral could-not-catch explanation and NO
+                     doctor is ever substituted.
+           Grammar words count as grammar ONLY in the positions a
+           template or the audit below gives them. No individual
+           name is special-cased: the structure alone decides, for
+           every name alike. */
         function namedDoctorCandidate(){
+          var toks = said.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+          function unit(alts, opt){ return { alts:alts, opt:!!opt }; }
+          function matchPat(pat){
+            function rec(ti, pi){
+              if(pi === pat.length) return ti === toks.length;
+              var u = pat[pi];
+              for(var k=0;k<u.alts.length;k++){
+                var alt = u.alts[k], ok = true;
+                for(var m=0;m<alt.length;m++){ if(toks[ti+m] !== alt[m]){ ok = false; break; } }
+                if(ok && rec(ti + alt.length, pi + 1)) return true;
+              }
+              if(u.opt) return rec(ti, pi + 1);
+              return false;
+            }
+            return rec(0, 0);
+          }
+          var ROLE = [["doctor"],["dr"],["ڈاکٹر"]];
+          /* English generic: [please] call/phone/ring/dial (or
+             talk/speak to) [my/the] doctor [please] [now]. */
+          var patEn = [
+            unit([["please"]], true),
+            unit([["call"],["phone"],["ring"],["dial"],["talk","to"],["speak","to"]]),
+            unit([["my"],["the"]], true),
+            unit(ROLE),
+            unit([["please"]], true),
+            unit([["now"]], true)
+          ];
+          /* Urdu / Roman Urdu generic: [possessive] doctor ko
+             call karo — every slot accepts either script, so the
+             pure-Urdu, pure-Roman and script-consistent mixed
+             forms of the same command all match; a name token in
+             any slot breaks the match. */
+          var patUr = [
+            unit([["میرے"],["میرا"],["میری"],["mera"],["mere"],["meri"],["my"],["apne"],["apna"],["apni"],["اپنے"],["اپنا"]], true),
+            unit(ROLE),
+            unit([["کو"],["ko"]]),
+            unit([["call","karo"],["call","kar","do"],["call","kardo"],["کال","کرو"],["کال","کریں"],["کال","کر","دو"],["call","کرو"],["کال","karo"]]),
+            unit([["please"],["پلیز"]], true)
+          ];
+          if(matchPat(patEn) || matchPat(patUr)) return "";
+          /* ---- Name extraction (for the not-found message) ---- */
           var stopEn = ["my","the","a","an","and","or","please","now","today","for","me","to","call","is","phone","ring","him","her","them","he","she","they","it","his","their","this","that","dial","talk","speak","get","connect","can","could","just"];
           var grammar = ["ko","ka","ki","ke","se","karo","kar","karke","bhi","hai","hain","mera","meri","mere","mujhe","wala","wale","wali","nahi","nahin","aur","par","pe","tha","thi","ho","chahiye","number","apne","apna","apni","yeh","ye","woh","wo","ab","jaldi","zara","karna","karne","kardo","karde","do","de"];
-          var skip = ["sahab","sahib","ji"];
-          var role = ["doctor","dr"];
-          var toks = low.trim().split(/\s+/).filter(Boolean);
+          var uGrammar = ["کو","کا","کی","کے","سے","کال","کرو","کریں","کرنا","کیجیے","فون","میرا","میرے","میری","مجھے","اپنے","اپنا","اپنی","ہے","ہیں","بھی","اور","پر","میں","نے","ذرا","اب","بس","کر","دو","دیں","چاہیے","نہیں","پلیز"];
+          var skip = ["sahab","sahib","ji","صاحب"];
+          function isRole(t){ return t === "doctor" || t === "dr" || t === "ڈاکٹر"; }
+          function explained(t){ return isRole(t) || stopEn.indexOf(t) >= 0 || grammar.indexOf(t) >= 0 || uGrammar.indexOf(t) >= 0 || skip.indexOf(t) >= 0 || /^\d+$/.test(t); }
+          function isArabic(t){ return /[\u0600-\u06FF]/.test(t); }
           var i, j;
           var ti = -1;
-          for(i=0;i<toks.length;i++){ if(role.indexOf(toks[i]) >= 0){ ti = i; break; } }
-          if(ti >= 0){
-            /* The name, when one is spoken right at the title, is
-               still extracted exactly as before ("call Dr Khan" →
-               "khan"), so the not-found message can name it. */
-            var cand = [];
-            for(j=ti+1; j<toks.length; j++){
-              var t = toks[j];
-              if(skip.indexOf(t) >= 0) continue; /* honorific — neither name nor grammar */
-              if(stopEn.indexOf(t) >= 0 || grammar.indexOf(t) >= 0 || role.indexOf(t) >= 0) break;
-              cand.push(t);
-              if(cand.length >= 2) break;
-            }
-            /* POSITIVE PROOF OVER THE WHOLE UTTERANCE: role,
-               command, grammar and courtesy words are recognized
-               wherever they appear — the inspection does NOT end
-               at the first such word. The request counts as
-               GENERIC only when every word in it is explained: a
-               role/command/grammar/courtesy word, or part of the
-               name extracted at the title. ANY other word — an
-               unresolved name before the title ("Khan is my
-               doctor, call him"), after a courtesy word ("call my
-               doctor please, Khan"), or stranded after grammar
-               ("doctor ko call karo, Khan ko") — makes the whole
-               request NAMED-but-unresolved: return null, the
-               neutral "could not catch the doctor's name" outcome,
-               and the sole-saved-doctor shortcut must never fire
-               for it. */
-            for(i=0;i<toks.length;i++){
-              var w = toks[i];
-              if(role.indexOf(w) >= 0 || stopEn.indexOf(w) >= 0 || grammar.indexOf(w) >= 0 || skip.indexOf(w) >= 0) continue;
-              if(cand.indexOf(w) >= 0) continue;
-              if(/^\d+$/.test(w)) continue;
+          for(i=0;i<toks.length;i++){ if(isRole(toks[i])){ ti = i; break; } }
+          if(ti < 0) return null;
+          /* An unexplained word BEFORE the title — a name there
+             ("Khan doctor ko call karo", "خان doctor کو کال
+             کرو") — is named-but-unresolved, never generic. */
+          for(i=0;i<ti;i++){ if(!explained(toks[i])) return null; }
+          /* The name position is the word right after the title
+             (past any honorific). Only a plain connector there
+             (کو / ko / please / پلیز) means "no name in this
+             position". A grammar word there is ambiguous — it
+             may be the name itself — and a word from the other
+             script there mixes the naming construction: both are
+             unresolved (null), never generic, never extracted. */
+          j = ti + 1;
+          while(j < toks.length && skip.indexOf(toks[j]) >= 0) j++;
+          var cand = [];
+          if(j < toks.length){
+            var t0 = toks[j];
+            if(t0 === "کو" || t0 === "ko" || t0 === "please" || t0 === "پلیز"){
+              /* no name in the name position */
+            }else if(explained(t0)){
               return null;
-            }
-            return cand.join(" ");
-          }
-          /* Urdu: the word right after ڈاکٹر is the name — unless it
-             is a grammar word (کو / کا / کی / سے …), which makes the
-             request generic. The SAME whole-utterance proof applies:
-             every word must be a role/grammar/command word or the
-             extracted name — a name ANYWHERE else ("ڈاکٹر کو کال
-             کرو، خان کو", "خان ڈاکٹر کو کال کرو") returns null, never
-             the generic shortcut. */
-          var utoks = said.split(/[\s\u060C\u061B\u061F\u06D4.,!?;:'"()]+/).filter(Boolean);
-          var uexpl = ["ڈاکٹر","کو","کا","کی","کے","سے","کال","کرو","کریں","کرنا","کیجیے","فون","میرا","میرے","میری","مجھے","اپنے","اپنا","اپنی","ہے","ہیں","بھی","اور","پر","میں","نے","ذرا","اب","بس","کر","دو","دیں","چاہیے","نہیں","پلیز"];
-          for(i=0;i<utoks.length;i++){
-            if(utoks[i] === "ڈاکٹر"){
-              var nx = utoks[i+1] || "";
-              var candU = (nx && uexpl.indexOf(nx) < 0) ? nx : "";
-              for(j=0;j<utoks.length;j++){
-                var uw = utoks[j];
-                if(uexpl.indexOf(uw) >= 0) continue;
-                if(candU && uw === candU) continue;
-                if(/^[\d\u0660-\u0669\u06F0-\u06F9]+$/.test(uw)) continue;
-                return null;
+            }else if(isArabic(t0) !== isArabic(toks[ti])){
+              return null;
+            }else{
+              cand.push(t0);
+              var j2 = j + 1;
+              while(j2 < toks.length && skip.indexOf(toks[j2]) >= 0) j2++;
+              if(j2 < toks.length){
+                var t1 = toks[j2];
+                if(!explained(t1) && isArabic(t1) === isArabic(toks[ti])) cand.push(t1);
               }
-              return candU;
             }
           }
-          return "";
+          /* Every remaining word must be explained — a role,
+             grammar, command or courtesy word, an honorific, a
+             digit, or part of the extracted name. Anything else,
+             anywhere ("call my doctor please, Khan", "doctor ko
+             call karo, Khan ko"), makes the whole request
+             unresolved. A structure that is fully explained but
+             matched no template and yielded no name is likewise
+             unrecognized — never generic. */
+          for(i=0;i<toks.length;i++){
+            if(cand.indexOf(toks[i]) >= 0) continue;
+            if(!explained(toks[i])) return null;
+          }
+          if(!cand.length) return null;
+          return cand.join(" ");
         }
 
         function callHelperAction(h){
@@ -2364,7 +2412,11 @@
              reaches the family picker. Complete-token matching
              only: no substring tests, so a name containing "dr"
              can never trip this. */
-          var rtoks = low.trim().split(/\s+/);
+          /* Role tokens are read from the UNICODE-PRESERVING
+             token stream (uni), never from the Latin-only string:
+             doctor-intent analysis must see every script in the
+             original utterance. */
+          var rtoks = uni.trim().split(/\s+/);
           if(rtoks.indexOf("doctor") >= 0 || rtoks.indexOf("dr") >= 0 || urduWordPresent("ڈاکٹر") || matchDoctor()){ doctorAction(); return; }
           if(has("pharmacy") || said.indexOf("فارمیسی") >= 0 || said.indexOf("دواخانہ") >= 0){ pharmacyAction(); return; }
           var h = matchHelperName();
@@ -2833,6 +2885,15 @@
            current attachment. */
         var ps = $("papersSend"); if(ps) ps.style.display = "none";
         var pst = $("papersSendToggle"); if(pst) pst.style.display = "none";
+        /* The saved-paper action card (docActions) is a SECOND
+           sending view, and it is hidden too: an already-open
+           paper's SEND IT must never sit beside this card or be
+           tapped to hijack the active manual flow into a
+           different paper. The earlier selection stays preserved
+           internally (docSel); endManualShare() restores a valid
+           card when the flow ends, and selectDoc() — which ends
+           the flow first — shows the newly picked paper's card. */
+        var da = $("docActions"); if(da) da.style.display = "none";
         sec.style.display = "";
         var cn = $("manualCurrentName"); if(cn) cn.textContent = manualShare.name;
         /* Saved-paper route, in order: current paper → SAVE A
@@ -2888,6 +2949,14 @@
         var sec = $("manualShare"); if(sec) sec.style.display = "none";
         var pst = $("papersSendToggle"); if(pst) pst.style.display = "";
         var ps = $("papersSend"); if(ps) ps.style.display = "none";
+        /* Restore the saved-paper action card that
+           renderManualShare() hid — only while a paper is still
+           selected and on the shelf (a deletion may have removed
+           it while the flow was active). When selectDoc() ended
+           the flow, it re-shows the newly picked paper's card
+           itself right after this returns. */
+        var da = $("docActions");
+        if(da) da.style.display = (typeof docSel !== "undefined" && typeof docs !== "undefined" && docSel >= 0 && docs[docSel]) ? "" : "none";
       }
       function showManualShare(o){
         if(manualUrl){ URL.revokeObjectURL(manualUrl); manualUrl = null; }
@@ -3689,6 +3758,20 @@
          returns. If the position cannot be found, the button resets
          and the failure is said plainly. */
       var locPos = null, locPosAt = 0;
+      /* Location requests carry an active-session GENERATION and
+         a REQUEST IDENTITY — the same isolation the recognizer
+         and the screen sharing already use. retireLocSession()
+         bumps both whenever the location session is left or
+         rebuilt (HOME, I AM STUCK, any other panel, and every
+         rebuild of the helper buttons), and each locFindPosition()
+         call takes the next request identity. A geolocation
+         callback that arrives late — after he has gone home, or
+         after a newer request for a different person has already
+         succeeded — is then obsolete: it returns silently BEFORE
+         it can touch the shared position cache (locPos/locPosAt),
+         any button, the shared note, or speech. */
+      var locSession = 0, locReqSeq = 0;
+      function retireLocSession(){ locSession++; locReqSeq++; }
       function locNoteSay(msg){
         var note = $("locNote");
         if(note){ note.textContent = msg; note.classList.add("show"); }
@@ -3713,6 +3796,11 @@
       }
       function locFindPosition(h, a){
         var name = h.name || "Family";
+        /* This request's identity, captured before anything is
+           asked of the device: both callbacks below check it
+           FIRST, and an obsolete callback does nothing at all. */
+        var mySession = locSession, myReq = ++locReqSeq;
+        function isCurrent(){ return mySession === locSession && myReq === locReqSeq; }
         function fail(){
           /* Reset the button to stage one, exactly as it started. */
           a.removeAttribute("data-ready");
@@ -3748,11 +3836,28 @@
         if(locPos && (Date.now() - locPosAt) < 60000){ usePos(locPos); return; }
         locNoteSay("Finding where you are… please wait a moment.");
         navigator.geolocation.getCurrentPosition(function(pos){
+          /* Identity check FIRST — before the shared cache is
+             written: an obsolete success must not rewrite the
+             cache, the note (it would name the wrong person's
+             button), or any button of the newer session. */
+          if(!isCurrent()) return;
           locPos = pos; locPosAt = Date.now();
           usePos(pos);
-        }, fail, {enableHighAccuracy:true, timeout:20000, maximumAge:60000});
+        }, function(){
+          /* Identity check FIRST: an obsolete failure must not
+             overwrite a newer session's found result with the
+             could-not-find note, and must never speak after he
+             has left (HOME / I AM STUCK) or moved on. */
+          if(!isCurrent()) return;
+          fail();
+        }, {enableHighAccuracy:true, timeout:20000, maximumAge:60000});
       }
       function renderLocHelpers(){
+        /* Rebuilding the location buttons starts a NEW location
+           session: any request still pending from the previous
+           buttons is retired, so its late callback lands silently
+           instead of writing into this session. */
+        retireLocSession();
         var wrap = $("locHelpers"), out = $("locOutBtns"), homeB = $("locHomeBtns");
         if(!wrap) return;
         wrap.innerHTML = ""; if(out) out.innerHTML = ""; if(homeB) homeB.innerHTML = "";
