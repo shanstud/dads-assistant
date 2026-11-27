@@ -45,6 +45,17 @@
       .greeting .salam{ font-size:clamp(25px,5vw,33px); font-weight:700; line-height:1.2; margin:0; }
       .greeting .today{ display:inline-block; font-size:clamp(18px,3.6vw,22px); color:var(--ink-soft); margin:4px 0 0; font-weight:700;}
       .greeting .clock{ display:inline-block; font-size:clamp(16px,3.2vw,19px); color:var(--ink-soft); margin:4px 0 0 12px; }
+      /* The first-save "Ready. You can now call …" confirmation
+         lives IN the greeting area: while it is shown it REPLACES
+         the greeting / date / clock lines in place — it is never
+         an extra card stacked above the actions, so the post-save
+         home screen is exactly as tall as the normal one. */
+      .greeting #homeReadyNote{
+        background:none; border:none; box-shadow:none; border-radius:0;
+        margin:0; padding:2px 8px;
+        font-size:clamp(21px,4.4vw,27px); font-weight:700; color:var(--ink); line-height:1.3;
+      }
+      .greeting.ready-on .salam, .greeting.ready-on .today, .greeting.ready-on .clock{ display:none; }
 
       /* ---------- Big home buttons ---------- */
       .grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; align-items:stretch; }
@@ -370,7 +381,7 @@
         .greeting .today{ font-size:18px; margin-top:2px; }
         .greeting .clock{ font-size:16px; margin-top:2px; margin-left:9px; }
 
-        .grid{ grid-template-columns:1fr 1fr; gap:5px; margin-top:6px; }
+        .grid{ grid-template-columns:1fr 1fr; gap:4px; margin-top:4px; }
         .bigbtn{
           min-height:62px; padding:5px 10px; gap:9px;
           font-size:21px; border-radius:14px; border-width:2px; line-height:1.2;
@@ -388,8 +399,8 @@
            fixed bottom bar without scrolling. */
         #homeSetupCta{ margin-top:6px; }
         .cta-text{ font-size:20px; line-height:1.35; margin-bottom:6px; }
-        .setup-link-wrap{ margin-top:6px; }
-        .setup-link{ font-size:17px; padding:14px 16px; min-height:48px; }
+        .setup-link-wrap{ margin-top:4px; }
+        .setup-link{ font-size:17px; padding:11px 16px; min-height:48px; }
 
         .bottombar{ gap:8px; padding:7px 9px calc(7px + env(safe-area-inset-bottom)); border-top-width:3px; }
         .bottombar button{ min-height:50px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
@@ -581,10 +592,11 @@
 
       <!-- ================= HOME ================= -->
       <main id="home">
-        <div class="greeting">
+        <div class="greeting" id="homeGreeting">
           <p class="salam" id="elderGreeting">Assalam-o-Alaikum</p>
           <p class="today" id="todayLine">Today</p>
           <p class="clock" id="clockLine"></p>
+          <div class="note" id="homeReadyNote" role="status"></div>
           <div class="hearwrap">
             <button class="hearbtn" id="hearHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Read My Choices Aloud</button>
           </div>
@@ -598,12 +610,10 @@
           </button>
         </div>
 
-        <div class="note" id="homeReadyNote" role="status"></div>
-
         <div class="grid" id="homeGrid">
           <button class="bigbtn solid bg-plum span2" data-open="panel-voice" id="voiceOpenBtn" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg></span>
-            <span>VOICE HELP — Tap and Speak<span class="sub">Say what you want</span></span>
+            <span>VOICE HELP<span class="sub">Tap and speak.</span></span>
           </button>
 
           <div class="gridhead" id="callFamilyHead" role="heading" aria-level="2"><span class="gh-label">CALL FAMILY</span></div>
@@ -619,12 +629,12 @@
 
           <button class="bigbtn solid bg-amber span-half" data-open="panel-rewrite" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg></span>
-            <span>Fix My Document<span class="sub">4 easy steps</span></span>
+            <span>Fix My Document<span class="sub">4 steps</span></span>
           </button>
 
           <button class="bigbtn solid bg-plum span-half" data-open="panel-docs" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
-            <span>MY PAPERS<span class="sub">Your papers, kept here</span></span>
+            <span>MY PAPERS<span class="sub">Saved papers</span></span>
           </button>
 
           <div class="gridhead" id="moreHead" role="heading" aria-level="2"><span class="gh-label">MORE THINGS</span></div>
@@ -1013,13 +1023,12 @@
         <div class="card" id="manualShare" style="display:none">
           <h3>Send it yourself in WhatsApp</h3>
           <p style="font-size:21px;margin:0 0 6px">You are sending: <b id="manualCurrentName" dir="auto"></b></p>
+          <div class="note" id="manualNote"></div>
           <div id="manualPaperStep" style="display:none">
-            <p style="font-size:21px;margin:10px 0 0"><b>Step 1:</b> this paper lives only inside this app. First save a copy of it on this device:</p>
             <a class="actionbtn bg-blue" id="manualSaveCopy" href="#" download>SAVE A COPY</a>
           </div>
-          <div class="note" id="manualNote"></div>
           <div id="manualHelpersWrap">
-            <p style="font-size:21px;margin:12px 0 0" id="manualRecipientIntro"><b>Then:</b> tap the person's name — WhatsApp opens for them. In WhatsApp tap the paperclip, choose the file, check it is attached, then press Send.</p>
+            <p style="font-size:21px;margin:12px 0 0" id="manualRecipientIntro">After saving, choose a family member below. In WhatsApp, tap the paperclip, attach this saved file, check the attachment, then press Send.</p>
             <div id="manualHelpers" style="margin-top:12px"></div>
           </div>
           <div id="manualSetup" style="display:none">
@@ -2424,6 +2433,48 @@
           pickerAction();
         }
 
+        /* ---- Call intent is script-independent ----
+           Recognized from the UNICODE-PRESERVING token stream
+           (uni) BEFORE the script-based branch split below, and
+           routed through the common resolver. A request that uses
+           Urdu script anywhere but words the call in English or
+           Roman Urdu — "Dr Mehta کو call karo", "call ڈاکٹر
+           Mehta", "ڈاکٹر کو call کرو" — must reach resolveCall()
+           exactly like its single-script forms; the Urdu branch
+           below only recognizes کال / فون and would otherwise
+           drop these into the generic WhatsApp-question fallback
+           (SEND THIS TO the main helper) without ever resolving
+           the call. Complete tokens only, in every script, so a
+           name containing a call word can never trip this. The
+           detected language (kind) still selects the spoken
+           response — it just never decides WHETHER a call is
+           resolved. Negation and the "call me" complete-word
+           behavior are preserved: negation already returned
+           above, and resolveCall()'s own order (911 → doctor →
+           pharmacy → complete name → picker) is unchanged. */
+        var callToks = uni.trim().split(/\s+/);
+        var CALL_TOKENS = ["call", "phone", "ring", "dial", "کال", "فون"];
+        var hasCallIntent = false;
+        for(var cti = 0; cti < callToks.length; cti++){
+          if(CALL_TOKENS.indexOf(callToks[cti]) >= 0){ hasCallIntent = true; break; }
+        }
+        if(hasCallIntent){
+          /* The complete-word "call me" behavior is preserved
+             exactly: it asks the main helper to call HIM, so it is
+             a message, not a call he places — and it still wins
+             over call resolution in every script mix, just as it
+             did ahead of the English call branch. Complete words
+             only: "call Megan" contains no " call me " and
+             resolves to Megan (or the picker) below. */
+          if(low.indexOf(" call me ") >= 0){
+            act("SEND TO " + fhName.toUpperCase(), waLink("Please call me when you can."), true, "bg-blue",
+              "Tap the big button. Your message goes to " + fhName + " on WhatsApp: please call me.");
+            return;
+          }
+          resolveCall();
+          return;
+        }
+
         /* ---- Urdu words ---- */
         if(/[\u0600-\u06FF]/.test(said)){
           /* An explicit 911 call request outranks the generic help
@@ -2897,7 +2948,7 @@
         sec.style.display = "";
         var cn = $("manualCurrentName"); if(cn) cn.textContent = manualShare.name;
         /* Saved-paper route, in order: current paper → SAVE A
-           COPY (step 1) → its instruction → recipient actions. The
+           COPY → the one instruction paragraph → recipient actions. The
            SAVE A COPY points at the flow's OWN URL (manualUrl),
            created once from the retained File — a later selectDoc()
            revoking docOpenUrl can never strand it. */
@@ -2919,7 +2970,22 @@
           var hw = $("manualHelpersWrap"); if(hw) hw.style.display = "";
           renderManualHelpers();
           spoken = manualShare.steps || "";
-          if(note){ note.textContent = spoken; note.classList.add("show"); }
+          /* SINGLE-SEQUENCE card: the visible note is ONLY the
+             short status (nothing was sent) — the attachment
+             instructions live in exactly ONE paragraph, the
+             recipient intro below, whose wording follows the
+             route: the saved-paper route saves a copy first, the
+             picked-file route attaches the file itself. The full
+             steps text is spoken, never duplicated as a second
+             visible instruction paragraph. */
+          var intro = $("manualRecipientIntro");
+          if(intro) intro.textContent = isPaper
+            ? "After saving, choose a family member below. In WhatsApp, tap the paperclip, attach this saved file, check the attachment, then press Send."
+            : "Choose a family member below. In WhatsApp, tap the paperclip, attach the file, check the attachment, then press Send.";
+          if(note){
+            if(manualShare.noteText){ note.textContent = manualShare.noteText; note.classList.add("show"); }
+            else { note.textContent = ""; note.classList.remove("show"); }
+          }
         }else{
           var hw2 = $("manualHelpersWrap"); if(hw2) hw2.style.display = "none";
           var su2 = $("manualSetup"); if(su2) su2.style.display = "";
@@ -2960,7 +3026,7 @@
       }
       function showManualShare(o){
         if(manualUrl){ URL.revokeObjectURL(manualUrl); manualUrl = null; }
-        manualShare = { file:o.file || null, name:o.name || "", paper:!!o.paper, steps:o.steps || "" };
+        manualShare = { file:o.file || null, name:o.name || "", paper:!!o.paper, steps:o.steps || "", noteText:o.noteText || "" };
         openPanel("panel-docs");
         renderManualShare(true);
       }
@@ -2979,7 +3045,8 @@
           file: f,
           name: nm,
           paper: false,
-          steps: "This device cannot send the " + what + " from here, so nothing was sent. Send it yourself instead: under 'Send it yourself in WhatsApp' just below, tap the person's name, then in WhatsApp tap the paperclip, choose " + (nm || ("your " + what)) + ", check it is attached, then press Send."
+          noteText: "This device cannot send this " + what + " from here, so nothing was sent.",
+          steps: "This device cannot send the " + what + " from here, so nothing was sent. Send it yourself instead: choose a family member below. In WhatsApp, tap the paperclip, choose " + (nm || ("your " + what)) + ", check it is attached, then press Send."
         });
       }
       /* The manual section's setup action: into Family Setup with
@@ -3581,7 +3648,8 @@
             file: sendFile,
             name: sendFile.name,
             paper: false,
-            steps: "This device cannot send it from here, so nothing was sent. Send it yourself instead: under 'Send it yourself in WhatsApp' just below, tap the person's name, then in WhatsApp tap the paperclip, choose " + sendFile.name + ", check it is attached, then press Send."
+            noteText: "This device cannot send this file from here, so nothing was sent.",
+            steps: "This device cannot send it from here, so nothing was sent. Send it yourself instead: choose a family member below. In WhatsApp, tap the paperclip, choose " + sendFile.name + ", check it is attached, then press Send."
           });
         }
       });
@@ -3617,6 +3685,12 @@
           list.appendChild(b);
         });
         if(docSel >= docs.length){ docSel = -1; $("docActions").style.display = "none"; }
+        /* Refresh-proofing: a docs re-render (add, delete, Setup
+           round-trip) must never leave the saved-paper action card
+           visible beside an active manual-sharing flow — the
+           manual flow stays the single sending view until FINISH
+           or an explicit shelf selection ends it. */
+        if(manualShare) $("docActions").style.display = "none";
       }
       var docOpenUrl = null;
       function selectDoc(idx){
@@ -3645,8 +3719,12 @@
         dan.textContent = "To send this paper: tap SEND IT below. Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.";
         dan.classList.add("show");
         speak("Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.", "en-US");
-        $("docActions").style.display = "";
-        $("docActions").scrollIntoView({behavior:"smooth", block:"center"});
+        /* Refresh-proofing: selectDoc() ends any manual flow
+           first, so manualShare is clear here — but the show is
+           still gated on it, so NO render path can ever present
+           this card beside an active manual-sharing flow. */
+        $("docActions").style.display = manualShare ? "none" : "";
+        if(!manualShare) $("docActions").scrollIntoView({behavior:"smooth", block:"center"});
       }
       function docToFile(doc){
         var parts = (doc.data || "").split(",");
@@ -3683,6 +3761,12 @@
       /* OPEN IT is a real link: selectDoc() points it at the document, so
          the tap itself opens it — no script-opened window. */
       $("docShare").addEventListener("click", function(){
+        /* Handler-level prohibition, not just a hidden button:
+           while a manual-sharing flow is active it is the ONLY
+           sending flow — this handler must not run at all, not
+           even via a programmatic click on the hidden node, or it
+           would replace the manual flow's current file. */
+        if(manualShare) return;
         var note = $("docActionNote");
         if(docSel<0 || !docs[docSel]) return;
         var f = docToFile(docs[docSel]);
@@ -3708,7 +3792,8 @@
             file: docToFile(docs[docSel]),
             name: docs[docSel].name,
             paper: true,
-            steps: "This device cannot send this paper from here, so nothing was sent. Step 1: tap SAVE A COPY in the 'Send it yourself in WhatsApp' section below — that keeps a copy of this paper on this device. Step 2: tap the person's name there, and in WhatsApp tap the paperclip, choose the copy you just saved, check it is attached, then press Send."
+            noteText: "This device cannot send this paper from here, so nothing was sent.",
+            steps: "This device cannot send this paper from here, so nothing was sent. Tap SAVE A COPY — that keeps a copy of this paper on this device. After saving, choose a family member below. In WhatsApp, tap the paperclip, attach this saved file, check the attachment, then press Send."
           });
         }
       });
@@ -3858,6 +3943,16 @@
            buttons is retired, so its late callback lands silently
            instead of writing into this session. */
         retireLocSession();
+        /* The shared status note belongs to the OLD session too:
+           clear it and hide it here, alongside the generation and
+           button reset. Otherwise a stale "Finding where you
+           are… please wait" (or an old "Found you — tap again")
+           survives beside the freshly reset FIND buttons with no
+           current request able to finish it — he would wait
+           forever for a request that no longer exists. The
+           current session renders its own instructions from here. */
+        var lnReset = $("locNote");
+        if(lnReset){ lnReset.textContent = ""; lnReset.classList.remove("show"); }
         var wrap = $("locHelpers"), out = $("locOutBtns"), homeB = $("locHomeBtns");
         if(!wrap) return;
         wrap.innerHTML = ""; if(out) out.innerHTML = ""; if(homeB) homeB.innerHTML = "";
@@ -4030,6 +4125,16 @@
       $("addApptBtn").addEventListener("click", function(){
         $("apptsEditor").appendChild(apptRow({text:""}));
       });
+      /* The greeting-area "Ready" confirmation is temporary: this
+         timer retires it and brings the greeting / date / clock
+         back. Declared beside the save routine that drives it. */
+      var homeReadyTimer = null;
+      function restoreHomeGreeting(){
+        homeReadyTimer = null;
+        var grt = $("homeGreeting"); if(grt) grt.classList.remove("ready-on");
+        var rn0 = $("homeReadyNote");
+        if(rn0){ rn0.textContent = ""; rn0.classList.remove("show"); }
+      }
       /* One save routine, two buttons: the Save at the end of the
          form and the sticky SAVE SETUP bar that stays above the
          HOME / I AM STUCK bar while the setup panel is open. */
@@ -4135,14 +4240,28 @@
         var rn = $("homeReadyNote");
         if(rn){
           var avn = availability();
+          var grt = $("homeGreeting");
           if(avn.anyCallable){
             var cns = avn.callable.map(function(h){ return avn.nameFor(h); });
             var list = cns.length > 1 ? (cns.slice(0, -1).join(", ") + " or " + cns[cns.length - 1]) : (cns[0] || "");
             rn.textContent = "Ready. You can now call " + list + ".";
             rn.classList.add("show");
+            /* The confirmation REPLACES the greeting / date /
+               clock in the greeting area (the .ready-on rules hide
+               those lines while the note is shown) — it never adds
+               a stacked card above the actions, so the post-save
+               home screen is exactly as tall as the normal one.
+               It is temporary: after a reading pause the greeting
+               returns and the note retires. A later save rebuilds
+               it from the then-current helpers, as before. */
+            if(grt) grt.classList.add("ready-on");
+            if(homeReadyTimer) clearTimeout(homeReadyTimer);
+            homeReadyTimer = setTimeout(restoreHomeGreeting, 20000);
           }else{
             rn.textContent = "";
             rn.classList.remove("show");
+            if(grt) grt.classList.remove("ready-on");
+            if(homeReadyTimer){ clearTimeout(homeReadyTimer); homeReadyTimer = null; }
           }
         }
         if(!wasConfigured){
