@@ -357,7 +357,7 @@
       .voicemic.listening{ background:var(--red); animation:voicepulse 1.2s ease-in-out infinite; }
       @keyframes voicepulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); } }
       @media (prefers-reduced-motion: reduce){ .voicemic.listening{ animation:none; } }
-      .voicemic-label{ font-size:21px; font-weight:700; margin-top:10px; }
+      .voicemic-label{ font-size:20px; line-height:28px; font-weight:700; margin-top:10px; }
       .voice-status{ font-size:22px; font-weight:700; margin:16px 0 0; text-align:center; }
       .voice-said{ font-size:23px; margin-top:14px; background:#FDF3E0; border:3px solid #EBD3A0; border-radius:14px; padding:14px 16px; }
       .voice-reply{ font-size:23px; margin-top:14px; background:#EFF7EE; border:3px solid #BFDDBE; border-radius:14px; padding:14px 16px; }
@@ -464,7 +464,7 @@
         .hearbtn svg{ width:22px; height:22px; }
         .voicemic{ width:102px; height:102px; }
         .voicemic svg{ width:46px; height:46px; }
-        .voicemic-label{ font-size:17px; margin-top:8px; }
+        .voicemic-label{ font-size:20px; line-height:28px; margin-top:8px; }
         .voice-status{ font-size:20px; line-height:1.5; }
         .voice-said, .voice-reply{ font-size:20px; padding:12px 14px; }
         .voice-examples{ font-size:20px; }
@@ -2002,12 +2002,24 @@
            likewise matched ONLY as a complete token of the original,
            un-stripped utterance — never as a substring — so نہال
            (Nehal), which only BEGINS with نہ, is a name, not a negation,
-           and still resolves to that helper's own call action. */
+           and still resolves to that helper's own call action. The
+           same complete-token rule now covers EVERY form the
+           detector knows — English, Roman Urdu and Urdu alike —
+           evaluated against the single token list built below. */
         var negLow = said.replace(/[\u2018\u2019]/g, "'").toLowerCase();
-        var negToks = said.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
-        var isNeg = /\b(not|no|never)\b/.test(negLow) || negLow.indexOf("don't") >= 0 || negLow.indexOf("dont") >= 0 || negLow.indexOf("do not") >= 0
-          || /\b(nahi|nahin|mat|na)\b/.test(negLow) || said.indexOf("\u0646\u06c1\u06cc\u06ba") >= 0 || said.indexOf("\u0645\u062a") >= 0
-          || negToks.indexOf("\u0646\u06c1") >= 0;
+        /* EVERY negation form is tested against this ONE token list,
+           built from the apostrophe-normalized utterance with
+           apostrophes KEPT inside tokens, so "don't" (straight or
+           curly) survives as a single token. No substring test
+           remains anywhere in the check: عصمت and نعمت only END in
+           مت, Dontae only BEGINS with "dont" — as complete tokens
+           they are not مت / dont, so those helpers stay callable,
+           and an explicit 911 request beside such a name still
+           reaches the emergency action below. "do not" needs no
+           entry of its own: its complete "not" token covers it. */
+        var negToks = negLow.split(/[^\p{L}\p{N}']+/u).map(function(t){ return t.replace(/^'+|'+$/g, ""); }).filter(Boolean);
+        var NEG_TOKS = ["not","no","never","don't","dont","nahi","nahin","mat","na","\u0646\u06c1","\u0646\u06c1\u06cc\u06ba","\u0645\u062a"];
+        var isNeg = negToks.some(function(t){ return NEG_TOKS.indexOf(t) >= 0; });
         if(isNeg){
           replyEl.textContent = "I am not sure what you meant. I will not send anything. Tap the microphone and say it again.";
           replyEl.style.display = "";
@@ -3746,7 +3758,7 @@
            SEND IT becomes ready (the paper is open) — not after the
            tap. The share itself still happens only on his click. */
         var dan = $("docActionNote");
-        dan.textContent = "To send this paper: tap SEND IT below. Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.";
+        dan.textContent = "To send this paper: tap SEND IT. Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.";
         dan.classList.add("show");
         speak("Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.", "en-US");
         /* Refresh-proofing: selectDoc() ends any manual flow
