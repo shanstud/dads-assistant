@@ -1026,6 +1026,7 @@
             <p style="font-size:21px;margin:12px 0 0">Family contacts are not set up on this device yet, so there is nobody to send this to. Set up the family first — your file stays picked, and you can come back and send it.</p>
             <button class="actionbtn bg-amber" id="manualSetupBtn" type="button">OPEN FAMILY SETUP</button>
           </div>
+          <button class="actionbtn secondary" id="manualDone" type="button" style="margin-top:16px">FINISH — SEND A DIFFERENT FILE INSTEAD</button>
         </div>
         <h3 style="font-size:24px;margin:20px 0 10px">MY SAVED PAPERS</h3>
         <div class="note show" role="note"><strong>These are copies only. Keep the original papers. These copies can disappear if this browser is cleared.</strong></div>
@@ -1445,6 +1446,10 @@
         /* A new location panel session starts clean: no OPENED marks
            and no prepared links carried over from last time. */
         if(id === "panel-location" && typeof renderLocHelpers === "function") renderLocHelpers();
+        /* Re-entering MY PAPERS with a manual-sharing flow active:
+           re-render that flow from the CURRENT availability, so its
+           recipients, wording and destinations can never be stale. */
+        if(id === "panel-docs" && typeof renderManualShare === "function") renderManualShare(false);
         /* The unavailable-contact recovery state is SPOKEN as well
            as shown: entering I AM STUCK or SEND MY LOCATION with no
            callable helper says the repair instruction out loud. */
@@ -2166,78 +2171,76 @@
            doctor is never offered for it; the generic single-doctor
            shortcut applies only when no name appears anywhere. */
         function namedDoctorCandidate(){
-          var stopEn = ["my","the","a","an","please","now","today","for","me","to","call","is","phone","ring"];
-          var grammar = ["ko","ka","ki","ke","se","karo","kar","karke","bhi","hai","hain","mera","meri","mere","mujhe","wala","wale","wali","nahi","nahin","aur","par","pe","tha","thi","ho","chahiye","number"];
+          var stopEn = ["my","the","a","an","and","or","please","now","today","for","me","to","call","is","phone","ring","him","her","them","he","she","they","it","his","their","this","that","dial","talk","speak","get","connect","can","could","just"];
+          var grammar = ["ko","ka","ki","ke","se","karo","kar","karke","bhi","hai","hain","mera","meri","mere","mujhe","wala","wale","wali","nahi","nahin","aur","par","pe","tha","thi","ho","chahiye","number","apne","apna","apni","yeh","ye","woh","wo","ab","jaldi","zara","karna","karne","kardo","karde","do","de"];
           var skip = ["sahab","sahib","ji"];
-          var toks = low.trim().split(/\s+/);
-          var i, j, k;
-          for(i=0;i<toks.length;i++){
-            if(toks[i] === "doctor" || toks[i] === "dr"){
-              /* The WHOLE request counts, not only the words after
-                 the title: a name-like word immediately BEFORE the
-                 title ("Khan doctor ko call karo") makes this a
-                 NAMED request too. From that word order the name
-                 cannot be extracted reliably, so return null — the
-                 neutral "could not catch the doctor's name"
-                 outcome — and the generic single-doctor shortcut
-                 must never fire for it. Stop words and Roman Urdu
-                 GRAMMAR words before the title are not names, so a
-                 genuinely generic request ("call my doctor",
-                 "doctor ko call karo") still returns "" below. */
-              for(var bj=i-1; bj>=0; bj--){
-                var bt = toks[bj];
-                if(skip.indexOf(bt) >= 0) continue; /* honorific */
-                if(stopEn.indexOf(bt) >= 0 || grammar.indexOf(bt) >= 0) break;
-                return null;
-              }
-              var cand = [];
-              var unreliable = false;
-              for(j=i+1; j<toks.length; j++){
-                var t = toks[j];
-                if(skip.indexOf(t) >= 0) continue; /* honorific — neither name nor grammar */
-                if(stopEn.indexOf(t) >= 0) break;
-                if(grammar.indexOf(t) >= 0){
-                  if(!cand.length){
-                    /* Grammar came first ("doctor ko …"): generic,
-                       UNLESS a name-like word is stranded after the
-                       grammar, before the verb — then the name
-                       cannot be extracted reliably. */
-                    for(k=j+1; k<toks.length; k++){
-                      var t2 = toks[k];
-                      if(stopEn.indexOf(t2) >= 0) break;
-                      if(grammar.indexOf(t2) >= 0 || skip.indexOf(t2) >= 0) continue;
-                      unreliable = true; break;
-                    }
-                  }
-                  break;
-                }
-                cand.push(t);
-                if(cand.length >= 2) break;
-              }
-              if(cand.length) return cand.join(" ");
-              return unreliable ? null : "";
+          var role = ["doctor","dr"];
+          var toks = low.trim().split(/\s+/).filter(Boolean);
+          var i, j;
+          var ti = -1;
+          for(i=0;i<toks.length;i++){ if(role.indexOf(toks[i]) >= 0){ ti = i; break; } }
+          if(ti >= 0){
+            /* The name, when one is spoken right at the title, is
+               still extracted exactly as before ("call Dr Khan" →
+               "khan"), so the not-found message can name it. */
+            var cand = [];
+            for(j=ti+1; j<toks.length; j++){
+              var t = toks[j];
+              if(skip.indexOf(t) >= 0) continue; /* honorific — neither name nor grammar */
+              if(stopEn.indexOf(t) >= 0 || grammar.indexOf(t) >= 0 || role.indexOf(t) >= 0) break;
+              cand.push(t);
+              if(cand.length >= 2) break;
             }
+            /* POSITIVE PROOF OVER THE WHOLE UTTERANCE: role,
+               command, grammar and courtesy words are recognized
+               wherever they appear — the inspection does NOT end
+               at the first such word. The request counts as
+               GENERIC only when every word in it is explained: a
+               role/command/grammar/courtesy word, or part of the
+               name extracted at the title. ANY other word — an
+               unresolved name before the title ("Khan is my
+               doctor, call him"), after a courtesy word ("call my
+               doctor please, Khan"), or stranded after grammar
+               ("doctor ko call karo, Khan ko") — makes the whole
+               request NAMED-but-unresolved: return null, the
+               neutral "could not catch the doctor's name" outcome,
+               and the sole-saved-doctor shortcut must never fire
+               for it. */
+            for(i=0;i<toks.length;i++){
+              var w = toks[i];
+              if(role.indexOf(w) >= 0 || stopEn.indexOf(w) >= 0 || grammar.indexOf(w) >= 0 || skip.indexOf(w) >= 0) continue;
+              if(cand.indexOf(w) >= 0) continue;
+              if(/^\d+$/.test(w)) continue;
+              return null;
+            }
+            return cand.join(" ");
           }
           /* Urdu: the word right after ڈاکٹر is the name — unless it
              is a grammar word (کو / کا / کی / سے …), which makes the
-             request generic. */
+             request generic. The SAME whole-utterance proof applies:
+             every word must be a role/grammar/command word or the
+             extracted name — a name ANYWHERE else ("ڈاکٹر کو کال
+             کرو، خان کو", "خان ڈاکٹر کو کال کرو") returns null, never
+             the generic shortcut. */
           var utoks = said.split(/[\s\u060C\u061B\u061F\u06D4.,!?;:'"()]+/).filter(Boolean);
-          var ustop = ["کو","کا","کی","کے","سے","کال","کرو","فون","میرا","میرے","میری"];
+          var uexpl = ["ڈاکٹر","کو","کا","کی","کے","سے","کال","کرو","کریں","کرنا","کیجیے","فون","میرا","میرے","میری","مجھے","اپنے","اپنا","اپنی","ہے","ہیں","بھی","اور","پر","میں","نے","ذرا","اب","بس","کر","دو","دیں","چاہیے","نہیں","پلیز"];
           for(i=0;i<utoks.length;i++){
             if(utoks[i] === "ڈاکٹر"){
-              /* A name BEFORE the title ("خان ڈاکٹر کو کال کرو") is
-                 a NAMED request too — not reliably extractable from
-                 that word order, so the neutral outcome (null),
-                 never the generic shortcut. A grammar word before
-                 the title ("میرے ڈاکٹر…") stays generic. */
-              var pv = utoks[i-1] || "";
-              if(pv && ustop.indexOf(pv) < 0) return null;
               var nx = utoks[i+1] || "";
-              return (nx && ustop.indexOf(nx) < 0) ? nx : "";
+              var candU = (nx && uexpl.indexOf(nx) < 0) ? nx : "";
+              for(j=0;j<utoks.length;j++){
+                var uw = utoks[j];
+                if(uexpl.indexOf(uw) >= 0) continue;
+                if(candU && uw === candU) continue;
+                if(/^[\d\u0660-\u0669\u06F0-\u06F9]+$/.test(uw)) continue;
+                return null;
+              }
+              return candU;
             }
           }
           return "";
         }
+
         function callHelperAction(h){
           var nm = h.name || "Family";
           var np = normalizePhone(h.phone);
@@ -2482,7 +2485,7 @@
         }
         if(has("send") && has("file", "photo", "picture")){
           go("panel-docs", "Opening MY PAPERS. Tap SEND A PHOTO OR FILE there, pick your file, then tap Send It.");
-          later(function(){ var ps = $("papersSend"); if(ps) ps.style.display = ""; }, 1100);
+          later(function(){ var ps = $("papersSend"); if(ps && !(typeof manualShare !== "undefined" && manualShare)) ps.style.display = ""; }, 1100);
           return;
         }
         if(has("document", "documents", "papers", "paper")){
@@ -2765,60 +2768,141 @@
          context all survive the setup detour (nothing is cleared),
          and SAVE A COPY stays available for app-stored papers. */
       var manualShare = null;
+      /* The manual flow OWNS its document download URL: created
+         from the retained File when the flow renders, used ONLY by
+         its SAVE A COPY, and revoked ONLY when the flow ends —
+         never by selectDoc() or any other paper action (selecting
+         another saved paper ends the flow first, see selectDoc). */
+      var manualUrl = null;
       function renderManualHelpers(){
         var wrap = $("manualHelpers"); if(!wrap) return; wrap.innerHTML = "";
         helpers().forEach(function(h){
-          if(!normalizePhone(h.phone)) return;
+          var np = normalizePhone(h.phone);
+          if(!np) return;
           var b = document.createElement("a");
           b.className = "actionbtn bg-green"; b.textContent = "Open WhatsApp to " + (h.name || "Family");
           b.href = waLinkTo(h.phone, "Assalam-o-Alaikum " + (h.name || "") + ", I want to send you a file.");
           b.target = "_blank"; b.rel = "noopener";
+          /* CLICK-TIME REVALIDATION: a recipient action built
+             before a Family Setup change must not be activatable
+             once its contact changed or was removed. The tap is
+             checked against the CURRENT config: same person, same
+             number → the destination is rebuilt fresh and the tap
+             goes through; anything else → the tap is stopped and
+             this section re-renders from the current config. */
+          (function(builtName, builtPhone, anchor){
+            anchor.addEventListener("click", function(e){
+              var cur = null;
+              helpers().forEach(function(hh){ if((hh.name || "") === builtName && normalizePhone(hh.phone) === builtPhone) cur = hh; });
+              if(!cur){
+                e.preventDefault();
+                renderManualShare(false);
+                var msg = "The family list just changed, so that button was out of date. The buttons here are up to date now — tap the person's name again.";
+                var note = $("manualNote");
+                if(note){ note.textContent = msg; note.classList.add("show"); }
+                speak(msg, "en-US");
+                return;
+              }
+              anchor.href = waLinkTo(cur.phone, "Assalam-o-Alaikum " + (cur.name || "") + ", I want to send you a file.");
+            });
+          })((h.name || ""), np, b);
           wrap.appendChild(b);
         });
       }
-      function showManualShare(o){
-        manualShare = { file:o.file || null, name:o.name || "", paper:!!o.paper };
-        openPanel("panel-docs");
-        var ps = $("papersSend"); if(ps) ps.style.display = "";
+      /* THE renderer for the ACTIVE manual-sharing state: rebuilds
+         the current-file name, the SAVE A COPY destination, the
+         instruction / setup-recovery wording and every recipient
+         label + destination from the RETAINED file and the CURRENT
+         availability(). It runs when the flow starts, after every
+         successful committed Setup save, and whenever MY PAPERS is
+         re-entered while the flow is active — so a helper renamed,
+         renumbered or removed in Setup (Alice→Beth, Sam removed)
+         can never linger here, and a first save from the no-helper
+         state replaces "nobody to send this to" with the new
+         recipients. announce=true also speaks and scrolls (flow
+         entry only); synchronization re-renders stay silent. */
+      function renderManualShare(announce){
         var sec = $("manualShare"); if(!sec) return;
+        if(!manualShare){ sec.style.display = "none"; return; }
+        /* SINGLE ACTIVE SENDING VIEW: while this flow is active,
+           the earlier MY PAPERS file-sending controls are hidden —
+           the papersSend section with its SEND IT and its "Or open
+           WhatsApp first" recipient instructions, and the toggle
+           that opens them. The earlier picked file stays preserved
+           internally (sendFile) but is never displayed as another
+           current attachment. */
+        var ps = $("papersSend"); if(ps) ps.style.display = "none";
+        var pst = $("papersSendToggle"); if(pst) pst.style.display = "none";
         sec.style.display = "";
         var cn = $("manualCurrentName"); if(cn) cn.textContent = manualShare.name;
         /* Saved-paper route, in order: current paper → SAVE A
-           COPY (step 1) → its instruction → recipient actions. */
+           COPY (step 1) → its instruction → recipient actions. The
+           SAVE A COPY points at the flow's OWN URL (manualUrl),
+           created once from the retained File — a later selectDoc()
+           revoking docOpenUrl can never strand it. */
         var pstep = $("manualPaperStep");
-        var isPaper = manualShare.paper && (typeof docSel !== "undefined") && docSel >= 0 && (typeof docs !== "undefined") && docs[docSel];
+        var isPaper = !!manualShare.paper;
         if(pstep){
           pstep.style.display = isPaper ? "" : "none";
           if(isPaper){
+            if(!manualUrl && manualShare.file){ try{ manualUrl = URL.createObjectURL(manualShare.file); }catch(e){ manualUrl = null; } }
             var msc = $("manualSaveCopy");
-            if(msc && (typeof docOpenUrl !== "undefined") && docOpenUrl){ msc.href = docOpenUrl; msc.setAttribute("download", docs[docSel].name); }
+            if(msc && manualUrl){ msc.href = manualUrl; msc.setAttribute("download", manualShare.name); }
           }
         }
         var note = $("manualNote");
         var av = availability();
+        var spoken = "";
         if(av.anyCallable){
           var su = $("manualSetup"); if(su) su.style.display = "none";
           var hw = $("manualHelpersWrap"); if(hw) hw.style.display = "";
           renderManualHelpers();
-          if(note){ note.textContent = o.steps; note.classList.add("show"); }
-          speak(o.steps, "en-US");
+          spoken = manualShare.steps || "";
+          if(note){ note.textContent = spoken; note.classList.add("show"); }
         }else{
           var hw2 = $("manualHelpersWrap"); if(hw2) hw2.style.display = "none";
           var su2 = $("manualSetup"); if(su2) su2.style.display = "";
-          var guide = "Family contacts are not set up on this device yet, so there is nobody to send this to. Tap OPEN FAMILY SETUP below and add the phone numbers — your " + (manualShare.paper ? "paper" : "file") + " (" + manualShare.name + ") stays picked, and you can come back and send it.";
-          if(note){ note.textContent = guide; note.classList.add("show"); }
-          speak(guide, "en-US");
+          spoken = "Family contacts are not set up on this device yet, so there is nobody to send this to. Tap OPEN FAMILY SETUP below and add the phone numbers — your " + (manualShare.paper ? "paper" : "file") + " (" + manualShare.name + ") stays picked, and you can come back and send it.";
+          if(note){ note.textContent = spoken; note.classList.add("show"); }
         }
-        /* Initial scroll/focus goes to the FIRST required step:
-           SAVE A COPY on the saved-paper route; otherwise the
-           section itself — never straight to the recipient list. */
-        if(isPaper){
-          var sc = $("manualSaveCopy");
-          if(sc){ sc.scrollIntoView({ behavior:"smooth", block:"center" }); if(sc.focus) sc.focus({ preventScroll:true }); }
-        }else if(sec.scrollIntoView){
-          sec.scrollIntoView({ behavior:"smooth", block:"center" });
+        if(announce){
+          if(spoken) speak(spoken, "en-US");
+          /* Initial scroll/focus goes to the FIRST required step:
+             SAVE A COPY on the saved-paper route; otherwise the
+             section itself — never straight to the recipient list. */
+          if(isPaper){
+            var sc = $("manualSaveCopy");
+            if(sc){ sc.scrollIntoView({ behavior:"smooth", block:"center" }); if(sc.focus) sc.focus({ preventScroll:true }); }
+          }else if(sec.scrollIntoView){
+            sec.scrollIntoView({ behavior:"smooth", block:"center" });
+          }
         }
       }
+      /* Leaving the manual flow — his explicit way out when he
+         wants a different file: the flow's own URL is revoked (the
+         ONLY place that happens), the state is cleared, the section
+         hides, and the normal MY PAPERS sending controls return. */
+      function endManualShare(){
+        if(manualUrl){ URL.revokeObjectURL(manualUrl); manualUrl = null; }
+        manualShare = null;
+        var sec = $("manualShare"); if(sec) sec.style.display = "none";
+        var pst = $("papersSendToggle"); if(pst) pst.style.display = "";
+        var ps = $("papersSend"); if(ps) ps.style.display = "none";
+      }
+      function showManualShare(o){
+        if(manualUrl){ URL.revokeObjectURL(manualUrl); manualUrl = null; }
+        manualShare = { file:o.file || null, name:o.name || "", paper:!!o.paper, steps:o.steps || "" };
+        openPanel("panel-docs");
+        renderManualShare(true);
+      }
+      /* The manual section's way out: end the flow so a different
+         file can be picked with the normal controls. */
+      $("manualDone").addEventListener("click", function(){
+        endManualShare();
+        speak("OK, that file is put away. Tap SEND A PHOTO OR FILE to pick a different one.", "en-US");
+        window.scrollTo(0, 0);
+      });
+
       function manualShareFallback(what){
         var f = (typeof docPickedFile !== "undefined") ? docPickedFile : null;
         var nm = f ? f.name : "";
@@ -3467,6 +3551,12 @@
       }
       var docOpenUrl = null;
       function selectDoc(idx){
+        /* Selecting a saved paper ENDS any active manual flow
+           first (the flow's own URL is revoked there, and only
+           there): the newly selected paper becomes the one current
+           sending context, and no visible SAVE A COPY can be left
+           pointing at the old flow's document or a revoked URL. */
+        if(manualShare) endManualShare();
         docSel = idx;
         if(docOpenUrl){ URL.revokeObjectURL(docOpenUrl); docOpenUrl = null; }
         docOpenUrl = URL.createObjectURL(docToFile(docs[idx]));
@@ -3568,6 +3658,10 @@
           docSel = -1;
           renderDocs();
           $("docActions").style.display = "none";
+          /* If the removed paper was the manual flow's document,
+             the flow ends with it — it can never present a paper
+             that is no longer on the shelf. */
+          if(manualShare && manualShare.paper) endManualShare();
         }else{
           docs.splice(idx,0,removed);
           docSel = idx;
@@ -3625,7 +3719,15 @@
           a.href = "#";
           if(a._label) a._label.textContent = "FIND MY LOCATION FOR " + name.toUpperCase();
           if(a._sub) a._sub.textContent = "Tap to find where you are first";
-          var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. Tap I AM STUCK below and " + mainHelperLabel() + " will help.";
+          /* The closing direction comes from availability(), NEVER
+             from the main helper's label: with the main helper's
+             number invalid (Alice) but another helper callable
+             (Sam), this message must not promise Alice's help.
+             Callable helpers → the generic I AM STUCK direction;
+             none callable → the Family Setup recovery. */
+          var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. " + (availability().anyCallable
+            ? "Tap I AM STUCK below to ask family for help."
+            : "Family contacts are not set up on this device yet, so there is nobody to ask yet. Ask family to open Family Setup and add the phone numbers.");
           locNoteSay(msg); speak(msg, "en-US");
         }
         if(!("geolocation" in navigator)){ fail(); return; }
@@ -3910,6 +4012,13 @@
         var wasConfigured = availability().anyCallable;
         setup = cand;
         applySetupToHome();
+        /* A manual-sharing flow active behind Setup re-renders from
+           the NEW committed config: renamed, renumbered or removed
+           helpers are replaced everywhere in that flow (no action
+           may keep an old number or a removed person), and a first
+           save from the no-helper state gives it real recipients
+           instead of "nobody to send this to". */
+        if(typeof renderManualShare === "function") renderManualShare(false);
         /* The Home ready note is rebuilt from the NEWLY COMMITTED
            callable helpers after EVERY successful save — never
            left over from an earlier configuration: renaming or
@@ -4112,6 +4221,10 @@
 
       /* ---------------- MY PAPERS: send-a-photo-or-file toggle ---------------- */
       $("papersSendToggle").addEventListener("click", function(){
+        /* While a manual-sharing flow is active it is the single
+           sending view — this section stays hidden until the flow
+           is finished with its FINISH button. */
+        if(manualShare) return;
         var ps = $("papersSend");
         ps.style.display = (ps.style.display === "none" || !ps.style.display) ? "" : "none";
       });
