@@ -1992,10 +1992,22 @@
         }
         var fh = firstHelper();
         var fhName = mainHelperLabel();
-        /* Negation first: a negative phrase must never fire the positive action. */
-        var negLow = said.toLowerCase();
+        /* Negation first: a negative phrase must never fire the positive action.
+           Typographic apostrophes are normalized to straight ones BEFORE
+           the contraction checks, so curly don’t (U+2019) and straight
+           don't are treated identically. Roman Urdu "na" joins
+           nahi/nahin/mat as a COMPLETE-WORD match only (\b…\b) — a name
+           merely containing "na" can never trigger it. Urdu نہ (the
+           negative-command particle in کال نہ کرو / کال نہ کریں) is
+           likewise matched ONLY as a complete token of the original,
+           un-stripped utterance — never as a substring — so نہال
+           (Nehal), which only BEGINS with نہ, is a name, not a negation,
+           and still resolves to that helper's own call action. */
+        var negLow = said.replace(/[\u2018\u2019]/g, "'").toLowerCase();
+        var negToks = said.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
         var isNeg = /\b(not|no|never)\b/.test(negLow) || negLow.indexOf("don't") >= 0 || negLow.indexOf("dont") >= 0 || negLow.indexOf("do not") >= 0
-          || /\b(nahi|nahin|mat)\b/.test(negLow) || said.indexOf("\u0646\u06c1\u06cc\u06ba") >= 0 || said.indexOf("\u0645\u062a") >= 0;
+          || /\b(nahi|nahin|mat|na)\b/.test(negLow) || said.indexOf("\u0646\u06c1\u06cc\u06ba") >= 0 || said.indexOf("\u0645\u062a") >= 0
+          || negToks.indexOf("\u0646\u06c1") >= 0;
         if(isNeg){
           replyEl.textContent = "I am not sure what you meant. I will not send anything. Tap the microphone and say it again.";
           replyEl.style.display = "";
