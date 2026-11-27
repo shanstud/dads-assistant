@@ -7,21 +7,6 @@
     <meta name="theme-color" content="#FFF8EE" />
     <link rel="icon" href="data:," />
     <title>Dad's Assistant</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#146356">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Dad's Assistant">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function () {});
-  });
-}
-</script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
@@ -2426,8 +2411,16 @@ if ('serviceWorker' in navigator) {
             ? "مجھے سمجھ نہیں آیا کہ کس کو کال کرنی ہے۔ میں اندازہ نہیں لگاؤں گا۔ آپ ان کو کال کر سکتے ہیں: " + names + "۔ گھر والا صفحہ کھل رہا ہے — صحیح نام والا سبز کال بٹن دبائیں۔"
             : "I am not sure who you mean, and I will not guess. You can call: " + names + ". Opening the home screen — tap the green Call button for the right person, or say their full name.");
         }
+        /* The ONE emergency-request predicate, shared by every
+           path: resolveCall() uses it, and the routing below runs
+           it BEFORE any callback / help / message branch, so an
+           explicit 911 request can never be swallowed by the
+           "call me" shortcut — in any script or mix of scripts. */
+        function isEmergencyRequest(){
+          return low.indexOf(" 911 ") >= 0 || said.indexOf("\u06f9\u06f1\u06f1") >= 0 || said.indexOf("\u0669\u0661\u0661") >= 0 || has("nine one one") || has("emergency") || said.indexOf("ایمرجنسی") >= 0;
+        }
         function resolveCall(){
-          if(low.indexOf(" 911 ") >= 0 || said.indexOf("\u06f9\u06f1\u06f1") >= 0 || said.indexOf("\u0669\u0661\u0661") >= 0 || has("nine one one") || has("emergency") || said.indexOf("ایمرجنسی") >= 0){ call911Action(); return; }
+          if(isEmergencyRequest()){ call911Action(); return; }
           /* Dr / doctor / ڈاکٹر are complete ROLE TOKENS, checked
              BEFORE any family resolution and independently of
              whether a saved doctor matches: "call Dr Khan" (only
@@ -2447,6 +2440,14 @@ if ('serviceWorker' in navigator) {
           if(h){ callHelperAction(h); return; }
           pickerAction();
         }
+
+        /* ---- Emergency priority: AFTER negation (handled at the
+           top of handleVoice) and BEFORE every callback / help /
+           message branch — including the "call me" shortcut in
+           the call-intent block below. An explicit emergency/911
+           request always gets the deliberate red tel:911 action,
+           never the WhatsApp callback message. ---- */
+        if(isEmergencyRequest()){ call911Action(); return; }
 
         /* ---- Call intent is script-independent ----
            Recognized from the UNICODE-PRESERVING token stream
@@ -2478,7 +2479,9 @@ if ('serviceWorker' in navigator) {
              exactly: it asks the main helper to call HIM, so it is
              a message, not a call he places — and it still wins
              over call resolution in every script mix, just as it
-             did ahead of the English call branch. Complete words
+             did ahead of the English call branch. (An explicit
+             emergency request already returned above, so this
+             only fires when no 911 was asked for.) Complete words
              only: "call Megan" contains no " call me " and
              resolves to Megan (or the picker) below. */
           if(low.indexOf(" call me ") >= 0){
