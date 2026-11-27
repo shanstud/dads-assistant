@@ -545,6 +545,8 @@
         #moreHead{ display:none; }
         #sendFileHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
         #sendFileHelpers .actionbtn{ margin-top:0; }
+        #manualHelpers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+        #manualHelpers .actionbtn{ margin-top:0; }
       }
 
       /* ---------- Mouse-first: a clear hover state on every control,
@@ -1008,6 +1010,23 @@
             <div id="sendFileHelpers"></div>
           </div>
         </div>
+        <div class="card" id="manualShare" style="display:none">
+          <h3>Send it yourself in WhatsApp</h3>
+          <p style="font-size:21px;margin:0 0 6px">You are sending: <b id="manualCurrentName" dir="auto"></b></p>
+          <div id="manualPaperStep" style="display:none">
+            <p style="font-size:21px;margin:10px 0 0"><b>Step 1:</b> this paper lives only inside this app. First save a copy of it on this device:</p>
+            <a class="actionbtn bg-blue" id="manualSaveCopy" href="#" download>SAVE A COPY</a>
+          </div>
+          <div class="note" id="manualNote"></div>
+          <div id="manualHelpersWrap">
+            <p style="font-size:21px;margin:12px 0 0" id="manualRecipientIntro"><b>Then:</b> tap the person's name — WhatsApp opens for them. In WhatsApp tap the paperclip, choose the file, check it is attached, then press Send.</p>
+            <div id="manualHelpers" style="margin-top:12px"></div>
+          </div>
+          <div id="manualSetup" style="display:none">
+            <p style="font-size:21px;margin:12px 0 0">Family contacts are not set up on this device yet, so there is nobody to send this to. Set up the family first — your file stays picked, and you can come back and send it.</p>
+            <button class="actionbtn bg-amber" id="manualSetupBtn" type="button">OPEN FAMILY SETUP</button>
+          </div>
+        </div>
         <h3 style="font-size:24px;margin:20px 0 10px">MY SAVED PAPERS</h3>
         <div class="note show" role="note"><strong>These are copies only. Keep the original papers. These copies can disappear if this browser is cleared.</strong></div>
         <div class="card">
@@ -1043,7 +1062,7 @@
         <h3 class="lochead">I AM HOME NOW</h3>
         <div id="locHomeBtns"></div>
         <div class="note" id="locNote"></div>
-        <div class="note show">This app cannot watch where you are by itself, and it cannot send messages by itself when you leave home. Automatic going-out and coming-home messages come with the family's own Android version of this app. Until then, these buttons are how you tell everyone.</div>
+        <div class="note show" id="locClosingNote">This app cannot watch where you are by itself, and it cannot send messages by itself when you leave home. Automatic going-out and coming-home messages come with the family's own Android version of this app. Until then, these buttons are how you tell everyone.</div>
       </section>
 
       <!-- ================= SETUP ================= -->
@@ -2026,7 +2045,11 @@
            doctors. "Most specific" applies ONLY to OVERLAPPING
            matches: a shorter complete match contained inside a
            longer one's span is discarded (the "John" inside "John
-           Brown"), so John Brown still wins there. But DISTINCT
+           Brown"), so John Brown still wins there. Specificity is
+           per OCCURRENCE: in "call John Brown or John" the John
+           inside John Brown is discarded, but the standalone John
+           is a separate occurrence and survives — two distinct
+           people, so the picker decides. And DISTINCT
            people named in separate parts of the sentence ("call
            Alice or Bob") are never decided between by name length —
            both survive, the result is {many:true}, and the caller
@@ -2039,8 +2062,14 @@
             var nm = (list[i].name || "").toLowerCase().replace(/\s+/g, " ").trim();
             if(!nm) continue;
             var needle = " " + nm + " ";
-            var idx = uni.indexOf(needle);
-            if(idx >= 0) ms.push({ item:list[i], start:idx, end:idx + needle.length });
+            /* EVERY occurrence of the complete name, each with its
+               own text position — specificity (below) is judged per
+               occurrence, never per name. */
+            var from = 0, idx;
+            while((idx = uni.indexOf(needle, from)) >= 0){
+              ms.push({ item:list[i], start:idx, end:idx + needle.length });
+              from = idx + 1;
+            }
           }
           if(!ms.length) return { one:null, many:false };
           var keep = ms.filter(function(m){
@@ -2130,7 +2159,12 @@
            extracted reliably — the caller then gives the neutral
            "I could not catch the doctor's name" explanation instead
            of inventing a name. Roman Urdu GRAMMAR words (ko, karo,
-           ka, ki, se…) are parsed as grammar, never as a name. */
+           ka, ki, se…) are parsed as grammar, never as a name. The
+           WHOLE request is considered: an unresolved name BEFORE
+           the title ("Khan doctor ko call karo", "خان ڈاکٹر کو کال
+           کرو") is a NAMED request too (→ null), so the sole saved
+           doctor is never offered for it; the generic single-doctor
+           shortcut applies only when no name appears anywhere. */
         function namedDoctorCandidate(){
           var stopEn = ["my","the","a","an","please","now","today","for","me","to","call","is","phone","ring"];
           var grammar = ["ko","ka","ki","ke","se","karo","kar","karke","bhi","hai","hain","mera","meri","mere","mujhe","wala","wale","wali","nahi","nahin","aur","par","pe","tha","thi","ho","chahiye","number"];
@@ -2139,6 +2173,23 @@
           var i, j, k;
           for(i=0;i<toks.length;i++){
             if(toks[i] === "doctor" || toks[i] === "dr"){
+              /* The WHOLE request counts, not only the words after
+                 the title: a name-like word immediately BEFORE the
+                 title ("Khan doctor ko call karo") makes this a
+                 NAMED request too. From that word order the name
+                 cannot be extracted reliably, so return null — the
+                 neutral "could not catch the doctor's name"
+                 outcome — and the generic single-doctor shortcut
+                 must never fire for it. Stop words and Roman Urdu
+                 GRAMMAR words before the title are not names, so a
+                 genuinely generic request ("call my doctor",
+                 "doctor ko call karo") still returns "" below. */
+              for(var bj=i-1; bj>=0; bj--){
+                var bt = toks[bj];
+                if(skip.indexOf(bt) >= 0) continue; /* honorific */
+                if(stopEn.indexOf(bt) >= 0 || grammar.indexOf(bt) >= 0) break;
+                return null;
+              }
               var cand = [];
               var unreliable = false;
               for(j=i+1; j<toks.length; j++){
@@ -2174,6 +2225,13 @@
           var ustop = ["کو","کا","کی","کے","سے","کال","کرو","فون","میرا","میرے","میری"];
           for(i=0;i<utoks.length;i++){
             if(utoks[i] === "ڈاکٹر"){
+              /* A name BEFORE the title ("خان ڈاکٹر کو کال کرو") is
+                 a NAMED request too — not reliably extractable from
+                 that word order, so the neutral outcome (null),
+                 never the generic shortcut. A grammar word before
+                 the title ("میرے ڈاکٹر…") stays generic. */
+              var pv = utoks[i-1] || "";
+              if(pv && ustop.indexOf(pv) < 0) return null;
               var nx = utoks[i+1] || "";
               return (nx && ustop.indexOf(nx) < 0) ? nx : "";
             }
@@ -2295,7 +2353,16 @@
         }
         function resolveCall(){
           if(low.indexOf(" 911 ") >= 0 || said.indexOf("\u06f9\u06f1\u06f1") >= 0 || said.indexOf("\u0669\u0661\u0661") >= 0 || has("nine one one") || has("emergency") || said.indexOf("ایمرجنسی") >= 0){ call911Action(); return; }
-          if(has("doctor") || said.indexOf("ڈاکٹر") >= 0 || matchDoctor()){ doctorAction(); return; }
+          /* Dr / doctor / ڈاکٹر are complete ROLE TOKENS, checked
+             BEFORE any family resolution and independently of
+             whether a saved doctor matches: "call Dr Khan" (only
+             Dr Patel saved, Alice a valid helper) stays in the
+             DOCTOR flow — Health + name-not-found — and never
+             reaches the family picker. Complete-token matching
+             only: no substring tests, so a name containing "dr"
+             can never trip this. */
+          var rtoks = low.trim().split(/\s+/);
+          if(rtoks.indexOf("doctor") >= 0 || rtoks.indexOf("dr") >= 0 || urduWordPresent("ڈاکٹر") || matchDoctor()){ doctorAction(); return; }
           if(has("pharmacy") || said.indexOf("فارمیسی") >= 0 || said.indexOf("دواخانہ") >= 0){ pharmacyAction(); return; }
           var h = matchHelperName();
           if(h){ callHelperAction(h); return; }
@@ -2679,24 +2746,93 @@
         note.classList.add("show");
         $("docEmail").href = "mailto:" + encodeURIComponent(firstHelper().email || "") + "?subject=" + encodeURIComponent("Please fix my document") + "&body=" + encodeURIComponent(docFullText());
       });
-      /* UNSUPPORTED-SHARE FALLBACK, shared by every send route:
-         when file sharing is unavailable on this device, the user
-         is NEVER routed to another SEND action that depends on the
-         same capability. Instead he is taken straight to the
-         manual "Or open WhatsApp first" route inside MY PAPERS,
-         the manual steps are shown AND spoken there, and his
-         chosen file and context are preserved (nothing is cleared)
-         so he can attach the file himself in WhatsApp. */
-      function manualShareFallback(what){
+      /* UNSUPPORTED-SHARE FALLBACK — ONE common manual-sharing
+         flow for every send route (document wizard, direct
+         MY PAPERS file, saved paper): when file sharing is
+         unavailable on this device, the user is NEVER routed to
+         another SEND action that depends on the same capability.
+         The ACTUAL File + document context are passed in, and the
+         flow displays THAT file as the current attachment, from
+         its own separate state (manualShare) — an earlier,
+         unrelated MY PAPERS selection (sendFile) is preserved
+         untouched and is never presented as the document being
+         sent. The section is entered through availability():
+         with callable helpers it shows the recipient actions and
+         the attachment steps; with NONE, the person-tapping
+         instructions are replaced by shown AND spoken setup
+         guidance plus an in-view OPEN FAMILY SETUP action. The
+         selected file, the saved-paper selection and the written
+         context all survive the setup detour (nothing is cleared),
+         and SAVE A COPY stays available for app-stored papers. */
+      var manualShare = null;
+      function renderManualHelpers(){
+        var wrap = $("manualHelpers"); if(!wrap) return; wrap.innerHTML = "";
+        helpers().forEach(function(h){
+          if(!normalizePhone(h.phone)) return;
+          var b = document.createElement("a");
+          b.className = "actionbtn bg-green"; b.textContent = "Open WhatsApp to " + (h.name || "Family");
+          b.href = waLinkTo(h.phone, "Assalam-o-Alaikum " + (h.name || "") + ", I want to send you a file.");
+          b.target = "_blank"; b.rel = "noopener";
+          wrap.appendChild(b);
+        });
+      }
+      function showManualShare(o){
+        manualShare = { file:o.file || null, name:o.name || "", paper:!!o.paper };
         openPanel("panel-docs");
         var ps = $("papersSend"); if(ps) ps.style.display = "";
-        var steps = "This device cannot send the " + what + " from here, so nothing was sent. Do it this way instead: tap the person's name under 'Or open WhatsApp first', then in WhatsApp tap the paperclip, choose your " + what + ", check it is attached, then press Send.";
-        var sn = $("sendFileNote");
-        if(sn){ sn.textContent = steps; sn.classList.add("show"); }
-        speak(steps, "en-US");
-        var sfh = $("sendFileHelpers");
-        if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+        var sec = $("manualShare"); if(!sec) return;
+        sec.style.display = "";
+        var cn = $("manualCurrentName"); if(cn) cn.textContent = manualShare.name;
+        /* Saved-paper route, in order: current paper → SAVE A
+           COPY (step 1) → its instruction → recipient actions. */
+        var pstep = $("manualPaperStep");
+        var isPaper = manualShare.paper && (typeof docSel !== "undefined") && docSel >= 0 && (typeof docs !== "undefined") && docs[docSel];
+        if(pstep){
+          pstep.style.display = isPaper ? "" : "none";
+          if(isPaper){
+            var msc = $("manualSaveCopy");
+            if(msc && (typeof docOpenUrl !== "undefined") && docOpenUrl){ msc.href = docOpenUrl; msc.setAttribute("download", docs[docSel].name); }
+          }
+        }
+        var note = $("manualNote");
+        var av = availability();
+        if(av.anyCallable){
+          var su = $("manualSetup"); if(su) su.style.display = "none";
+          var hw = $("manualHelpersWrap"); if(hw) hw.style.display = "";
+          renderManualHelpers();
+          if(note){ note.textContent = o.steps; note.classList.add("show"); }
+          speak(o.steps, "en-US");
+        }else{
+          var hw2 = $("manualHelpersWrap"); if(hw2) hw2.style.display = "none";
+          var su2 = $("manualSetup"); if(su2) su2.style.display = "";
+          var guide = "Family contacts are not set up on this device yet, so there is nobody to send this to. Tap OPEN FAMILY SETUP below and add the phone numbers — your " + (manualShare.paper ? "paper" : "file") + " (" + manualShare.name + ") stays picked, and you can come back and send it.";
+          if(note){ note.textContent = guide; note.classList.add("show"); }
+          speak(guide, "en-US");
+        }
+        /* Initial scroll/focus goes to the FIRST required step:
+           SAVE A COPY on the saved-paper route; otherwise the
+           section itself — never straight to the recipient list. */
+        if(isPaper){
+          var sc = $("manualSaveCopy");
+          if(sc){ sc.scrollIntoView({ behavior:"smooth", block:"center" }); if(sc.focus) sc.focus({ preventScroll:true }); }
+        }else if(sec.scrollIntoView){
+          sec.scrollIntoView({ behavior:"smooth", block:"center" });
+        }
       }
+      function manualShareFallback(what){
+        var f = (typeof docPickedFile !== "undefined") ? docPickedFile : null;
+        var nm = f ? f.name : "";
+        showManualShare({
+          file: f,
+          name: nm,
+          paper: false,
+          steps: "This device cannot send the " + what + " from here, so nothing was sent. Send it yourself instead: under 'Send it yourself in WhatsApp' just below, tap the person's name, then in WhatsApp tap the paperclip, choose " + (nm || ("your " + what)) + ", check it is attached, then press Send."
+        });
+      }
+      /* The manual section's setup action: into Family Setup with
+         the manual-sharing state, the picked files, the saved-paper
+         selection and all written context left exactly as they are. */
+      $("manualSetupBtn").addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
       /* Step 4, second send: the picked photo/file itself, via the share sheet. */
       $("docSendFile").addEventListener("click", function(){
         var note = $("docNote");
@@ -3283,17 +3419,17 @@
         }
         manualSendSteps();
         /* File sharing is unavailable here: do NOT send him to
-           another share-dependent action. The manual "Or open
-           WhatsApp first" route is in this same section — show AND
-           speak its steps, and keep his picked file in place so he
-           can attach exactly that file in WhatsApp. */
+           another share-dependent action. The common manual-sharing
+           flow takes over with THIS picked file as the current
+           attachment; the file stays picked so he can attach
+           exactly that file in WhatsApp. */
         function manualSendSteps(){
-          var steps = "This device cannot send it from here, so nothing was sent. Use 'Or open WhatsApp first' just below instead: tap the person's name, then in WhatsApp tap the paperclip, choose " + sendFile.name + ", check it is attached, then press Send.";
-          note.textContent = steps;
-          note.classList.add("show");
-          speak(steps, "en-US");
-          var sfh = $("sendFileHelpers");
-          if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+          showManualShare({
+            file: sendFile,
+            name: sendFile.name,
+            paper: false,
+            steps: "This device cannot send it from here, so nothing was sent. Send it yourself instead: under 'Send it yourself in WhatsApp' just below, tap the person's name, then in WhatsApp tap the paperclip, choose " + sendFile.name + ", check it is attached, then press Send."
+          });
         }
       });
       function renderSendFileHelpers(){
@@ -3402,19 +3538,19 @@
         }
         manualPaperSteps();
         /* File sharing is unavailable here: never route him to
-           another share-dependent action. This paper lives only
-           inside the app, so the manual route starts with SAVE A
-           COPY (above) to put a copy on the device; then the "Or
-           open WhatsApp first" route in MY PAPERS sends it. The
-           steps are shown AND spoken, and the paper stays selected. */
+           another share-dependent action. The common manual-sharing
+           flow takes over with THIS paper as the current
+           attachment, in order: the paper → SAVE A COPY (step 1,
+           because this paper lives only inside the app) → its
+           instruction → the recipient actions. The paper stays
+           selected throughout. */
         function manualPaperSteps(){
-          var ps = $("papersSend"); if(ps) ps.style.display = "";
-          var steps = "This device cannot send this paper from here, so nothing was sent. First tap SAVE A COPY above — that keeps a copy of this paper on this device. Then use 'Or open WhatsApp first': tap the person's name, and in WhatsApp tap the paperclip, choose the copy you just saved, check it is attached, then press Send.";
-          note.textContent = steps;
-          note.classList.add("show");
-          speak(steps, "en-US");
-          var sfh = $("sendFileHelpers");
-          if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+          showManualShare({
+            file: docToFile(docs[docSel]),
+            name: docs[docSel].name,
+            paper: true,
+            steps: "This device cannot send this paper from here, so nothing was sent. Step 1: tap SAVE A COPY in the 'Send it yourself in WhatsApp' section below — that keeps a copy of this paper on this device. Step 2: tap the person's name there, and in WhatsApp tap the paperclip, choose the copy you just saved, check it is attached, then press Send."
+          });
         }
       });
       $("docRemove").addEventListener("click", function(){ $("docConfirm").style.display = ""; });
@@ -3525,6 +3661,15 @@
         if(lh) lh.textContent = availability().anyCallable
           ? "Tap each name below, one by one, to tell everyone listed here."
           : "Family contacts are not set up on this device yet — ask family to open Family Setup and add the phone numbers, and the names will appear here.";
+        /* The closing note keeps the location-limitations
+           explanation in both cases; only its final sentence
+           follows availability — with no callable helper there are
+           no buttons that tell anyone, so it gives the
+           setup-recovery wording instead. */
+        var lcn = $("locClosingNote");
+        if(lcn) lcn.textContent = availability().anyCallable
+          ? "This app cannot watch where you are by itself, and it cannot send messages by itself when you leave home. Automatic going-out and coming-home messages come with the family's own Android version of this app. Until then, these buttons are how you tell everyone."
+          : "This app cannot watch where you are by itself, and it cannot send messages by itself when you leave home. Automatic going-out and coming-home messages come with the family's own Android version of this app. Until the family phone numbers are added in Family Setup, there is nobody to send to yet — ask family to open Family Setup and add the numbers.";
         /* Recipient guard, empty case: no valid number anywhere →
            no send buttons in any of the three sections, just the
            repair line. */
@@ -3765,20 +3910,35 @@
         var wasConfigured = availability().anyCallable;
         setup = cand;
         applySetupToHome();
+        /* The Home ready note is rebuilt from the NEWLY COMMITTED
+           callable helpers after EVERY successful save — never
+           left over from an earlier configuration: renaming or
+           removing a helper retires the old names (Alice→Beth and
+           Sam removed can no longer read "call Alice or Sam"), and
+           when nobody is callable the note is cleared. A FAILED
+           save returned above, before the commit, so the existing
+           note is preserved exactly as it was. */
+        var rn = $("homeReadyNote");
+        if(rn){
+          var avn = availability();
+          if(avn.anyCallable){
+            var cns = avn.callable.map(function(h){ return avn.nameFor(h); });
+            var list = cns.length > 1 ? (cns.slice(0, -1).join(", ") + " or " + cns[cns.length - 1]) : (cns[0] || "");
+            rn.textContent = "Ready. You can now call " + list + ".";
+            rn.classList.add("show");
+          }else{
+            rn.textContent = "";
+            rn.classList.remove("show");
+          }
+        }
         if(!wasConfigured){
           /* The FIRST successful save finishes on Home, at the top,
-             with a brief confirmation there naming the helpers who
-             can now be called — built from the actual saved callable
-             helpers. Later saves from an already-configured device
-             keep the in-place confirmation below. */
-          var avn = availability();
-          var cns = avn.callable.map(function(h){ return avn.nameFor(h); });
-          var list = cns.length > 1 ? (cns.slice(0, -1).join(", ") + " or " + cns[cns.length - 1]) : (cns[0] || "");
+             with the confirmation note above naming the helpers who
+             can now be called. Later saves from an already-
+             configured device keep the in-place confirmation below. */
           panelStack.length = 0;
           openPanel(null, true);
           window.scrollTo(0, 0);
-          var rn = $("homeReadyNote");
-          if(rn){ rn.textContent = "Ready. You can now call " + list + "."; rn.classList.add("show"); }
           return;
         }
         $("setupSaved").classList.add("show");
@@ -4362,8 +4522,20 @@
              must never stop a newer session. A current failure is
              shown AND spoken. */
           if(scr.peer !== peer) return;
+          /* The recovery wording is built from availability(), not
+             from the main helper's label: it names a CURRENTLY
+             callable helper (never one whose number is invalid),
+             refers to the visible call actions when the callable
+             helper has no saved name, and — when nobody is
+             callable — directs him to OPEN FAMILY SETUP instead of
+             to a call that does not exist. */
+          var avc = availability();
+          var cwho = avc.callable.length ? dispName(avc.callable[0]) : "";
+          var ctail = cwho ? ("call " + cwho + ".")
+            : (avc.anyCallable ? "tap one of the CALL buttons on this screen."
+                               : "tap OPEN FAMILY SETUP to add a family phone number first.");
           var msg = (err && err.name === "NotAllowedError")
-            ? "Screen sharing was cancelled or not allowed. If you did not tap Cancel, use AnyDesk below or call " + mainHelperLabel() + "."
+            ? "Screen sharing was cancelled or not allowed. If you did not tap Cancel, use AnyDesk below or " + ctail
             : "The computer did not share the screen. Tap START, choose Entire screen, then tap Share.";
           screenCleanup("");
           screenSetStatus(msg, true); speak(msg, "en-US");
