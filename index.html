@@ -358,7 +358,11 @@
 
       /* ---------- Phone size: compact, fits the screen ---------- */
       @media (max-width:619px){
-        body{ font-size:18px; padding-bottom:78px; }
+        /* The last home element (the Family Setup tap area) must
+           end at least 12px above the fixed bottom bar: the bar is
+           ~67px tall plus the safe-area inset, so the page bottom
+           padding clears it by ~17px at 375px. */
+        body{ font-size:18px; padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
         .wrap{ padding:8px 10px 28px; }
 
         .greeting{ padding:0 2px 0; }
@@ -385,7 +389,7 @@
         #homeSetupCta{ margin-top:6px; }
         .cta-text{ font-size:20px; line-height:1.35; margin-bottom:6px; }
         .setup-link-wrap{ margin-top:6px; }
-        .setup-link{ font-size:14px; padding:8px 12px; }
+        .setup-link{ font-size:17px; padding:14px 16px; min-height:48px; }
 
         .bottombar{ gap:8px; padding:7px 9px calc(7px + env(safe-area-inset-bottom)); border-top-width:3px; }
         .bottombar button{ min-height:50px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
@@ -404,11 +408,14 @@
         }
         textarea{ min-height:110px; }
         label.flabel{ font-size:18px; margin:14px 0 6px; }
+        /* The two document-wizard field labels stay at 20px — they
+           name the boxes he must fill in. */
+        label.flabel[for="docText"], label.flabel[for="docChange"]{ font-size:20px; }
 
         .actionbtn{ min-height:54px; padding:10px 14px; margin-top:10px; font-size:20px; border-radius:14px; gap:9px; }
         .actionbtn svg{ width:25px; height:25px; }
         .microw{ gap:8px; margin-top:10px; }
-        .micbtn{ flex-basis:150px; min-height:54px; padding:9px 12px; font-size:18px; border-radius:12px; border-width:2px; gap:7px; }
+        .micbtn{ flex-basis:150px; min-height:54px; padding:9px 12px; font-size:20px; border-radius:12px; border-width:2px; gap:7px; }
         .micbtn svg{ width:23px; height:23px; }
         .micstatus{ font-size:20px; padding:10px 12px; }
         .mic-fallback{ font-size:20px; line-height:1.5; padding:12px 14px; }
@@ -442,7 +449,7 @@
         .gridhead .gh-label{ font-size:18px; }
         .lochead{ font-size:21px; margin:18px 0 8px; }
         .hearwrap{ margin-top:2px; }
-        .hearbtn{ min-height:44px; font-size:17px; padding:7px 15px; }
+        .hearbtn{ min-height:62px; font-size:20px; padding:10px 18px; }
         .hearbtn svg{ width:22px; height:22px; }
         .voicemic{ width:102px; height:102px; }
         .voicemic svg{ width:46px; height:46px; }
@@ -582,12 +589,14 @@
         </div>
 
         <div id="homeSetupCta" style="display:none">
-          <p class="cta-text">Family contacts are not set up on this device yet. Until Family Setup is done, the Call and Message buttons cannot appear — there is nobody for them to call.</p>
+          <p class="cta-text" id="homeSetupCtaText">Family contacts are not set up on this device yet. Until Family Setup is done, the Call and Message buttons cannot appear — there is nobody for them to call.</p>
           <button class="bigbtn solid bg-amber" id="homeSetupOpen" type="button" style="width:100%">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
             <span>OPEN FAMILY SETUP<span class="sub">For family — fill in once</span></span>
           </button>
         </div>
+
+        <div class="note" id="homeReadyNote" role="status"></div>
 
         <div class="grid" id="homeGrid">
           <button class="bigbtn solid bg-plum span2" data-open="panel-voice" id="voiceOpenBtn" type="button">
@@ -595,7 +604,7 @@
             <span>VOICE HELP — Tap and Speak<span class="sub">Say what you want</span></span>
           </button>
 
-          <div class="gridhead" role="heading" aria-level="2"><span class="gh-label">CALL FAMILY</span></div>
+          <div class="gridhead" id="callFamilyHead" role="heading" aria-level="2"><span class="gh-label">CALL FAMILY</span></div>
 
           <span id="helpersSlot" style="display:contents"></span>
 
@@ -768,8 +777,8 @@
       <!-- ================= VOICE MODE ================= -->
       <section class="panel" id="panel-voice" aria-label="Voice help">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
-        <h2>Voice Help</h2>
-        <p class="hint">Tap a big microphone and say what you want. I will show you one big button to finish it.</p>
+        <h2>VOICE HELP</h2>
+        <p class="hint">Tap and speak.</p>
         <div class="card">
           <div class="voicemic-wrap">
             <div class="voicemic-col">
@@ -844,7 +853,7 @@
             <p style="margin:12px 0 0">Your words are kept exactly as you say them. Then tap NEXT below.</p>
           </div>
           <button class="actionbtn secondary" id="docExampleToggle" type="button" style="min-height:54px;font-size:20px;margin-top:16px">Show an example</button>
-          <div id="docExamples" style="display:none">
+          <div id="docExamples" hidden>
             <p style="margin:12px 0 0">Any paper can be checked — a will, a letter, a form, anything. You could say: <b>“Please check this paper”</b> — or <b>“Please fix this letter”</b> — or <b>“This is my will, please read it and tell me if it is all right.”</b> For a change: <b>“Change the date to Friday, and make it polite.”</b></p>
           </div>
         </div>
@@ -852,6 +861,7 @@
           <p>A person fixes it properly and sends it back.</p>
           <a class="actionbtn bg-teal" id="docEmail" href="#">SEND BY EMAIL</a>
           <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">SEND TO <span data-hname>Zee</span> — WhatsApp</a>
+          <button class="actionbtn bg-amber" id="docSetupSend" type="button" style="display:none">SET UP FAMILY TO SEND THIS</button>
           <div id="docFileSendWrap" style="display:none">
             <hr class="divider" />
             <p id="docFileSendHow" style="font-size:21px;font-weight:700;margin:0">First send your words above. Then tap this button and choose WhatsApp again — the photo itself will go.</p>
@@ -1009,6 +1019,7 @@
         <div class="card" id="docActions" style="display:none">
           <h3 id="docActionName" dir="auto"></h3>
           <a class="actionbtn bg-teal" id="docOpen" href="#" target="_blank" rel="noopener">OPEN IT</a>
+          <a class="actionbtn bg-blue" id="docSaveCopy" href="#" download style="display:none">SAVE A COPY ON THIS DEVICE</a>
           <button class="actionbtn bg-green" id="docShare" type="button">SEND IT</button>
           <button class="actionbtn bg-red" id="docRemove" type="button">TAKE IT OFF</button>
           <div id="docConfirm" style="display:none">
@@ -1024,7 +1035,7 @@
       <section class="panel" id="panel-location" aria-label="Send my location">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Send My Location</h2>
-        <p class="hint">Tap each name below, one by one, to tell everyone listed here.</p>
+        <p class="hint" id="locHint">Tap each name below, one by one, to tell everyone listed here.</p>
         <h3 class="lochead">SEND MY LOCATION</h3>
         <div id="locHelpers"></div>
         <h3 class="lochead">I AM GOING OUT</h3>
@@ -1130,13 +1141,14 @@
       <section class="panel" id="panel-stuck" aria-label="I am stuck">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Do not worry.</h2>
-        <p class="hint" style="font-size:22px;color:var(--ink)">Nothing is broken. Tap HOME below to start again, or call <span data-hname>Zee</span> — he will help you.</p>
+        <p class="hint" id="stuckHint" style="font-size:22px;color:var(--ink)">Nothing is broken. Tap HOME below to start again, or call <span data-hname>Zee</span> — he will help you.</p>
         <a class="bigbtn solid bg-green" href="#" id="stuckCallZee" style="margin-bottom:16px">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>Call <span data-hname>Zee</span><span class="sub">Tap to talk to <span data-hname>Zee</span> now</span></span>
         </a>
-        <p class="stuck-instruction">Tap each name below, one by one. When you have tapped everyone, your family helpers will all have the message ready in WhatsApp.</p>
+        <p class="stuck-instruction" id="stuckInstruction">Tap each name below, one by one. When you have tapped everyone, your family helpers will all have the message ready in WhatsApp.</p>
         <div id="stuckSendBtns"></div>
+        <div id="stuckSetupSlot"></div>
         <div class="note" id="stuckNote"></div>
       </section>
 
@@ -1293,6 +1305,29 @@
          fall back to neutral wording, never to a hard-coded person. */
       function dispName(h){ return (h && h.name) ? h.name.trim() : ""; }
       function mainHelperLabel(){ return dispName(firstHelper()) || "Family"; }
+      /* ONE shared availability state, computed once here and reused
+         by HOME, Health, Show My Screen, I AM STUCK, Send My Location
+         and the voice picker — so every screen agrees about who can
+         actually be called, and every instruction is generated from
+         the helper its action really represents:
+           mainCallable — the main (first) helper has a valid number;
+           callable     — every helper with a valid number, in order;
+           anyCallable  — at least one helper can be called;
+           nameFor(h)   — the display name every rendered action for
+                          that helper uses (neutral "Family" when no
+                          name is saved — the same fallback the Call
+                          buttons use). */
+      function availability(){
+        var hs = helpers();
+        var callable = hs.filter(function(h){ return normalizePhone(h.phone); });
+        var main = hs.length ? hs[0] : null;
+        return {
+          mainCallable: !!(main && normalizePhone(main.phone)),
+          callable: callable,
+          anyCallable: callable.length > 0,
+          nameFor: function(h){ return dispName(h) || "Family"; }
+        };
+      }
       /* The ONE final-send-step wording for every WhatsApp/share route,
          shown and spoken BEFORE the handoff: the button only OPENS
          WhatsApp; nothing is sent until he taps Send there. */
@@ -1617,25 +1652,39 @@
                 }
               };
               rec.onerror = function(ev){
-                /* Session-generation + identity check: an obsolete
-                   recognition (he escaped with HOME / I AM STUCK, or a
-                   newer microphone session replaced this one) returns
+                /* Identity check FIRST, before any text, label, class
+                   or speech change: an obsolete recognition (he
+                   escaped with HOME / I AM STUCK, or a newer
+                   microphone session replaced this one) returns
                    silently — it must never speak over the new state. */
                 if(attempt !== micAttempt || tok !== sessionToken || (activeRec && activeRec !== rec)) return;
                 failed = true;
                 var msg = micErrorMessage((ev && ev.error) || "");
                 if(activeRec === rec){ activeRec = null; activeBtn = null; }
+                /* The CURRENT recognizer errored: retire its attempt
+                   identity as well as its recognizer reference, so
+                   results delivered after this error are rejected
+                   too. */
+                micAttempt = null;
                 btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
                 if(msg) micSay(btn, msg, true);
               };
               rec.onend = function(){
-                if(activeRec === rec){ activeRec = null; activeBtn = null; }
-                btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
-                /* Obsolete session or attempt: tidy up only. In
-                   particular the "I did not hear anything…"
+                /* Identity check FIRST — before ANY active-state,
+                   class or label change. An obsolete recognizer's
+                   end must never touch the microphone button: it
+                   would make a newer, live microphone look stopped.
+                   In particular the "I did not hear anything…"
                    instruction must NOT be spoken after HOME / I AM
                    STUCK, or over a newer microphone attempt. */
                 if(attempt !== micAttempt || tok !== sessionToken) return;
+                if(activeRec === rec){ activeRec = null; activeBtn = null; }
+                /* The CURRENT recognizer ended: retire its attempt
+                   identity as well as its recognizer reference, so
+                   late results delivered after the end are rejected
+                   too. */
+                micAttempt = null;
+                btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
                 if(target && finalSoFar){ target.focus(); refreshSendLinks(); if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview(); }
                 if(!failed && !heard && !finalSoFar) micSay(btn, micErrorMessage("no-speech"), true);
                 else if(!failed && (heard || finalSoFar)) micSay(btn, "I heard you. Your words are in the box — check them, then tap the big button below.", false);
@@ -1753,7 +1802,7 @@
       $("msgWhats").addEventListener("click", function(e){
         var msg = $("msgText").value.trim(), note = $("msgNote"), t = msgTarget();
         if(!msg){ e.preventDefault(); note.textContent = "First say your message — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!normalizePhone(t.phone)){ e.preventDefault(); var rmsg = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.textContent = rmsg; note.classList.add("show"); speak(rmsg, "en-US"); return; }
+        if(!normalizePhone(t.phone)){ e.preventDefault(); var rmsg = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + mainHelperLabel() + " to add it in Family Setup."; note.textContent = rmsg; note.classList.add("show"); speak(rmsg, "en-US"); return; }
         note.textContent = handoffText(t.name || "your family") + " The answer will come on WhatsApp — you can listen to it there, and reply with your voice.";
         note.classList.add("show");
         $("msgWhats").href = waLinkTo(t.phone, msg);
@@ -1773,8 +1822,11 @@
         var p = dateParts();
         /* The spoken call list is built ONLY from helpers whose
            numbers normalize — an invalid saved helper is never
-           announced as callable. */
-        var names = helpers().filter(function(h){ return normalizePhone(h.phone); }).map(function(h){ return h.name; }).filter(Boolean);
+           announced as callable — and each name uses the SAME
+           neutral fallback as the Call buttons, so a nameless but
+           valid helper is announced as "Family", never dropped. */
+        var av0 = availability();
+        var names = av0.callable.map(function(h){ return av0.nameFor(h); });
         var who = names.length ? ("You can call " + names.join(", ") + ". ") : "";
         speak((elderName() ? elderName() + ". " : "") + "Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
       });
@@ -1836,14 +1888,30 @@
             if(finals.trim()){ heard = true; handleVoice(finals.trim()); }
           };
           rec.onend = function(){
-            if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); }
-            if(attempt !== voiceAttempt || tok !== sessionToken) return; /* obsolete: he escaped, or a newer attempt is live — an old end must never speak "I did not hear anything" over it */
+            /* Identity check FIRST — before the microphone buttons
+               are touched. An obsolete recognizer's end must never
+               clear the listening state: a newer attempt may be
+               live on those same buttons, and an old end must never
+               speak "I did not hear anything" over it. */
+            if(attempt !== voiceAttempt || tok !== sessionToken) return;
+            if(voiceRec === rec) voiceRec = null;
+            /* The CURRENT recognizer ended: retire its attempt
+               identity as well as its recognizer reference, so late
+               results delivered after the end are rejected too. */
+            voiceAttempt = null;
+            setVoiceMic(null);
             if(!failed && !heard) voiceStatus(micErrorMessage("no-speech"));
           };
           rec.onerror = function(ev){
-            if(attempt !== voiceAttempt || voiceRec !== rec) return;
+            /* Identity check FIRST, before any status, class or
+               speech change. */
+            if(attempt !== voiceAttempt || tok !== sessionToken || voiceRec !== rec) return;
             failed = true;
-            voiceRec = null; setVoiceMic(null);
+            voiceRec = null;
+            /* The CURRENT recognizer errored: retire its attempt
+               identity too, so late results are rejected. */
+            voiceAttempt = null;
+            setVoiceMic(null);
             var msg = micErrorMessage((ev && ev.error) || "");
             if(msg){ voiceStatus(msg); speak(msg, "en-US"); }
           };
@@ -1858,7 +1926,7 @@
       $("voiceMicEn").addEventListener("click", function(){ startVoice(this, "en-US"); });
       $("voiceMicUr").addEventListener("click", function(){ startVoice(this, "ur-PK"); });
       $("voiceHear").addEventListener("click", function(){
-        speak("Tap a microphone and just speak. You can say: call " + firstHelper().name + ". I am fine. I need help. Fix my document. Change a document. Or ask: what is the time?", "en-US");
+        speak("Tap a microphone and just speak. You can say: call " + mainHelperLabel() + ". I am fine. I need help. Fix my document. Change a document. Or ask: what is the time?", "en-US");
         voiceStatus("Tap a microphone, then speak.");
       });
       $("voiceOpenBtn").addEventListener("click", function(){
@@ -1947,31 +2015,60 @@
           for(var i=0;i<toks.length;i++) if(toks[i] === word) return true;
           return false;
         }
+        /* Titles are NOT person-identifying aliases — in ANY
+           matcher: "Dr", "doctor" and ڈاکٹر never pick a person by
+           themselves. "Call Dr Khan" with only Dr Patel saved
+           behaves exactly like "call doctor Khan": the requested
+           name (Khan) is resolved first and reported not found —
+           Patel is never selected via the shared title. */
+        var TITLE_WORDS = ["dr", "doctor", "ڈاکٹر"];
+        /* COMPLETE-name resolution by SPAN, shared by helpers and
+           doctors. "Most specific" applies ONLY to OVERLAPPING
+           matches: a shorter complete match contained inside a
+           longer one's span is discarded (the "John" inside "John
+           Brown"), so John Brown still wins there. But DISTINCT
+           people named in separate parts of the sentence ("call
+           Alice or Bob") are never decided between by name length —
+           both survive, the result is {many:true}, and the caller
+           opens the picker / selection screen instead. Spans are
+           measured on the Unicode-preserving string, so Urdu saved
+           names resolve by exactly the same rule. */
+        function pickComplete(list){
+          var ms = [];
+          for(var i=0;i<list.length;i++){
+            var nm = (list[i].name || "").toLowerCase().replace(/\s+/g, " ").trim();
+            if(!nm) continue;
+            var needle = " " + nm + " ";
+            var idx = uni.indexOf(needle);
+            if(idx >= 0) ms.push({ item:list[i], start:idx, end:idx + needle.length });
+          }
+          if(!ms.length) return { one:null, many:false };
+          var keep = ms.filter(function(m){
+            return !ms.some(function(o){
+              return o !== m && o.start <= m.start && o.end >= m.end && (o.end - o.start) > (m.end - m.start);
+            });
+          });
+          var items = [];
+          keep.forEach(function(m){ if(items.indexOf(m.item) < 0) items.push(m.item); });
+          if(items.length === 1) return { one:items[0], many:false };
+          if(items.length > 1) return { one:null, many:true };
+          return { one:null, many:false };
+        }
         function matchHelperName(){
           var hs = helpers();
           var i, nm, parts, w;
-          /* Pass 1: COMPLETE saved names — ALL matches are
-             considered before choosing, in both the Latin string
-             and the Unicode-preserving string. The MOST SPECIFIC
-             (longest) complete match wins, so a shorter saved name
-             never wins inside a longer requested name: "call John
-             Brown" with helpers John AND John Brown reaches John
-             Brown. A tie between different people is genuinely
-             ambiguous → null → the picker. */
-          var best = null, bestLen = -1, tie = false;
-          for(i=0;i<hs.length;i++){
-            nm = (hs[i].name || "").toLowerCase().trim();
-            if(nm && nameSpoken(nm)){
-              if(nm.length > bestLen){ best = hs[i]; bestLen = nm.length; tie = false; }
-              else if(nm.length === bestLen && best !== hs[i]) tie = true;
-            }
-          }
-          if(best) return tie ? null : best;
+          /* Pass 1: COMPLETE saved names, resolved by span (see
+             pickComplete): overlapping specificity only; distinct
+             people named separately are ambiguous → the picker. */
+          var pc = pickComplete(hs);
+          if(pc.one) return pc.one;
+          if(pc.many) return null;
           /* Pass 2: aliases — one name part (a first name or a
-             surname) or the Urdu form of the first name. An alias is
-             accepted ONLY when it identifies exactly ONE person;
-             fragments and shared names are never automatic aliases,
-             so an ambiguous alias falls through to the picker. */
+             surname) or the Urdu form of the first name. Titles are
+             never aliases. An alias is accepted ONLY when it
+             identifies exactly ONE person; fragments and shared
+             names are never automatic aliases, so an ambiguous
+             alias falls through to the picker. */
           var found = null, count = 0;
           for(i=0;i<hs.length;i++){
             nm = (hs[i].name || "").toLowerCase().trim();
@@ -1980,7 +2077,7 @@
             var hit = false;
             if(parts.length > 1){
               for(w=0; w<parts.length; w++){
-                if(parts[w].length >= 2 && nameSpoken(parts[w])){ hit = true; break; }
+                if(parts[w].length >= 2 && TITLE_WORDS.indexOf(parts[w]) < 0 && nameSpoken(parts[w])){ hit = true; break; }
               }
             }
             if(!hit){
@@ -1993,21 +2090,17 @@
         }
         /* A doctor counts as NAMED when their complete saved name —
            or a name part belonging to no other doctor — is spoken.
-           Complete matches are ALL considered (Latin and
-           Unicode-preserving strings); the most specific wins, a
-           tie is ambiguous. */
+           Complete matches resolve by span, exactly like helpers
+           (pickComplete): overlapping specificity only, distinct
+           doctors named separately are ambiguous. Titles are never
+           aliases, and a configured Urdu alias follows the same
+           complete-word unique-match rule as for helpers. */
         function matchDoctor(){
           var ds = doctorsList();
+          var pc = pickComplete(ds);
+          if(pc.one) return pc.one;
+          if(pc.many) return null;
           var i, nm, parts, w;
-          var best = null, bestLen = -1, tie = false;
-          for(i=0;i<ds.length;i++){
-            nm = (ds[i].name || "").toLowerCase().trim();
-            if(nm && nameSpoken(nm)){
-              if(nm.length > bestLen){ best = ds[i]; bestLen = nm.length; tie = false; }
-              else if(nm.length === bestLen && best !== ds[i]) tie = true;
-            }
-          }
-          if(best) return tie ? null : best;
           var found = null, count = 0;
           for(i=0;i<ds.length;i++){
             nm = (ds[i].name || "").toLowerCase().trim();
@@ -2016,8 +2109,12 @@
             var hit = false;
             if(parts.length > 1){
               for(w=0; w<parts.length; w++){
-                if(parts[w].length >= 2 && nameSpoken(parts[w])){ hit = true; break; }
+                if(parts[w].length >= 2 && TITLE_WORDS.indexOf(parts[w]) < 0 && nameSpoken(parts[w])){ hit = true; break; }
               }
+            }
+            if(!hit){
+              var al = UR_ALIAS[parts[0]];
+              if(al && urduWordPresent(al)) hit = true;
             }
             if(hit){ found = ds[i]; count++; }
           }
@@ -2028,19 +2125,46 @@
            "ڈاکٹر خان کو کال کرو") and "" when the request is generic
            ("call my doctor") — so GENERIC and NAMED doctor requests
            are handled differently, and a named-but-unresolved doctor
-           is never silently replaced by a different, callable one. */
+           is never silently replaced by a different, callable one.
+           Returns null when a name was attempted but cannot be
+           extracted reliably — the caller then gives the neutral
+           "I could not catch the doctor's name" explanation instead
+           of inventing a name. Roman Urdu GRAMMAR words (ko, karo,
+           ka, ki, se…) are parsed as grammar, never as a name. */
         function namedDoctorCandidate(){
           var stopEn = ["my","the","a","an","please","now","today","for","me","to","call","is","phone","ring"];
+          var grammar = ["ko","ka","ki","ke","se","karo","kar","karke","bhi","hai","hain","mera","meri","mere","mujhe","wala","wale","wali","nahi","nahin","aur","par","pe","tha","thi","ho","chahiye","number"];
+          var skip = ["sahab","sahib","ji"];
           var toks = low.trim().split(/\s+/);
-          var i, j;
+          var i, j, k;
           for(i=0;i<toks.length;i++){
             if(toks[i] === "doctor" || toks[i] === "dr"){
               var cand = [];
-              for(j=i+1; j<toks.length && cand.length<2; j++){
-                if(stopEn.indexOf(toks[j]) >= 0) break;
-                cand.push(toks[j]);
+              var unreliable = false;
+              for(j=i+1; j<toks.length; j++){
+                var t = toks[j];
+                if(skip.indexOf(t) >= 0) continue; /* honorific — neither name nor grammar */
+                if(stopEn.indexOf(t) >= 0) break;
+                if(grammar.indexOf(t) >= 0){
+                  if(!cand.length){
+                    /* Grammar came first ("doctor ko …"): generic,
+                       UNLESS a name-like word is stranded after the
+                       grammar, before the verb — then the name
+                       cannot be extracted reliably. */
+                    for(k=j+1; k<toks.length; k++){
+                      var t2 = toks[k];
+                      if(stopEn.indexOf(t2) >= 0) break;
+                      if(grammar.indexOf(t2) >= 0 || skip.indexOf(t2) >= 0) continue;
+                      unreliable = true; break;
+                    }
+                  }
+                  break;
+                }
+                cand.push(t);
+                if(cand.length >= 2) break;
               }
-              return cand.join(" ");
+              if(cand.length) return cand.join(" ");
+              return unreliable ? null : "";
             }
           }
           /* Urdu: the word right after ڈاکٹر is the name — unless it
@@ -2075,6 +2199,15 @@
                           : "This is the emergency number. Tap the big red button only for a real emergency.");
         }
         function doctorAction(){
+          /* DISTINCT doctors named in separate parts of the
+             sentence: never decide between them by name length or
+             anything else — the selection screen decides. */
+          if(pickComplete(doctorsList()).many){
+            go("panel-health", kind === "ur"
+              ? "آپ نے ایک سے زیادہ ڈاکٹروں کا نام لیا ہے، میں اندازہ نہیں لگاؤں گا۔ صحت والا صفحہ کھل رہا ہے — صحیح ڈاکٹر کے نام کے نیچے کال والا بٹن دبائیں۔"
+              : "You named more than one doctor, and I will not guess. Opening Health and Hospital — tap the CALL button under the right doctor there.");
+            return;
+          }
           /* A NAMED doctor resolves first: if that doctor's number
              is not saved properly, say so plainly — NEVER substitute
              a different, callable doctor for the one he named. */
@@ -2098,6 +2231,16 @@
              it is callable. (Only Dr Patel saved + "call doctor
              Khan" must NOT reach Patel.) */
           var candName = namedDoctorCandidate();
+          if(candName === null){
+            /* A name was attempted but could not be extracted
+               reliably (Roman Urdu grammar around it): the neutral
+               explanation — never an invented name, never a
+               substituted doctor. */
+            go("panel-health", kind === "ur"
+              ? "مجھے ڈاکٹر کا نام سمجھ نہیں آیا۔ صحت والا صفحہ کھل رہا ہے — اپنے ڈاکٹر کے نام کے نیچے کال والا بٹن دبائیں۔"
+              : "I could not catch the doctor's name. Opening Health and Hospital — tap the CALL button under the right doctor there.");
+            return;
+          }
           if(candName){
             go("panel-health", kind === "ur"
               ? "مجھے آپ کے ڈاکٹروں میں " + candName + " نام کا کوئی ڈاکٹر نہیں ملا۔ صحت والا صفحہ کھل رہا ہے — وہاں صحیح ڈاکٹر کے نام کے نیچے کال والا بٹن دبائیں۔"
@@ -2144,7 +2287,8 @@
               : "I do not have any working family phone numbers on this device yet. Family contacts are not set up here — ask family to open Family Setup and add the numbers.");
             return;
           }
-          var names = callable.map(function(h){ return h.name; }).filter(Boolean).join(", ");
+          var avp = availability();
+          var names = callable.map(function(h){ return avp.nameFor(h); }).join(", ");
           go(null, kind === "ur"
             ? "مجھے سمجھ نہیں آیا کہ کس کو کال کرنی ہے۔ میں اندازہ نہیں لگاؤں گا۔ آپ ان کو کال کر سکتے ہیں: " + names + "۔ گھر والا صفحہ کھل رہا ہے — صحیح نام والا سبز کال بٹن دبائیں۔"
             : "I am not sure who you mean, and I will not guess. You can call: " + names + ". Opening the home screen — tap the green Call button for the right person, or say their full name.");
@@ -2440,6 +2584,22 @@
         }
         syncDocEmailVisibility();
         syncDocPreview();
+        /* Unconfigured state (NO callable helper): Step 4's SEND
+           action is replaced by SET UP FAMILY TO SEND THIS — he is
+           never sent into a missing-number warning with no way
+           forward. His entered document and attachment stay fully
+           intact; only the send actions hide, and they come back
+           by themselves once Family Setup is saved. */
+        var noCall = !availability().anyCallable;
+        var dsb = $("docSetupSend");
+        if(dsb) dsb.style.display = noCall ? "" : "none";
+        if(noCall){
+          $("docSend").style.display = "none";
+          var em3 = $("docEmail"); if(em3) em3.style.display = "none";
+          var fw3 = $("docFileSendWrap"); if(fw3) fw3.style.display = "none";
+        }else{
+          $("docSend").style.display = "";
+        }
       }
       /* EVERY edit to the document text — typing, deleting,
          pasting — bumps the monotonic revision counter. (Speech
@@ -2519,6 +2679,24 @@
         note.classList.add("show");
         $("docEmail").href = "mailto:" + encodeURIComponent(firstHelper().email || "") + "?subject=" + encodeURIComponent("Please fix my document") + "&body=" + encodeURIComponent(docFullText());
       });
+      /* UNSUPPORTED-SHARE FALLBACK, shared by every send route:
+         when file sharing is unavailable on this device, the user
+         is NEVER routed to another SEND action that depends on the
+         same capability. Instead he is taken straight to the
+         manual "Or open WhatsApp first" route inside MY PAPERS,
+         the manual steps are shown AND spoken there, and his
+         chosen file and context are preserved (nothing is cleared)
+         so he can attach the file himself in WhatsApp. */
+      function manualShareFallback(what){
+        openPanel("panel-docs");
+        var ps = $("papersSend"); if(ps) ps.style.display = "";
+        var steps = "This device cannot send the " + what + " from here, so nothing was sent. Do it this way instead: tap the person's name under 'Or open WhatsApp first', then in WhatsApp tap the paperclip, choose your " + what + ", check it is attached, then press Send.";
+        var sn = $("sendFileNote");
+        if(sn){ sn.textContent = steps; sn.classList.add("show"); }
+        speak(steps, "en-US");
+        var sfh = $("sendFileHelpers");
+        if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+      }
       /* Step 4, second send: the picked photo/file itself, via the share sheet. */
       $("docSendFile").addEventListener("click", function(){
         var note = $("docNote");
@@ -2527,16 +2705,17 @@
         if(!f){ note.textContent = "First pick a photo or file in Step 1."; note.classList.add("show"); return; }
         if(canShareFile(f)){
           navigator.share({files:[f], title:f.name}).catch(function(err){
-            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap the button if you want to try again.";
-            else note.textContent = "That did not work. Tap I AM STUCK or use Send My File or Photo.";
-            note.classList.add("show");
+            if(err && err.name === "AbortError"){ note.textContent = "Nothing was sent. Tap the button if you want to try again."; note.classList.add("show"); }
+            else manualShareFallback(what);
           });
           note.textContent = handoffAttachText(dispName(firstHelper()) || "your family") + " Your phone is asking where to send it — choose WhatsApp again.";
           note.classList.add("show"); return;
         }
-        note.textContent = "This device cannot send the " + what + " from here, so nothing was sent. Go back to the home screen, open MY PAPERS and use SEND A PHOTO OR FILE, or tap I AM STUCK.";
-        note.classList.add("show");
+        manualShareFallback(what);
       });
+      /* Step 4's unconfigured replacement action: into Family Setup,
+         with the document and attachment left exactly as they are. */
+      $("docSetupSend").addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
 
       /* ---------------- My Tasks (saved on this device) ---------------- */
       var tasks = [];
@@ -2637,9 +2816,14 @@
           || !apptsList().length
           || (!setup.hospAddr && !doctorsList().some(function(d){ return d.address; }));
         if(!anyEmpty) return;
-        var np = normalizePhone(firstHelper().phone);
-        if(np){
-          slot.appendChild(bigLink("tel:+" + np, "bg-green", "CALL FAMILY TO SET THIS UP", "Tap to call " + mainHelperLabel()));
+        /* The family-help action uses an ACTUAL callable helper —
+           the first one, whichever it is — and its subtitle and its
+           destination are derived from that SAME helper. SET UP
+           FAMILY HELP is offered only when NO helper is callable. */
+        var avh = availability();
+        if(avh.anyCallable){
+          var h0 = avh.callable[0];
+          slot.appendChild(bigLink("tel:+" + normalizePhone(h0.phone), "bg-green", "CALL FAMILY TO SET THIS UP", "Tap to call " + avh.nameFor(h0)));
           return;
         }
         /* No helper is callable: the top action becomes the setup
@@ -2670,7 +2854,7 @@
              at render.) */
           var bd = document.createElement("div"); bd.className = "card";
           var bp = document.createElement("p"); bp.style.margin = "0"; bp.style.fontSize = "23px";
-          bp.textContent = "The pharmacy phone number is not saved properly. Ask " + firstHelper().name + " to fix it in Family Setup.";
+          bp.textContent = "The pharmacy phone number is not saved properly. Ask " + mainHelperLabel() + " to fix it in Family Setup.";
           bd.appendChild(bp); body.appendChild(bd);
         } else body.appendChild(emptyLine("Pharmacy number not saved yet."));
       }
@@ -2701,7 +2885,7 @@
           if(normalizePhone(doc.phone)) card.appendChild(actLink("tel:+" + normalizePhone(doc.phone), "bg-green", "CALL " + (doc.name || "DOCTOR").toUpperCase()));
           else if((doc.phone || "").trim()){
             var bp2 = document.createElement("p");
-            bp2.textContent = "This number is not saved properly. Ask " + firstHelper().name + " to fix it in Family Setup.";
+            bp2.textContent = "This number is not saved properly. Ask " + mainHelperLabel() + " to fix it in Family Setup.";
             card.appendChild(bp2);
           }
           if(doc.address) card.appendChild(actLink("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent((doc.name ? doc.name + " " : "") + doc.address), "bg-blue", "DIRECTIONS"));
@@ -2808,7 +2992,7 @@
       $("grocWhats").addEventListener("click", function(e){
         var list = $("grocText").value.trim(), note = $("grocNote"), t = grocTarget();
         if(!list){ e.preventDefault(); note.textContent = "First say what you need — tap a microphone and speak, or type it in the box."; note.classList.add("show"); return; }
-        if(!normalizePhone(t.phone)){ e.preventDefault(); var rmsg2 = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + firstHelper().name + " to add it in Family Setup."; note.textContent = rmsg2; note.classList.add("show"); speak(rmsg2, "en-US"); return; }
+        if(!normalizePhone(t.phone)){ e.preventDefault(); var rmsg2 = "I do not have a phone number for " + (t.name || "that person") + " yet. Ask " + mainHelperLabel() + " to add it in Family Setup."; note.textContent = rmsg2; note.classList.add("show"); speak(rmsg2, "en-US"); return; }
         note.textContent = handoffText(t.name || "your family");
         note.classList.add("show");
         $("grocWhats").href = waLinkTo(t.phone, "I need these things from the shop:\n" + list);
@@ -2848,13 +3032,40 @@
          that person, not whether he pressed WhatsApp's Send arrow. */
       function renderStuckHelpers(){
         var wrap = $("stuckSendBtns"); if(!wrap) return; wrap.innerHTML = "";
-        /* Recipient guard, empty case: nobody with a valid number
-           means NO send buttons at all — just the repair line. */
-        if(!helpers().some(function(h){ return normalizePhone(h.phone); })){
-          var rp = document.createElement("p");
-          rp.style.cssText = "font-size:21px;font-weight:700;margin:0";
-          rp.textContent = "No family phone numbers are saved properly yet, so there is nobody to send to. Ask family to add the numbers in Family Setup — or tap CALL below if a number appears there.";
-          wrap.appendChild(rp);
+        /* The panel's static copy follows the shared availability
+           state: with NO callable helper, neither the "call … — he
+           will help you" line nor the "tap each name below"
+           instruction may refer to actions that do not exist in
+           this state — the setup-recovery wording replaces them.
+           With helpers callable but the MAIN helper not callable,
+           the hint never names the main helper as the person to
+           call (their button is hidden in this state). */
+        var avs = availability();
+        var sh = $("stuckHint");
+        if(sh) sh.textContent = !avs.anyCallable
+          ? "Nothing is broken. Ask a family member to add their number once."
+          : (avs.mainCallable
+            ? "Nothing is broken. Tap HOME below to start again, or call " + mainHelperLabel() + " — he will help you."
+            : "Nothing is broken. Tap HOME below to start again, or send a message to family below. You can also call from the home screen — the main helper's own number still needs fixing in Family Setup.");
+        var si = $("stuckInstruction");
+        if(si) si.style.display = avs.anyCallable ? "" : "none";
+        /* Unconfigured state: NO send buttons at all, and the view
+           itself carries the way forward — one large OPEN FAMILY
+           SETUP action (the same pattern Health uses), not just an
+           explanation pointing elsewhere. */
+        var sslot = $("stuckSetupSlot");
+        if(sslot){
+          sslot.innerHTML = "";
+          if(!avs.anyCallable){
+            var ssb = document.createElement("button");
+            ssb.type = "button";
+            ssb.className = "bigbtn solid bg-amber"; ssb.style.marginBottom = "16px";
+            var sst = document.createElement("span"); sst.textContent = "OPEN FAMILY SETUP";
+            var sss = document.createElement("span"); sss.className = "sub"; sss.textContent = "For family — fill in once";
+            sst.appendChild(sss); ssb.appendChild(sst);
+            ssb.addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
+            sslot.appendChild(ssb);
+          }
         }
         helpers().forEach(function(h){
           if(!normalizePhone(h.phone)) return;
@@ -2926,16 +3137,38 @@
         var qls = document.querySelectorAll("[data-quicklink]");
         for(var qi2=0; qi2<qls.length; qi2++) qls[qi2].style.display = fhN ? "" : "none";
         var paz = $("passwordAskZee"); if(paz) paz.style.display = fhN ? "" : "none";
-        /* ONE unavailable-contact recovery state: with no callable
-           helper, HOME leads with the OPEN FAMILY SETUP action and
-           its plain explanation; and every instruction is generated
-           from AVAILABLE actions only — the Quick Messages hint
-           never points at hidden send buttons. */
-        var cta = $("homeSetupCta"); if(cta) cta.style.display = fhN ? "none" : "";
+        /* ONE unavailable-contact recovery state, from the shared
+           availability state: while the MAIN helper is not callable,
+           HOME leads with the OPEN FAMILY SETUP action — but its
+           explanation matches reality. When another helper IS
+           callable, their Call buttons below are visible and work,
+           so the text explains only the main-helper repair and never
+           claims the Call buttons cannot appear; the "cannot
+           appear / nobody to call" wording is used only when NO
+           helper is callable. Every instruction is generated from
+           AVAILABLE actions only — the Quick Messages hint never
+           points at hidden send buttons, and it too separates the
+           main-helper repair from the nobody-callable case. */
+        var av = availability();
+        var cta = $("homeSetupCta");
+        if(cta){
+          cta.style.display = av.mainCallable ? "none" : "";
+          var ct = $("homeSetupCtaText");
+          if(ct && !av.mainCallable) ct.textContent = av.anyCallable
+            ? "The main helper's phone number is not saved properly, so the Message and Quick Message buttons cannot appear yet — they all go to the main helper. The Call buttons below still work. Ask family to fix the main helper's number in Family Setup."
+            : "Family contacts are not set up on this device yet. Until Family Setup is done, the Call and Message buttons cannot appear — there is nobody for them to call.";
+        }
         var qh = $("quickHint");
-        if(qh) qh.textContent = fhN
+        if(qh) qh.textContent = av.mainCallable
           ? "Tap one. WhatsApp opens to " + mainHelperLabel() + " with the words ready — tap the green Send arrow there."
-          : "Family contacts are not set up on this device yet, so there is nobody to send to. Ask family to open Family Setup and add the phone numbers — then the message buttons will appear here.";
+          : (av.anyCallable
+            ? "These messages all go to " + mainHelperLabel() + ", whose number is not saved properly yet, so they cannot be sent for now. Ask family to fix the main helper's number in Family Setup — the Call buttons on the home screen still work."
+            : "Family contacts are not set up on this device yet, so there is nobody to send to. Ask family to open Family Setup and add the phone numbers — then the message buttons will appear here.");
+        /* The CALL FAMILY heading exists only while a Call button
+           can appear under it — in the unconfigured state (no
+           callable helper) the empty heading is hidden. */
+        var cfh = $("callFamilyHead");
+        if(cfh) cfh.style.display = av.anyCallable ? "" : "none";
         var slot = $("placesSlot"); slot.innerHTML = "";
         setup.places.forEach(function(pl){
           if(!pl.name || !pl.url) return;
@@ -3042,15 +3275,26 @@
         if(!sendFile){ note.textContent = "First tap the blue button above and pick your file or photo."; note.classList.add("show"); return; }
         if(canShareFile(sendFile)){
           navigator.share({files:[sendFile], title:sendFile.name}).catch(function(err){
-            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap SEND IT if you want to try again.";
-            else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
-            note.classList.add("show");
+            if(err && err.name === "AbortError"){ note.textContent = "Nothing was sent. Tap SEND IT if you want to try again."; note.classList.add("show"); }
+            else manualSendSteps();
           });
           note.textContent = handoffAttachText("your family") + " Your phone is asking where to send it — tap WhatsApp.";
           note.classList.add("show"); return;
         }
-        note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
-        note.classList.add("show");
+        manualSendSteps();
+        /* File sharing is unavailable here: do NOT send him to
+           another share-dependent action. The manual "Or open
+           WhatsApp first" route is in this same section — show AND
+           speak its steps, and keep his picked file in place so he
+           can attach exactly that file in WhatsApp. */
+        function manualSendSteps(){
+          var steps = "This device cannot send it from here, so nothing was sent. Use 'Or open WhatsApp first' just below instead: tap the person's name, then in WhatsApp tap the paperclip, choose " + sendFile.name + ", check it is attached, then press Send.";
+          note.textContent = steps;
+          note.classList.add("show");
+          speak(steps, "en-US");
+          var sfh = $("sendFileHelpers");
+          if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+        }
       });
       function renderSendFileHelpers(){
         var wrap = $("sendFileHelpers"); if(!wrap) return; wrap.innerHTML = "";
@@ -3091,6 +3335,12 @@
         if(docOpenUrl){ URL.revokeObjectURL(docOpenUrl); docOpenUrl = null; }
         docOpenUrl = URL.createObjectURL(docToFile(docs[idx]));
         $("docOpen").href = docOpenUrl;
+        /* SAVE A COPY: this paper lives only inside the app, so a
+           real download copy on the device is offered right here —
+           it is also the first step of the manual send route when
+           file sharing is unavailable. */
+        var dsc = $("docSaveCopy");
+        if(dsc){ dsc.href = docOpenUrl; dsc.setAttribute("download", docs[idx].name); dsc.style.display = ""; }
         $("docActionName").textContent = docs[idx].name;
         $("docConfirm").style.display = "none";
         /* The share instruction is presented and spoken NOW, when
@@ -3118,7 +3368,7 @@
         var pending = files.length, failed = false, tooBig = false;
         function finish(){
           renderDocs();
-          if(failed) note.textContent = "The shelf is full — that document could not be kept here. Ask " + firstHelper().name + " to help.";
+          if(failed) note.textContent = "The shelf is full — that document could not be kept here. Ask " + mainHelperLabel() + " to help.";
           else if(tooBig) note.textContent = "One file was too big for this shelf and was not added. The others are on the shelf below.";
           else note.textContent = "Added. Your document is on the shelf below.";
           note.classList.add("show");
@@ -3143,15 +3393,29 @@
         var f = docToFile(docs[docSel]);
         if(canShareFile(f)){
           navigator.share({files:[f], title:f.name}).catch(function(err){
-            if(err && err.name === "AbortError") note.textContent = "Nothing was sent. Tap SEND IT if you want to try again.";
-            else note.textContent = "That did not work. Use the WhatsApp button below or tap I AM STUCK.";
-            note.classList.add("show");
+            if(err && err.name === "AbortError"){ note.textContent = "Nothing was sent. Tap SEND IT if you want to try again."; note.classList.add("show"); }
+            else manualPaperSteps();
           });
           note.textContent = handoffAttachText("your family") + " Your phone is asking where to send it — tap WhatsApp.";
-        }else{
-          note.textContent = "This cannot be sent from here. Tap ASK OR MESSAGE FAMILY on the home screen and " + firstHelper().name + " will do this with you.";
+          note.classList.add("show");
+          return;
         }
-        note.classList.add("show");
+        manualPaperSteps();
+        /* File sharing is unavailable here: never route him to
+           another share-dependent action. This paper lives only
+           inside the app, so the manual route starts with SAVE A
+           COPY (above) to put a copy on the device; then the "Or
+           open WhatsApp first" route in MY PAPERS sends it. The
+           steps are shown AND spoken, and the paper stays selected. */
+        function manualPaperSteps(){
+          var ps = $("papersSend"); if(ps) ps.style.display = "";
+          var steps = "This device cannot send this paper from here, so nothing was sent. First tap SAVE A COPY above — that keeps a copy of this paper on this device. Then use 'Or open WhatsApp first': tap the person's name, and in WhatsApp tap the paperclip, choose the copy you just saved, check it is attached, then press Send.";
+          note.textContent = steps;
+          note.classList.add("show");
+          speak(steps, "en-US");
+          var sfh = $("sendFileHelpers");
+          if(sfh) sfh.scrollIntoView({ behavior:"smooth", block:"center" });
+        }
       });
       $("docRemove").addEventListener("click", function(){ $("docConfirm").style.display = ""; });
       $("docRemoveNo").addEventListener("click", function(){ $("docConfirm").style.display = "none"; });
@@ -3225,7 +3489,7 @@
           a.href = "#";
           if(a._label) a._label.textContent = "FIND MY LOCATION FOR " + name.toUpperCase();
           if(a._sub) a._sub.textContent = "Tap to find where you are first";
-          var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. Tap I AM STUCK below and " + firstHelper().name + " will help.";
+          var msg = "I could not find where you are. Your location may be turned off, so nothing was sent. Tap I AM STUCK below and " + mainHelperLabel() + " will help.";
           locNoteSay(msg); speak(msg, "en-US");
         }
         if(!("geolocation" in navigator)){ fail(); return; }
@@ -3254,6 +3518,13 @@
         var wrap = $("locHelpers"), out = $("locOutBtns"), homeB = $("locHomeBtns");
         if(!wrap) return;
         wrap.innerHTML = ""; if(out) out.innerHTML = ""; if(homeB) homeB.innerHTML = "";
+        /* The "tap each name below" instruction exists only while
+           names actually appear below; with no callable helper it
+           is replaced by the setup-recovery wording. */
+        var lh = $("locHint");
+        if(lh) lh.textContent = availability().anyCallable
+          ? "Tap each name below, one by one, to tell everyone listed here."
+          : "Family contacts are not set up on this device yet — ask family to open Family Setup and add the phone numbers, and the names will appear here.";
         /* Recipient guard, empty case: no valid number anywhere →
            no send buttons in any of the three sections, just the
            repair line. */
@@ -3489,8 +3760,27 @@
           return;
         }
         $("setupPhoneWarn").classList.remove("show");
+        /* Judged on the OUTGOING setup: was anyone callable before
+           this save? */
+        var wasConfigured = availability().anyCallable;
         setup = cand;
         applySetupToHome();
+        if(!wasConfigured){
+          /* The FIRST successful save finishes on Home, at the top,
+             with a brief confirmation there naming the helpers who
+             can now be called — built from the actual saved callable
+             helpers. Later saves from an already-configured device
+             keep the in-place confirmation below. */
+          var avn = availability();
+          var cns = avn.callable.map(function(h){ return avn.nameFor(h); });
+          var list = cns.length > 1 ? (cns.slice(0, -1).join(", ") + " or " + cns[cns.length - 1]) : (cns[0] || "");
+          panelStack.length = 0;
+          openPanel(null, true);
+          window.scrollTo(0, 0);
+          var rn = $("homeReadyNote");
+          if(rn){ rn.textContent = "Ready. You can now call " + list + "."; rn.classList.add("show"); }
+          return;
+        }
         $("setupSaved").classList.add("show");
         window.scrollTo(0, document.body.scrollHeight);
       }
@@ -3688,7 +3978,7 @@
              stays directly in the SEND click handler, never behind
              an async speech wait. */
           if(typeof syncDocFileUI === "function") syncDocFileUI();
-          if(docPickedFile) speak(handoffAttachText(dispName(firstHelper()) || "your family"), "en-US");
+          if(docPickedFile && availability().anyCallable) speak(handoffAttachText(dispName(firstHelper()) || "your family"), "en-US");
         }
         window.scrollTo(0, 0);
       }
@@ -3724,9 +4014,13 @@
       var exampleBtn = $("docExampleToggle");
       if(exampleBtn) exampleBtn.addEventListener("click", function(){
         var ex = $("docExamples"); if(!ex) return;
-        var show = (ex.style.display === "none" || !ex.style.display);
-        ex.style.display = show ? "" : "none";
-        exampleBtn.textContent = show ? "Hide the example" : "Show an example";
+        /* Visibility lives in the hidden PROPERTY, and the label is
+           derived from the RESULTING state. (The old test read
+           style.display, where the empty string after showing
+           counted as "shown" again — so the second click re-showed
+           instead of hiding.) */
+        ex.hidden = !ex.hidden;
+        exampleBtn.textContent = ex.hidden ? "Show an example" : "Hide the example";
       });
       $("wizBack").addEventListener("click", function(){ showWizStep(wizStep - 1); });
       showWizStep(1);
@@ -3764,6 +4058,24 @@
          the share card leads: one short instruction, then START. */
       function renderScreenCallBtns(){
         var wrap = $("screenCallBtns"); if(!wrap) return; wrap.innerHTML = "";
+        /* Unconfigured state: the CALL FAMILY FOR HELP card must
+           not sit empty (it looks broken) — it carries the same
+           setup action + explanation as the other unconfigured
+           routes. */
+        if(!availability().anyCallable){
+          var scp = document.createElement("p");
+          scp.style.cssText = "font-size:21px;font-weight:700;margin:0 0 12px";
+          scp.textContent = "Ask a family member to add their number once.";
+          wrap.appendChild(scp);
+          var scb = document.createElement("button");
+          scb.type = "button";
+          scb.className = "bigbtn solid bg-amber"; scb.style.marginBottom = "4px";
+          var sct = document.createElement("span"); sct.textContent = "OPEN FAMILY SETUP";
+          var scs = document.createElement("span"); scs.className = "sub"; scs.textContent = "For family — fill in once";
+          sct.appendChild(scs); scb.appendChild(sct);
+          scb.addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
+          wrap.appendChild(scb);
+        }
         helpers().forEach(function(h){
           if(!normalizePhone(h.phone)) return;
           var a = document.createElement("a");
@@ -3779,7 +4091,9 @@
         var anyCall = helpers().some(function(h){ return normalizePhone(h.phone); });
         var ah = $("screenAnydeskHelp");
         if(ah) ah.textContent = anyCall
-          ? "If nothing opened, do not worry. AnyDesk needs one-time setup by " + mainHelperLabel() + ". Tap the CALL " + mainHelperLabel().toUpperCase() + " button on this screen and they will set it up with you."
+          ? (availability().mainCallable
+            ? "If nothing opened, do not worry. AnyDesk needs one-time setup by " + mainHelperLabel() + ". Tap the CALL " + mainHelperLabel().toUpperCase() + " button on this screen and they will set it up with you."
+            : "If nothing opened, do not worry. AnyDesk needs one-time setup by family. Tap one of the CALL buttons on this screen and they will set it up with you.")
           : "If nothing opened, do not worry. AnyDesk needs one-time setup by family. Family contacts are not set up on this device yet — ask family to open Family Setup and add the phone numbers, and call buttons will appear on this screen.";
         var sg = $("screenShareGuide");
         if(sg) sg.textContent = anyCall
