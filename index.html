@@ -48,6 +48,7 @@
 
       /* ---------- Big home buttons ---------- */
       .grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; align-items:stretch; }
+      .grid > *{ min-width:0; }
       @media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
       .grid > .bigbtn{ height:100%; }
       .bigbtn{
@@ -92,6 +93,8 @@
       .lochead{ font-size:24px; margin:22px 0 10px; }
       #locOutBtns, #locHomeBtns{ display:grid; grid-template-columns:1fr; gap:12px; }
       #locHelpers .bigbtn.opened, #locOutBtns .bigbtn.opened, #locHomeBtns .bigbtn.opened{ background:var(--green-dark); }
+      #homeSetupCta{ margin-top:14px; }
+      .cta-text{ font-size:21px; font-weight:700; margin:0 0 10px; }
       .setup-link-wrap{ text-align:center; margin-top:28px; }
       .setup-link{
         display:inline-block; padding:14px 18px; min-height:48px;
@@ -356,16 +359,16 @@
       /* ---------- Phone size: compact, fits the screen ---------- */
       @media (max-width:619px){
         body{ font-size:18px; padding-bottom:78px; }
-        .wrap{ padding:10px 10px 28px; }
+        .wrap{ padding:8px 10px 28px; }
 
         .greeting{ padding:0 2px 0; }
         .greeting .salam{ font-size:24px; line-height:1.2; }
         .greeting .today{ font-size:18px; margin-top:2px; }
         .greeting .clock{ font-size:16px; margin-top:2px; margin-left:9px; }
 
-        .grid{ grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+        .grid{ grid-template-columns:1fr 1fr; gap:5px; margin-top:6px; }
         .bigbtn{
-          min-height:68px; padding:7px 10px; gap:9px;
+          min-height:62px; padding:5px 10px; gap:9px;
           font-size:21px; border-radius:14px; border-width:2px; line-height:1.2;
         }
         /* The MESSAGE card takes the full phone row: beside a Call
@@ -374,10 +377,15 @@
         #homeHelpBtn{ grid-column:1 / -1; }
         .bigbtn .ic{ width:36px; height:36px; border-radius:10px; }
         .bigbtn .ic svg{ width:21px; height:21px; }
-        .bigbtn .sub{ font-size:17px; line-height:1.3; margin-top:2px; }
+        .bigbtn .sub{ font-size:20px; line-height:1.3; margin-top:2px; }
         .emergency-strip{ margin-top:8px; }
-        .setup-link-wrap{ margin-top:12px; }
-        .setup-link{ font-size:14px; padding:10px 12px; }
+        /* Compact first-run CTA at phone size, so the whole home
+           screen — Family Setup link included — stays clear of the
+           fixed bottom bar without scrolling. */
+        #homeSetupCta{ margin-top:6px; }
+        .cta-text{ font-size:20px; line-height:1.35; margin-bottom:6px; }
+        .setup-link-wrap{ margin-top:6px; }
+        .setup-link{ font-size:14px; padding:8px 12px; }
 
         .bottombar{ gap:8px; padding:7px 9px calc(7px + env(safe-area-inset-bottom)); border-top-width:3px; }
         .bottombar button{ min-height:50px; font-size:20px; border-radius:12px; gap:7px; white-space:nowrap; }
@@ -402,19 +410,19 @@
         .microw{ gap:8px; margin-top:10px; }
         .micbtn{ flex-basis:150px; min-height:54px; padding:9px 12px; font-size:18px; border-radius:12px; border-width:2px; gap:7px; }
         .micbtn svg{ width:23px; height:23px; }
-        .micstatus{ font-size:18px; padding:10px 12px; }
-        .mic-fallback{ font-size:19px; line-height:1.5; padding:12px 14px; }
+        .micstatus{ font-size:20px; padding:10px 12px; }
+        .mic-fallback{ font-size:20px; line-height:1.5; padding:12px 14px; }
 
-        .answer{ padding:16px; margin-top:14px; font-size:19px; border-radius:14px; }
-        .note{ font-size:19px; line-height:1.5; padding:12px 14px; }
-        .status{ font-size:18px; }
-        .filepick{ min-height:60px; padding:12px; font-size:19px; border-radius:14px; }
+        .answer{ padding:16px; margin-top:14px; font-size:20px; border-radius:14px; }
+        .note{ font-size:20px; line-height:1.5; padding:12px 14px; }
+        .status{ font-size:20px; }
+        .filepick{ min-height:60px; padding:12px; font-size:20px; border-radius:14px; }
         .filepick svg{ width:25px; height:25px; }
-        .picked{ font-size:17px; }
+        .picked{ font-size:20px; }
         .pickedname{ font-size:21px; }
         .doc-file-big{ font-size:22px; padding:13px; }
         .pagephotos{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
-        .pagephotos a{ font-size:16px; }
+        .pagephotos a{ font-size:20px; }
 
         .taskrow{ padding:12px; gap:10px; border-radius:12px; border-width:2px; margin-bottom:9px; }
         .taskrow .box{ width:36px; height:36px; border-width:3px; border-radius:9px; font-size:23px; }
@@ -430,18 +438,24 @@
         .docbtn{ padding:13px 12px; gap:10px; font-size:19px; border-radius:12px; border-width:2px; margin-bottom:9px; }
         #docText{ min-height:140px !important; }
 
-        .gridhead{ margin-top:2px; gap:9px; }
+        .gridhead{ margin-top:0; gap:9px; }
         .gridhead .gh-label{ font-size:18px; }
         .lochead{ font-size:21px; margin:18px 0 8px; }
-        .hearwrap{ margin-top:4px; }
+        .hearwrap{ margin-top:2px; }
         .hearbtn{ min-height:44px; font-size:17px; padding:7px 15px; }
         .hearbtn svg{ width:22px; height:22px; }
         .voicemic{ width:102px; height:102px; }
         .voicemic svg{ width:46px; height:46px; }
         .voicemic-label{ font-size:17px; margin-top:8px; }
         .voice-status{ font-size:20px; line-height:1.5; }
-        .voice-said, .voice-reply{ font-size:19px; padding:12px 14px; }
-        .voice-examples{ font-size:17px; }
+        .voice-said, .voice-reply{ font-size:20px; padding:12px 14px; }
+        .voice-examples{ font-size:20px; }
+
+        /* MORE THINGS on the phone: ONE column of wide rows — one
+           clear title and at most one short supporting line each. */
+        #panel-more .grid{ grid-template-columns:1fr; }
+        .setup-help summary{ font-size:20px; }
+        .setup-help p{ font-size:20px; }
       }
 
       /* ---------- Desktop: use the whole window, no scrolling ----------
@@ -559,12 +573,20 @@
       <!-- ================= HOME ================= -->
       <main id="home">
         <div class="greeting">
-          <p class="salam" id="elderGreeting">Wazir Ali</p>
+          <p class="salam" id="elderGreeting">Assalam-o-Alaikum</p>
           <p class="today" id="todayLine">Today</p>
           <p class="clock" id="clockLine"></p>
           <div class="hearwrap">
             <button class="hearbtn" id="hearHome" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Read My Choices Aloud</button>
           </div>
+        </div>
+
+        <div id="homeSetupCta" style="display:none">
+          <p class="cta-text">Family contacts are not set up on this device yet. Until Family Setup is done, the Call and Message buttons cannot appear — there is nobody for them to call.</p>
+          <button class="bigbtn solid bg-amber" id="homeSetupOpen" type="button" style="width:100%">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <span>OPEN FAMILY SETUP<span class="sub">For family — fill in once</span></span>
+          </button>
         </div>
 
         <div class="grid" id="homeGrid">
@@ -599,7 +621,7 @@
           <span id="moreHomeWrap" style="display:contents">
           <button class="bigbtn solid bg-teal" data-open="panel-quick" id="moreQuick" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-            <span>Quick Messages<span class="sub">I am fine · Going out · Home · My place</span></span>
+            <span>Quick Messages<span class="sub">I am fine · Going out · Home</span></span>
           </button>
 
           <button class="bigbtn solid bg-amber" data-open="panel-message" id="moreMessage" type="button">
@@ -609,7 +631,7 @@
 
           <button class="bigbtn solid bg-blue" data-open="panel-convert" id="moreConvert" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
-            <span>Change My File<span class="sub">Photos into a PDF · PDF into photos · join PDFs</span></span>
+            <span>Change My File<span class="sub">Photos to PDF · join PDFs</span></span>
           </button>
 
           <button class="bigbtn" data-open="panel-tasks" id="moreTasks" type="button">
@@ -624,12 +646,12 @@
 
           <button class="bigbtn" data-open="panel-health" id="moreHealth" type="button">
             <span class="ic" style="background:#FBE3E0;color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h6.27"/></svg></span>
-            <span>Health &amp; Hospital<span class="sub">Doctors, medicines, appointments, rides</span></span>
+            <span>Health &amp; Hospital<span class="sub">Doctors, medicines, visits</span></span>
           </button>
 
           <button class="bigbtn" data-open="panel-screen" id="moreScreen" type="button">
             <span class="ic ic-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
-            <span>SHOW MY SCREEN TO FAMILY<span class="sub">A family member can watch and help</span></span>
+            <span>SHOW MY SCREEN TO FAMILY<span class="sub">Family can watch and help</span></span>
           </button>
 
           <a class="bigbtn solid bg-blue" href="https://www.facebook.com" id="moreFacebook" target="_blank" rel="noopener">
@@ -662,7 +684,7 @@
 
           <button class="bigbtn solid bg-teal span2" data-open="panel-more" id="moreThingsBtn" type="button">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
-            <span>MORE THINGS — CLICK HERE<span class="sub">All the other things, on one screen</span></span>
+            <span>MORE THINGS<span class="sub">All the other things</span></span>
           </button>
         </div>
 
@@ -675,7 +697,7 @@
       <section class="panel" id="panel-quick" aria-label="Quick messages">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Quick Messages</h2>
-        <p class="hint">Tap one. WhatsApp opens to <span data-hname>Zee</span> with the words ready — tap the green Send arrow there.</p>
+        <p class="hint" id="quickHint">Tap one. WhatsApp opens to <span data-hname>Zee</span> with the words ready — tap the green Send arrow there.</p>
         <div class="grid" style="margin-top:6px">
           <a class="bigbtn solid bg-teal" data-quicklink="fine" href="#" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>I AM FINE<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
           <a class="bigbtn solid bg-blue" data-quicklink="call" href="#" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>PLEASE CALL ME<span class="sub">WhatsApp opens — tap the green Send arrow</span></span></a>
@@ -738,7 +760,7 @@
           <label class="flabel">Who should get the list?</label>
           <div class="chips" id="grocChips"></div>
           <a class="actionbtn bg-green" id="grocWhats" href="#" target="_blank" rel="noopener">SEND MY LIST ON WHATSAPP</a>
-          <p style="font-size:19px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
+          <p style="font-size:20px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
           <div class="note" id="grocNote"></div>
         </div>
       </section>
@@ -786,33 +808,29 @@
       <section class="panel" id="panel-rewrite" aria-label="Rewrite my document">
         <button class="backbtn" data-back type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Go Back</button>
         <h2>Fix My Document</h2>
-        <p class="hint">One step at a time. A person fixes your document and sends it back.</p>
-        <p id="wizStepLabel" style="font-size:24px;font-weight:700;text-align:center;background:#E0F0F0;border:3px solid var(--teal);border-radius:14px;padding:10px;margin:0 0 14px">STEP 1 OF 4</p>
+        <p id="wizStepLabel" style="font-size:24px;font-weight:700;text-align:center;background:#E0F0F0;border:3px solid var(--teal);border-radius:14px;padding:6px 10px;margin:0 0 12px">STEP 1 OF 4</p>
         <div class="note" id="wizWarn" role="alert"></div>
         <div class="card wizstep" data-step="1">
-          <h3>PUT YOUR DOCUMENT</h3>
           <p>Speak it, type it, or pick a photo or file of it.</p>
-          <label class="flabel" for="docText">Your document</label>
-          <textarea id="docText" dir="auto" style="min-height:200px" placeholder="Your letter or document goes here…"></textarea>
+          <label class="filepick" for="docFileInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a Photo or File</label>
+          <input type="file" id="docFileInput" accept="image/*,.pdf,.txt,.doc,.docx" />
+          <div class="picked" id="docFilePicked"></div>
           <div class="microw">
             <button class="micbtn" type="button" data-mic data-target="docText" data-lang="en-US"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span>Speak English</span></button>
             <button class="micbtn" type="button" data-mic data-target="docText" data-lang="ur-PK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg> <span lang="ur">اردو بولیں</span></button>
           </div>
-          <label class="filepick" for="docFileInput" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Pick a Photo or File</label>
-          <input type="file" id="docFileInput" accept="image/*,.pdf,.txt,.doc,.docx" />
-          <div class="picked" id="docFilePicked"></div>
+          <label class="flabel" for="docText">Your document</label>
+          <textarea id="docText" dir="auto" style="min-height:200px" placeholder="Your letter or document goes here…"></textarea>
         </div>
         <div class="card wizstep" data-step="2">
-          <h3>CHECK WHAT YOU PICKED</h3>
           <p>Check it below — LISTEN reads the words you typed or spoke.</p>
           <img class="doc-photo-preview" id="docPhotoPreview" alt="The photo you picked" />
           <div class="doc-file-big" id="docFileBig"></div>
           <div id="docPreview" dir="auto" style="font-size:24px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:#FFFDF8;border:3px solid var(--line);border-radius:14px;padding:16px;min-height:80px">Nothing yet — do Step 1 first.</div>
-          <p id="docFileHearNote" style="display:none;font-size:19px;margin:12px 0 0">LISTEN reads only the words you typed or spoke — a photo or file cannot be read aloud. You can see it here, and it will be sent in Step 4.</p>
+          <p id="docFileHearNote" style="display:none;font-size:20px;margin:12px 0 0">LISTEN reads only the words you typed or spoke — a photo or file cannot be read aloud. You can see it here, and it will be sent in Step 4.</p>
           <button class="actionbtn bg-teal" id="docRead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read It to Me</button>
         </div>
         <div class="card wizstep" data-step="3">
-          <h3>SAY WHAT TO CHANGE</h3>
           <p>Choose one:</p>
           <button class="actionbtn bg-amber" id="docJustCheck" type="button" style="font-size:26px;min-height:84px;margin-bottom:14px">JUST CHECK THIS PAPER</button>
           <button class="actionbtn secondary" id="docWantChange" type="button" style="font-size:26px;min-height:84px">I WANT SOMETHING CHANGED</button>
@@ -831,7 +849,6 @@
           </div>
         </div>
         <div class="card wizstep" data-step="4">
-          <h3>SEND IT</h3>
           <p>A person fixes it properly and sends it back.</p>
           <a class="actionbtn bg-teal" id="docEmail" href="#">SEND BY EMAIL</a>
           <a class="actionbtn bg-amber" id="docSend" href="#" target="_blank" rel="noopener">SEND TO <span data-hname>Zee</span> — WhatsApp</a>
@@ -912,6 +929,7 @@
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>EMERGENCY — CALL 911<span class="sub">Only for a real emergency</span></span>
         </a>
+        <div id="healthSetupSlot"></div>
         <h3 class="lochead">MY DOCTORS</h3>
         <div id="doctorsBody"></div>
         <h3 class="lochead">MY HOSPITAL &amp; PHARMACY</h3>
@@ -919,15 +937,14 @@
         <h3 class="lochead">MY MEDICINES</h3>
         <div id="medsBody"></div>
         <button class="actionbtn bg-teal" id="medsListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read My Medicines</button>
-        <div class="note show">This list is for remembering. Always follow your doctor's words first.</div>
+        <div class="note show" id="medsNote">This list is for remembering. Always follow your doctor's words first.</div>
         <h3 class="lochead">MY APPOINTMENTS</h3>
         <div id="apptsBody"></div>
         <button class="actionbtn bg-teal" id="apptsListen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> LISTEN — Read My Appointments</button>
-        <div class="note show">This app shows your appointments here, but it cannot ring or remind you by itself. Your family will help you keep track.</div>
+        <div class="note show" id="apptsNote">This app shows your appointments here, but it cannot ring or remind you by itself. Your family will help you keep track.</div>
         <h3 class="lochead">GET A RIDE</h3>
         <div id="rideBody"></div>
-        <div class="note show">Uber opens. Check the place name, then tap Confirm in Uber. Or call family instead.</div>
-        <div id="healthSetupSlot"></div>
+        <div class="note show" id="rideNote">Uber opens. Check the place name, then tap Confirm in Uber. Or call family instead.</div>
         <a class="bigbtn solid bg-red" href="tel:911" style="margin-top:8px">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <span>EMERGENCY — Call 911<span class="sub">Only for a real emergency</span></span>
@@ -943,7 +960,7 @@
           <ol class="steps">
             <li><b>1</b> Tap the button for the place below.</li>
             <li><b>2</b> Follow the steps they show you. They may send a code to your phone, or ask you to confirm another way.</li>
-            <li><b>3</b> If you get stuck, tap the yellow button below and <span data-hname>Zee</span> will help you.</li>
+            <li><b>3</b> <span id="pwStep3">If you get stuck, tap the yellow button below and <span data-hname>Zee</span> will help you.</span></li>
           </ol>
         </div>
         <div id="passwordBody"></div>
@@ -1030,7 +1047,7 @@
           <div id="helpersEditor"></div>
           <button class="actionbtn secondary" id="addHelperBtn" type="button">+ Add Another Helper</button>
           <div class="setup-grid" style="margin-top:10px">
-            <div><label class="flabel" for="sElderName">His name</label><input type="text" id="sElderName" placeholder="e.g. Wazir Ali" /></div>
+            <div><label class="flabel" for="sElderName">His name</label><input type="text" id="sElderName" placeholder="Type his name here" /></div>
             <div><label class="flabel" for="sCity">His city (for weather)</label><input type="text" id="sCity" placeholder="e.g. Toronto" /></div>
           </div>
           <details class="setup-help">
@@ -1143,24 +1160,29 @@
             <p style="font-size:21px;margin:0"><b>Step 2.</b> Send the link to whoever will watch. Tap their name and WhatsApp will open with the link ready:</p>
             <div class="screen-code" id="screenCode"></div>
             <div id="screenSendBtns"></div>
-            <p style="font-size:19px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
+            <p style="font-size:20px;margin:10px 0 0">WhatsApp opens — tap the green Send arrow</p>
           </div>
           </div>
           <p id="screenShareGuide" style="display:none;margin:0">In-app screen viewing works on the computer — on this phone it cannot start here. Family can set it up with you on the computer, or use AnyDesk and the call buttons on this screen.</p>
         </div>
 
+        <div class="card" id="screenCallCard">
+          <h3>CALL FAMILY FOR HELP</h3>
+          <div id="screenCallBtns"></div>
+        </div>
+
         <div class="card" id="screenAnydeskCard">
           <h3>IF <span data-hname>Zee</span> NEEDS TO CLICK FOR YOU — AnyDesk</h3>
-          <p>Sometimes watching is not enough and <span data-hname>Zee</span> needs to click for you. That is what AnyDesk is for. Tap the button and AnyDesk opens. If <span data-hname>Zee</span> has already set it up for you, he can then connect and help.</p>
+          <p>Sometimes family needs to click for you, not just watch — AnyDesk does that.</p>
           <a class="bigbtn solid bg-teal" id="screenOpen" href="anydesk://" style="margin-bottom:16px">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span>
             <span>Open AnyDesk<span class="sub">Tap — AnyDesk will open</span></span>
           </a>
-          <p style="margin:0;font-size:21px">If nothing opened, do not worry. AnyDesk needs one-time setup by <span data-hname>Zee</span>. Tap CALL <span data-hname>Zee</span> below and he will set it up with you.</p>
-        </div>
-        <div class="card" id="screenCallCard">
-          <h3>CALL FAMILY FOR HELP</h3>
-          <div id="screenCallBtns"></div>
+          <details class="setup-help">
+            <summary>How AnyDesk setup works</summary>
+            <p>Tap OPEN ANYDESK above and AnyDesk opens. If family has already set it up for you, they can then connect and help.</p>
+            <p style="margin:0;font-size:21px" id="screenAnydeskHelp">If nothing opened, do not worry. AnyDesk needs one-time setup by family. Tap the CALL button on this screen and they will set it up with you.</p>
+          </details>
         </div>
 
         <div class="card" id="screenAboutCard">
@@ -1219,20 +1241,36 @@
         zeeEmail:"", amreenEmail:"", zehraEmail:"",
         helpers:[],
         doctors:[], medicines:[], appointments:[], groceryLink:"",
-        elderName:"Wazir Ali",
+        elderName:"",
         city:"", emailReset:"https://accounts.google.com/signin/recovery", emailChoice:"both",
         hospName:"", hospAddr:"", docName:"", docPhone:"", pharmName:"", pharmPhone:"",
         places:[]
       };
       var setup = {};
-      try{ setup = Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem("dadSetup")||"{}")); }
+      var helpersListWasSaved = false;
+      try{
+        var storedCfg = JSON.parse(localStorage.getItem("dadSetup")||"{}");
+        /* Whether the helpers LIST itself was ever saved decides
+           whether the legacy person-named fields may be read for
+           one-time migration (below). A saved list — even an
+           explicitly EMPTY one — is authoritative. */
+        helpersListWasSaved = !!storedCfg && Object.prototype.hasOwnProperty.call(storedCfg, "helpers");
+        setup = Object.assign({}, DEFAULTS, storedCfg);
+      }
       catch(e){ setup = Object.assign({}, DEFAULTS); }
       if(!Array.isArray(setup.places)) setup.places = [];
       if(!Array.isArray(setup.helpers)) setup.helpers = [];
       if(!Array.isArray(setup.doctors)) setup.doctors = [];
       if(!Array.isArray(setup.medicines)) setup.medicines = [];
       if(!Array.isArray(setup.appointments)) setup.appointments = [];
-      if(!setup.helpers.length){
+      if(!helpersListWasSaved && !setup.helpers.length){
+        /* One-time migration ONLY for a config saved before the
+           helpers list existed (the list itself was never saved):
+           the legacy person-named fields are read into the list.
+           Once a list has been saved — even an explicitly empty
+           one — it is AUTHORITATIVE: no code path may insert a
+           person into a saved config, and the legacy fields are
+           never written back with a name attached. */
         if(setup.zeePhone || setup.zeeEmail) setup.helpers.push({name:"Zee", phone:setup.zeePhone||"", email:setup.zeeEmail||""});
         if(setup.amreenPhone || setup.amreenEmail) setup.helpers.push({name:"Amreen", phone:setup.amreenPhone||"", email:setup.amreenEmail||""});
         if(setup.zehraPhone || setup.zehraEmail) setup.helpers.push({name:"Zehra", phone:setup.zehraPhone||"", email:setup.zehraEmail||""});
@@ -1245,9 +1283,12 @@
       function medsList(){ return (setup.medicines || []).filter(function(m){ return m && (m.name || m.when); }); }
       function apptsList(){ return (setup.appointments || []).filter(function(a){ return a && a.text; }); }
       function firstHelper(){ var hs = helpers(); return hs.length ? hs[0] : {name:"Family", phone:"", email:""}; }
-      /* His name, from Family Setup ("His name", default "Wazir Ali"):
-         drives the greeting and the email subjects. */
-      function elderName(){ var n = (setup.elderName || "").trim(); return n || "Wazir Ali"; }
+      /* His name, from Family Setup ("His name"). The shipped
+         default is EMPTY — no name is baked into this file. When no
+         name is entered, the greeting and the outgoing email
+         subjects use neutral wording instead; a device that saved
+         a name keeps using exactly that name. */
+      function elderName(){ return (setup.elderName || "").trim(); }
       /* A helper's display name, or "" when no name is saved — labels
          fall back to neutral wording, never to a hard-coded person. */
       function dispName(h){ return (h && h.name) ? h.name.trim() : ""; }
@@ -1350,6 +1391,13 @@
         /* A new location panel session starts clean: no OPENED marks
            and no prepared links carried over from last time. */
         if(id === "panel-location" && typeof renderLocHelpers === "function") renderLocHelpers();
+        /* The unavailable-contact recovery state is SPOKEN as well
+           as shown: entering I AM STUCK or SEND MY LOCATION with no
+           callable helper says the repair instruction out loud. */
+        if((id === "panel-stuck" || id === "panel-location") && typeof helpers === "function" && typeof speak === "function"
+           && !helpers().some(function(h){ return normalizePhone(h.phone); })){
+          speak("Family contacts are not set up on this device yet. No family phone numbers are saved properly, so there is nobody to send to. Ask family to open Family Setup and add the numbers.", "en-US");
+        }
         if(!isBack && id !== currentPanelId) panelStack.push(currentPanelId);
         currentPanelId = id;
         var panels = document.querySelectorAll(".panel");
@@ -1378,6 +1426,8 @@
       $("bbHome").addEventListener("click", function(){ cancelSession(); panelStack.length = 0; openPanel(null, true); });
       $("bbStuck").addEventListener("click", function(){ cancelSession(); openPanel("panel-stuck"); });
       $("setupLink").addEventListener("click", function(e){ e.preventDefault(); fillSetupForm(); openPanel("panel-setup"); });
+      var hsCtaBtn = $("homeSetupOpen");
+      if(hsCtaBtn) hsCtaBtn.addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
 
       /* ---------------- Session cancellation ----------------
          HOME and I AM STUCK are his escape buttons: they must win over
@@ -1399,6 +1449,11 @@
         for(var ci=0; ci<navTimers.length; ci++) clearTimeout(navTimers[ci]);
         navTimers = [];
         if(typeof voiceRec !== "undefined" && voiceRec){ try{ voiceRec.stop(); }catch(e){} voiceRec = null; }
+        /* Every pending recognition attempt loses its identity, so
+           an initialization that completes after this escape is
+           rejected outright. */
+        if(typeof micAttempt !== "undefined") micAttempt = null;
+        if(typeof voiceAttempt !== "undefined") voiceAttempt = null;
         if(typeof setVoiceMic === "function") setVoiceMic(null);
         if(typeof activeRec !== "undefined" && activeRec){ try{ activeRec.stop(); }catch(e){} activeRec = null; }
         if(typeof activeBtn !== "undefined" && activeBtn){
@@ -1486,6 +1541,11 @@
       }
 
       var activeRec = null, activeBtn = null;
+      /* Per-attempt identity for microphone initialization: every
+         tap creates its OWN attempt object, and only the attempt
+         that is still current may create a recognizer or let its
+         callbacks touch text, labels, status or speech. */
+      var micAttempt = null;
       function stopRec(btn){
         if(activeRec){ try{ activeRec.stop(); }catch(e){} }
         if(btn){ btn.classList.remove("listening"); var s = btn.querySelector("[data-miclabel]"); if(s) s.textContent = btn.getAttribute("data-label"); }
@@ -1513,10 +1573,17 @@
             if(activeRec){ stopRec(btn); return; }
             var target = $(btn.getAttribute("data-target"));
             var lang = btn.getAttribute("data-lang") || "en-US";
+            var attempt = {};
+            micAttempt = attempt;
             var tok = sessionToken;
             micSay(btn, lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…", false);
             primeMic(function(ready){
-              if(tok !== sessionToken) return; /* HOME / I AM STUCK was tapped while the mic was getting ready */
+              /* Per-attempt identity + session token: an obsolete
+                 microphone-initialization completion (he escaped, or
+                 a newer attempt superseded this one) creates NOTHING.
+                 A double-tap during pending init therefore yields
+                 exactly one recognizer — the newest attempt's. */
+              if(attempt !== micAttempt || tok !== sessionToken) return;
               if(ready !== true){ micSay(btn, ready, true); return; }
               var rec = new SR();
               rec.lang = lang;
@@ -1529,7 +1596,7 @@
               labelSpan.textContent = (lang === "ur-PK") ? "سن رہا ہوں… رک کر ٹھہریں" : "Listening… tap to stop";
               micSay(btn, lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW. Your words will appear in the box as you speak.", false);
               rec.onresult = function(ev){
-                if(tok !== sessionToken) return; /* stale: he escaped with HOME / I AM STUCK */
+                if(attempt !== micAttempt || tok !== sessionToken) return; /* stale attempt: he escaped, or a newer attempt owns the microphone */
                 var finals = "", interim = "";
                 for(var i = ev.resultIndex; i < ev.results.length; i++){
                   var r = ev.results[i];
@@ -1538,6 +1605,10 @@
                 if(finals){ heard = true; finalSoFar += finals; }
                 if(target){
                   target.value = base + finalSoFar + interim;
+                  /* A programmatic speech-recognition write is a
+                     text edit like any other: it bumps the document
+                     revision (see the text-file read race guard). */
+                  if(target.id === "docText") docTextRevision++;
                   if(finals){
                     target.focus();
                     refreshSendLinks();
@@ -1550,7 +1621,7 @@
                    recognition (he escaped with HOME / I AM STUCK, or a
                    newer microphone session replaced this one) returns
                    silently — it must never speak over the new state. */
-                if(tok !== sessionToken || (activeRec && activeRec !== rec)) return;
+                if(attempt !== micAttempt || tok !== sessionToken || (activeRec && activeRec !== rec)) return;
                 failed = true;
                 var msg = micErrorMessage((ev && ev.error) || "");
                 if(activeRec === rec){ activeRec = null; activeBtn = null; }
@@ -1560,10 +1631,11 @@
               rec.onend = function(){
                 if(activeRec === rec){ activeRec = null; activeBtn = null; }
                 btn.classList.remove("listening"); labelSpan.textContent = btn.getAttribute("data-label");
-                /* Obsolete session: tidy up only. In particular the
-                   "I did not hear anything…" instruction must NOT be
-                   spoken after HOME / I AM STUCK. */
-                if(tok !== sessionToken) return;
+                /* Obsolete session or attempt: tidy up only. In
+                   particular the "I did not hear anything…"
+                   instruction must NOT be spoken after HOME / I AM
+                   STUCK, or over a newer microphone attempt. */
+                if(attempt !== micAttempt || tok !== sessionToken) return;
                 if(target && finalSoFar){ target.focus(); refreshSendLinks(); if(target.id === "docText" && typeof syncDocPreview === "function") syncDocPreview(); }
                 if(!failed && !heard && !finalSoFar) micSay(btn, micErrorMessage("no-speech"), true);
                 else if(!failed && (heard || finalSoFar)) micSay(btn, "I heard you. Your words are in the box — check them, then tap the big button below.", false);
@@ -1693,19 +1765,26 @@
         if(!to){ e.preventDefault(); var nm = t.name || "that person"; var emsg = "I do not have " + nm + "'s email address. Send it on WhatsApp instead, or ask " + mainHelperLabel() + " to add " + nm + "'s email."; note.textContent = emsg; note.classList.add("show"); speak(emsg, "en-US"); return; }
         note.textContent = "Your mail app is opening with everything filled in. Tap Send there.";
         note.classList.add("show");
-        $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from " + elderName()) + "&body=" + encodeURIComponent(msg);
+        $("msgEmail").href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Message from " + (elderName() || "Dad")) + "&body=" + encodeURIComponent(msg);
       });
 
       /* ---------------- Listen: hear your options (home) ---------------- */
       $("hearHome").addEventListener("click", function(){
         var p = dateParts();
-        var names = helpers().map(function(h){ return h.name; }).filter(Boolean);
+        /* The spoken call list is built ONLY from helpers whose
+           numbers normalize — an invalid saved helper is never
+           announced as callable. */
+        var names = helpers().filter(function(h){ return normalizePhone(h.phone); }).map(function(h){ return h.name; }).filter(Boolean);
         var who = names.length ? ("You can call " + names.join(", ") + ". ") : "";
-        speak(elderName() + ". Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
+        speak((elderName() ? elderName() + ". " : "") + "Today is " + p.dayLong + ", " + p.dateLong + ". The time is " + p.time + ". " + who + "Tap Voice Help and say what you want. For papers and letters, look for the word Documents on the screen.", "en-US");
       });
 
       /* ---------------- Voice Mode: tap, speak, done ---------------- */
       var voiceRec = null;
+      /* Per-attempt identity for Voice Help recognition, same rule
+         as the box microphones: only the current attempt's callbacks
+         may display, speak or act. */
+      var voiceAttempt = null;
       function voiceStatus(t){ $("voiceStatus").textContent = t; }
       function setVoiceMic(btn){
         var btns = [$("voiceMicEn"), $("voiceMicUr")];
@@ -1723,11 +1802,16 @@
       function startVoice(btn, lang){
         if(!SR) return;
         if(voiceRec){ try{ voiceRec.stop(); }catch(e){} return; }
+        var attempt = {};
+        voiceAttempt = attempt;
         var tok = sessionToken;
         setVoiceMic(btn);
         voiceStatus(lang === "ur-PK" ? "ایک لمحہ… مائیک تیار ہو رہا ہے" : "One moment — getting the microphone ready…");
         primeMic(function(ready){
-          if(tok !== sessionToken) return; /* HOME / I AM STUCK was tapped while the mic was getting ready */
+          /* Per-attempt identity + session token: an obsolete
+             initialization completion creates no recognizer, so a
+             double-tap during pending init yields ONE recognizer. */
+          if(attempt !== voiceAttempt || tok !== sessionToken) return;
           if(ready !== true){
             setVoiceMic(null);
             voiceStatus(ready);
@@ -1741,7 +1825,7 @@
           voiceStatus(lang === "ur-PK" ? "سن رہا ہوں… اب بولیں" : "LISTENING — SPEAK NOW.");
           var heard = false, failed = false;
           rec.onresult = function(ev){
-            if(tok !== sessionToken) return; /* stale: he escaped with HOME / I AM STUCK */
+            if(attempt !== voiceAttempt || tok !== sessionToken) return; /* stale attempt: an old attempt's words (even "call 911") must never display, speak or act during a newer attempt */
             var finals = "", interim = "";
             for(var i = ev.resultIndex; i < ev.results.length; i++){
               var r = ev.results[i];
@@ -1753,11 +1837,11 @@
           };
           rec.onend = function(){
             if(voiceRec === rec){ voiceRec = null; setVoiceMic(null); }
-            if(tok !== sessionToken) return; /* obsolete: he escaped — say nothing */
+            if(attempt !== voiceAttempt || tok !== sessionToken) return; /* obsolete: he escaped, or a newer attempt is live — an old end must never speak "I did not hear anything" over it */
             if(!failed && !heard) voiceStatus(micErrorMessage("no-speech"));
           };
           rec.onerror = function(ev){
-            if(voiceRec !== rec) return;
+            if(attempt !== voiceAttempt || voiceRec !== rec) return;
             failed = true;
             voiceRec = null; setVoiceMic(null);
             var msg = micErrorMessage((ev && ev.error) || "");
@@ -1788,6 +1872,18 @@
         $("voiceAction").style.display = "none";
         var kind = detectLang(said);
         var low = " " + said.toLowerCase().replace(/[^a-z0-9\s]/g, " ") + " ";
+        /* UNICODE-PRESERVING twin of `low`: punctuation becomes
+           spaces but letters are KEPT in every script, so a helper
+           or doctor saved with an Urdu name (فاطمہ) is recognized
+           when that exact complete name is spoken. The Urdu alias
+           map below is an ADDITION to this path — never the only
+           Urdu path. */
+        var uni = " " + said.toLowerCase().replace(/[^\p{L}\p{N}\s]+/gu, " ").replace(/\s+/g, " ") + " ";
+        function nameSpoken(nm){
+          if(!nm) return false;
+          var n = " " + nm.replace(/\s+/g, " ") + " ";
+          return low.indexOf(n) >= 0 || uni.indexOf(n) >= 0;
+        }
         var fh = firstHelper();
         var fhName = mainHelperLabel();
         /* Negation first: a negative phrase must never fire the positive action. */
@@ -1854,13 +1950,23 @@
         function matchHelperName(){
           var hs = helpers();
           var i, nm, parts, w;
-          /* Pass 1: COMPLETE saved names — every helper is searched
-             before any alias is considered, so "call John Brown"
-             finds John Brown even when John Smith is listed first. */
+          /* Pass 1: COMPLETE saved names — ALL matches are
+             considered before choosing, in both the Latin string
+             and the Unicode-preserving string. The MOST SPECIFIC
+             (longest) complete match wins, so a shorter saved name
+             never wins inside a longer requested name: "call John
+             Brown" with helpers John AND John Brown reaches John
+             Brown. A tie between different people is genuinely
+             ambiguous → null → the picker. */
+          var best = null, bestLen = -1, tie = false;
           for(i=0;i<hs.length;i++){
             nm = (hs[i].name || "").toLowerCase().trim();
-            if(nm && low.indexOf(" " + nm + " ") >= 0) return hs[i];
+            if(nm && nameSpoken(nm)){
+              if(nm.length > bestLen){ best = hs[i]; bestLen = nm.length; tie = false; }
+              else if(nm.length === bestLen && best !== hs[i]) tie = true;
+            }
           }
+          if(best) return tie ? null : best;
           /* Pass 2: aliases — one name part (a first name or a
              surname) or the Urdu form of the first name. An alias is
              accepted ONLY when it identifies exactly ONE person;
@@ -1874,7 +1980,7 @@
             var hit = false;
             if(parts.length > 1){
               for(w=0; w<parts.length; w++){
-                if(parts[w].length >= 2 && low.indexOf(" " + parts[w] + " ") >= 0){ hit = true; break; }
+                if(parts[w].length >= 2 && nameSpoken(parts[w])){ hit = true; break; }
               }
             }
             if(!hit){
@@ -1886,14 +1992,22 @@
           return count === 1 ? found : null;
         }
         /* A doctor counts as NAMED when their complete saved name —
-           or a name part belonging to no other doctor — is spoken. */
+           or a name part belonging to no other doctor — is spoken.
+           Complete matches are ALL considered (Latin and
+           Unicode-preserving strings); the most specific wins, a
+           tie is ambiguous. */
         function matchDoctor(){
           var ds = doctorsList();
           var i, nm, parts, w;
+          var best = null, bestLen = -1, tie = false;
           for(i=0;i<ds.length;i++){
             nm = (ds[i].name || "").toLowerCase().trim();
-            if(nm && low.indexOf(" " + nm + " ") >= 0) return ds[i];
+            if(nm && nameSpoken(nm)){
+              if(nm.length > bestLen){ best = ds[i]; bestLen = nm.length; tie = false; }
+              else if(nm.length === bestLen && best !== ds[i]) tie = true;
+            }
           }
+          if(best) return tie ? null : best;
           var found = null, count = 0;
           for(i=0;i<ds.length;i++){
             nm = (ds[i].name || "").toLowerCase().trim();
@@ -1902,12 +2016,45 @@
             var hit = false;
             if(parts.length > 1){
               for(w=0; w<parts.length; w++){
-                if(parts[w].length >= 2 && low.indexOf(" " + parts[w] + " ") >= 0){ hit = true; break; }
+                if(parts[w].length >= 2 && nameSpoken(parts[w])){ hit = true; break; }
               }
             }
             if(hit){ found = ds[i]; count++; }
           }
           return count === 1 ? found : null;
+        }
+        /* Was a doctor NAMED in this request? Returns the spoken
+           name when the request names someone ("call doctor Khan",
+           "ڈاکٹر خان کو کال کرو") and "" when the request is generic
+           ("call my doctor") — so GENERIC and NAMED doctor requests
+           are handled differently, and a named-but-unresolved doctor
+           is never silently replaced by a different, callable one. */
+        function namedDoctorCandidate(){
+          var stopEn = ["my","the","a","an","please","now","today","for","me","to","call","is","phone","ring"];
+          var toks = low.trim().split(/\s+/);
+          var i, j;
+          for(i=0;i<toks.length;i++){
+            if(toks[i] === "doctor" || toks[i] === "dr"){
+              var cand = [];
+              for(j=i+1; j<toks.length && cand.length<2; j++){
+                if(stopEn.indexOf(toks[j]) >= 0) break;
+                cand.push(toks[j]);
+              }
+              return cand.join(" ");
+            }
+          }
+          /* Urdu: the word right after ڈاکٹر is the name — unless it
+             is a grammar word (کو / کا / کی / سے …), which makes the
+             request generic. */
+          var utoks = said.split(/[\s\u060C\u061B\u061F\u06D4.,!?;:'"()]+/).filter(Boolean);
+          var ustop = ["کو","کا","کی","کے","سے","کال","کرو","فون","میرا","میرے","میری"];
+          for(i=0;i<utoks.length;i++){
+            if(utoks[i] === "ڈاکٹر"){
+              var nx = utoks[i+1] || "";
+              return (nx && ustop.indexOf(nx) < 0) ? nx : "";
+            }
+          }
+          return "";
         }
         function callHelperAction(h){
           var nm = h.name || "Family";
@@ -1945,6 +2092,21 @@
             }
             return;
           }
+          /* A NAMED request that resolves to nobody: show the
+             doctor selection screen and explain the name was not
+             found — NEVER fall back to another doctor just because
+             it is callable. (Only Dr Patel saved + "call doctor
+             Khan" must NOT reach Patel.) */
+          var candName = namedDoctorCandidate();
+          if(candName){
+            go("panel-health", kind === "ur"
+              ? "مجھے آپ کے ڈاکٹروں میں " + candName + " نام کا کوئی ڈاکٹر نہیں ملا۔ صحت والا صفحہ کھل رہا ہے — وہاں صحیح ڈاکٹر کے نام کے نیچے کال والا بٹن دبائیں۔"
+              : "I could not find a doctor named " + candName + " in your doctors. Opening Health and Hospital — tap the CALL button under the right doctor there. If " + candName + " should be there, ask " + fhName + " to add them in Family Setup.");
+            return;
+          }
+          /* GENERIC request ("call my doctor"): a single callable
+             doctor is called directly; otherwise the selection
+             screen below. */
           var callable = doctorsList().filter(function(d){ return normalizePhone(d.phone); });
           if(callable.length === 1){
             var d = callable[0];
@@ -1970,7 +2132,19 @@
             : "Opening Health and Hospital. Your pharmacy button is there.");
         }
         function pickerAction(){
-          var names = helpers().map(function(h){ return h.name; }).filter(Boolean).join(", ");
+          /* The picker list is built ONLY from helpers whose
+             numbers normalize — an invalid saved helper is never
+             announced as callable. When nobody is callable, setup
+             guidance is offered instead of an empty picker
+             instruction. */
+          var callable = helpers().filter(function(h){ return normalizePhone(h.phone); });
+          if(!callable.length){
+            say(kind === "ur"
+              ? "اس آلے پر گھر والوں کا کوئی صحیح نمبر محفوظ نہیں ہے۔ گھر والوں سے کہیں کہ فیملی سیٹ اپ کھول کر نمبر شامل کر دیں۔"
+              : "I do not have any working family phone numbers on this device yet. Family contacts are not set up here — ask family to open Family Setup and add the numbers.");
+            return;
+          }
+          var names = callable.map(function(h){ return h.name; }).filter(Boolean).join(", ");
           go(null, kind === "ur"
             ? "مجھے سمجھ نہیں آیا کہ کس کو کال کرنی ہے۔ میں اندازہ نہیں لگاؤں گا۔ آپ ان کو کال کر سکتے ہیں: " + names + "۔ گھر والا صفحہ کھل رہا ہے — صحیح نام والا سبز کال بٹن دبائیں۔"
             : "I am not sure who you mean, and I will not guess. You can call: " + names + ". Opening the home screen — tap the green Call button for the right person, or say their full name.");
@@ -2267,17 +2441,26 @@
         syncDocEmailVisibility();
         syncDocPreview();
       }
-      $("docText").addEventListener("input", syncDocPreview);
+      /* EVERY edit to the document text — typing, deleting,
+         pasting — bumps the monotonic revision counter. (Speech
+         recognition's programmatic writes bump it in the mic
+         handler.) The text-file read below captures the revision
+         when it starts and is accepted only if it still matches. */
+      $("docText").addEventListener("input", function(){ docTextRevision++; syncDocPreview(); });
       $("docChange").addEventListener("input", syncDocPreview);
-      /* Text-file read race: a document-selection generation AND a
-         snapshot of the words in the box are captured when a read
-         begins. The result is accepted only if BOTH still match when
-         the read finishes — a newer attachment selection aborts the
-         old reader, and any typed or spoken edit in the meantime
-         (which changes the box's contents) makes the late result
-         obsolete, so a background read can never overwrite his
-         newer words. */
+      /* Text-file read race: a document-selection generation, the
+         monotonic TEXT REVISION, and a snapshot of the words in the
+         box are captured when a read begins. The result is accepted
+         only if the generation AND the revision still match when
+         the read finishes (the value comparison stays as an extra
+         check, never the only one) — so even the type-words-then-
+         clear-the-box case, where the box ends up holding exactly
+         the words it started with, leaves the box empty when the
+         old read completes: any edit in the meantime makes the
+         late result obsolete, and a background read can never
+         overwrite his newer words. */
       var docSelGen = 0, docReader = null;
+      var docTextRevision = 0;
       $("docFileInput").addEventListener("change", function(){
         var f = (this.files || [])[0];
         docSelGen++;
@@ -2287,24 +2470,26 @@
         $("docFilePicked").textContent = f ? ("You picked: " + f.name) : "";
         syncDocFileUI();
         if(f){
-          /* The share instruction is presented and spoken NOW, when
-             the SEND 2 OF 2 share action becomes ready — not after
-             the tap. The share itself still happens only on his
-             click, directly in the click handler. */
-          var howEl = $("docFileSendHow");
-          if(howEl) howEl.textContent += " Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.";
-          speak("Choose WhatsApp, choose the person, check the attached file, then press Send. Nothing has been sent yet.", "en-US");
+          /* Step 1 announces ONLY that the photo/file was selected
+             and that NEXT is the next action. The attachment
+             instruction belongs to Step 4: generated from the
+             current file + helper, displayed beside SEND 1 OF 2 /
+             SEND 2 OF 2 and spoken when Step 4 is ENTERED — never
+             at selection time. */
+          speak("You picked " + f.name + ". Tap NEXT below to go on.", "en-US");
         }
         if(f && (f.type === "text/plain" || /\.txt$/i.test(f.name))){
           var gen = docSelGen;
+          var revAtStart = docTextRevision;
           var snapshot = $("docText").value;
           var r = new FileReader();
           docReader = r;
           r.onload = function(){
             if(docReader === r) docReader = null;
             if(gen !== docSelGen) return; /* a newer selection replaced this read */
-            if($("docText").value !== snapshot) return; /* he typed or spoke meanwhile — his words win */
-            $("docText").value = String(r.result || ""); syncDocPreview();
+            if(docTextRevision !== revAtStart) return; /* ANY edit since the read began — typing, deleting, pasting, speech — wins, even when the box happens to hold the same words again (type, then clear) */
+            if($("docText").value !== snapshot) return; /* extra check only — never the only one */
+            $("docText").value = String(r.result || ""); docTextRevision++; syncDocPreview();
           };
           r.onerror = function(){ if(docReader === r) docReader = null; };
           r.onabort = function(){ if(docReader === r) docReader = null; };
@@ -2315,7 +2500,7 @@
         var d = $("docText").value.trim();
         var note = $("docNote");
         if(!d && !docPickedName){ e.preventDefault(); note.textContent = "Step 1 is empty. First put your document in the box — type it, paste it, speak it, or pick a photo or file."; note.classList.add("show"); return; }
-        if(!normalizePhone(firstHelper().phone)){ e.preventDefault(); note.textContent = "The phone number for " + mainHelperLabel() + " is not saved properly, so this cannot be sent. Ask family to fix it in Family Setup."; note.classList.add("show"); return; }
+        if(!normalizePhone(firstHelper().phone)){ e.preventDefault(); var drmsg = "The phone number for " + mainHelperLabel() + " is not saved properly, so this cannot be sent. Ask family to fix it in Family Setup."; note.textContent = drmsg; note.classList.add("show"); speak(drmsg, "en-US"); return; }
         var full = docFullText(), partial = false;
         if(full.length > 1500){ full = full.slice(0, 1500); partial = true; }
         note.textContent = partial
@@ -2431,8 +2616,11 @@
       }
       /* Empty health sections get ONE concise line each — no repeated
          passive "ask family to set this up" cards. When ANY section
-         is empty, ONE large CALL FAMILY TO SET THIS UP button (to the
-         main helper) appears once, below the ride section. */
+         is empty, ONE large action appears once, near the TOP of the
+         Health view (in #healthSetupSlot, right under the emergency
+         button — never buried at the bottom): CALL FAMILY TO SET
+         THIS UP when a helper is callable, or SET UP FAMILY HELP —
+         the round-8 recovery route into Family Setup — when none is. */
       function emptyLine(text){
         var d = document.createElement("div"); d.className = "empty-msg";
         d.style.textAlign = "left";
@@ -2450,8 +2638,20 @@
           || (!setup.hospAddr && !doctorsList().some(function(d){ return d.address; }));
         if(!anyEmpty) return;
         var np = normalizePhone(firstHelper().phone);
-        if(!np) return;
-        slot.appendChild(bigLink("tel:+" + np, "bg-green", "CALL FAMILY TO SET THIS UP", "Tap to call " + mainHelperLabel()));
+        if(np){
+          slot.appendChild(bigLink("tel:+" + np, "bg-green", "CALL FAMILY TO SET THIS UP", "Tap to call " + mainHelperLabel()));
+          return;
+        }
+        /* No helper is callable: the top action becomes the setup
+           route itself, consistent with the home recovery state. */
+        var sb = document.createElement("button");
+        sb.type = "button";
+        sb.className = "bigbtn solid bg-amber"; sb.style.marginBottom = "16px";
+        var st = document.createElement("span"); st.textContent = "SET UP FAMILY HELP";
+        var ss = document.createElement("span"); ss.className = "sub"; ss.textContent = "Family adds the numbers and details here";
+        st.appendChild(ss); sb.appendChild(st);
+        sb.addEventListener("click", function(){ fillSetupForm(); openPanel("panel-setup"); });
+        slot.appendChild(sb);
       }
       function renderHealth(){
         /* Hospital & pharmacy only — doctors live solely in the
@@ -2512,6 +2712,8 @@
         var body = $("medsBody"); if(!body) return; body.innerHTML = "";
         var ms = medsList();
         var listen = $("medsListen"); if(listen) listen.style.display = ms.length ? "" : "none";
+        /* The explanatory box shows only once the list has content. */
+        var mnote = $("medsNote"); if(mnote) mnote.style.display = ms.length ? "" : "none";
         if(!ms.length){
           body.appendChild(emptyLine("No medicines saved yet."));
           return;
@@ -2527,6 +2729,8 @@
         var body = $("apptsBody"); if(!body) return; body.innerHTML = "";
         var as = apptsList();
         var listen = $("apptsListen"); if(listen) listen.style.display = as.length ? "" : "none";
+        /* The explanatory box shows only once the list has content. */
+        var anote = $("apptsNote"); if(anote) anote.style.display = as.length ? "" : "none";
         if(!as.length){
           body.appendChild(emptyLine("No appointments saved yet."));
           return;
@@ -2553,6 +2757,8 @@
         if(!any){
           body.appendChild(emptyLine("No ride places saved yet."));
         }
+        /* The Uber guidance box shows only once a ride exists. */
+        var rnote = $("rideNote"); if(rnote) rnote.style.display = any ? "" : "none";
       }
       $("medsListen").addEventListener("click", function(){
         var ms = medsList();
@@ -2610,6 +2816,14 @@
 
       /* ---------------- Password help ---------------- */
       function renderPassword(){
+        /* Step 3's instruction is generated from AVAILABLE actions
+           only: the yellow Ask button exists only while the main
+           helper's number is valid, so when it is hidden the step
+           points at I AM STUCK and Family Setup instead. */
+        var s3 = $("pwStep3");
+        if(s3) s3.textContent = normalizePhone(firstHelper().phone)
+          ? "If you get stuck, tap the yellow button below and " + mainHelperLabel() + " will help you."
+          : "If you get stuck, tap I AM STUCK below. Family contacts are not set up on this device yet — ask family to open Family Setup and add the phone numbers, and an Ask button will appear here.";
         var body = $("passwordBody"); body.innerHTML = "";
         body.appendChild(bigLink("https://www.facebook.com/login/identify", "bg-blue", "Facebook — Get a New Password", "Tap, then follow the steps on that page"));
         body.appendChild(bigLink("https://accounts.google.com/signin/recovery", "bg-teal", "Gmail — Get a New Password", "Tap, then follow the steps on that page"));
@@ -2693,7 +2907,7 @@
       }
       function applySetupToHome(){
         renderHelpers(); applyHelperNames(); renderStuckHelpers();
-        var eg = $("elderGreeting"); if(eg) eg.textContent = elderName();
+        var eg = $("elderGreeting"); if(eg) eg.textContent = elderName() || "Assalam-o-Alaikum";
         var fh = firstHelper();
         /* The standing Call buttons only ever point at a number that
            normalizes; an invalid stored number hides the button
@@ -2712,6 +2926,16 @@
         var qls = document.querySelectorAll("[data-quicklink]");
         for(var qi2=0; qi2<qls.length; qi2++) qls[qi2].style.display = fhN ? "" : "none";
         var paz = $("passwordAskZee"); if(paz) paz.style.display = fhN ? "" : "none";
+        /* ONE unavailable-contact recovery state: with no callable
+           helper, HOME leads with the OPEN FAMILY SETUP action and
+           its plain explanation; and every instruction is generated
+           from AVAILABLE actions only — the Quick Messages hint
+           never points at hidden send buttons. */
+        var cta = $("homeSetupCta"); if(cta) cta.style.display = fhN ? "none" : "";
+        var qh = $("quickHint");
+        if(qh) qh.textContent = fhN
+          ? "Tap one. WhatsApp opens to " + mainHelperLabel() + " with the words ready — tap the green Send arrow there."
+          : "Family contacts are not set up on this device yet, so there is nobody to send to. Ask family to open Family Setup and add the phone numbers — then the message buttons will appear here.";
         var slot = $("placesSlot"); slot.innerHTML = "";
         setup.places.forEach(function(pl){
           if(!pl.name || !pl.url) return;
@@ -2791,7 +3015,7 @@
         if(normalizePhone(mt.phone)) $("msgWhats").href = waLinkTo(mt.phone, mm);
         else $("msgWhats").href = "#";
         var mto = (mt.email || "").trim();
-        if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from " + elderName()) + "&body=" + encodeURIComponent(mm);
+        if(mto) $("msgEmail").href = "mailto:" + encodeURIComponent(mto) + "?subject=" + encodeURIComponent("Message from " + (elderName() || "Dad")) + "&body=" + encodeURIComponent(mm);
         else $("msgEmail").href = "#";
       }
       ["msgText","docText"].forEach(function(id){
@@ -3245,8 +3469,11 @@
           if(rows.length) rows[0].scrollIntoView({behavior:"smooth", block:"center"});
           return;
         }
-        var cfh = cand.helpers[0];
-        cand.zeePhone = cfh.phone || ""; cand.zeeEmail = cfh.email || "";
+        /* The helpers list is the ONLY place a person's details are
+           written: the main helper's phone/email are NOT copied into
+           the person-named legacy fields (zeePhone/zeeEmail) on save.
+           Those fields are read once, for migration, only when the
+           list itself was never saved — never written back. */
         /* Persist the CANDIDATE first. On a failed write nothing is
            committed: the live and stored config stay exactly as they
            were, the entered data stays visible in the form, and no
@@ -3451,7 +3678,18 @@
         $("wizBack").style.display = wizStep === 1 ? "none" : "";
         $("wizNext").style.display = wizStep === 4 ? "none" : "";
         if(wizStep === 2 && typeof syncDocPreview === "function") syncDocPreview();
-        if(wizStep === 4 && typeof syncDocEmailVisibility === "function") syncDocEmailVisibility();
+        if(wizStep === 4){
+          if(typeof syncDocEmailVisibility === "function") syncDocEmailVisibility();
+          /* Entering Step 4 with an attachment: the central
+             attachment instruction is generated from the CURRENT
+             file + helper, displayed beside SEND 1 OF 2 / SEND 2 OF
+             2 (syncDocFileUI refreshes it here) and SPOKEN now, on
+             entry — not at selection time. navigator.share() itself
+             stays directly in the SEND click handler, never behind
+             an async speech wait. */
+          if(typeof syncDocFileUI === "function") syncDocFileUI();
+          if(docPickedFile) speak(handoffAttachText(dispName(firstHelper()) || "your family"), "en-US");
+        }
         window.scrollTo(0, 0);
       }
       $("wizNext").addEventListener("click", function(){
@@ -3495,7 +3733,7 @@
 
       /* ---------------- MORE THINGS lives in its own panel ----------------
          At EVERY width, the MORE THINGS buttons live in panel-more,
-         opened by the single MORE THINGS — CLICK HERE button on the
+         opened by the single MORE THINGS button on the
          home screen — so the home screen stays short enough to see
          that button without scrolling, phone included. The nodes
          themselves move, so every id, link and listener the buttons
@@ -3534,6 +3772,19 @@
           a.textContent = "CALL " + (h.name || "FAMILY").toUpperCase();
           wrap.appendChild(a);
         });
+        /* The screen-help instructions are generated from AVAILABLE
+           actions only: with no callable helper there are no call
+           buttons below, so the words say so and point at Family
+           Setup instead of referring to buttons that are not there. */
+        var anyCall = helpers().some(function(h){ return normalizePhone(h.phone); });
+        var ah = $("screenAnydeskHelp");
+        if(ah) ah.textContent = anyCall
+          ? "If nothing opened, do not worry. AnyDesk needs one-time setup by " + mainHelperLabel() + ". Tap the CALL " + mainHelperLabel().toUpperCase() + " button on this screen and they will set it up with you."
+          : "If nothing opened, do not worry. AnyDesk needs one-time setup by family. Family contacts are not set up on this device yet — ask family to open Family Setup and add the phone numbers, and call buttons will appear on this screen.";
+        var sg = $("screenShareGuide");
+        if(sg) sg.textContent = anyCall
+          ? "In-app screen viewing works on the computer — on this phone it cannot start here. Family can set it up with you on the computer, or use AnyDesk and the call buttons on this screen."
+          : "In-app screen viewing works on the computer — on this phone it cannot start here. Family can set it up with you on the computer, or use AnyDesk. Family contacts are not set up on this device yet — once Family Setup adds the numbers, call buttons will appear on this screen.";
       }
       (function orderScreenPanel(){
         var panel = $("panel-screen"); if(!panel) return;
@@ -3593,8 +3844,10 @@
       function screenCleanup(msg){
         /* ending=true first: closing the call below fires its close
            handlers, and they must not mistake our own stop for the
-           watcher leaving. */
+           watcher leaving. The session generation is bumped too, so
+           every callback captured by the old session is obsolete. */
         scr.ending = true;
+        scr.gen = (scr.gen || 0) + 1;
         if(scr.timer){ clearInterval(scr.timer); scr.timer = null; }
         if(scr.connTimer){ clearTimeout(scr.connTimer); scr.connTimer = null; }
         scr.peerReady = false; scr.readyShown = false;
@@ -3643,6 +3896,8 @@
           return;
         }
         scr.peer = peer;
+        scr.gen = (scr.gen || 0) + 1;
+        var sgen = scr.gen;
         scr.peerReady = false; scr.readyShown = false;
         /* Connection-service readiness is tracked SEPARATELY from
            capture readiness. The invitation (code + send buttons) is
@@ -3706,6 +3961,9 @@
           if(scr.peer === peer && !scr.peerReady && !scr.watching) connFail();
         }, 20000);
         peer.on("call", function(call){
+          /* The emitting peer must still be the CURRENT peer before
+             the session stream is used at all. */
+          if(scr.peer !== peer){ try{ call.close(); }catch(e){} return; }
           /* One watcher at a time: while a media call is already active,
              any further incoming call is closed at once, unanswered. */
           if(scr.call || scr.watching){
@@ -3716,8 +3974,13 @@
             scr.call = call;
             var goneDone = false;
             function watcherGone(){
+              /* The EXACT current peer AND call AND session
+                 generation are required — including when the current
+                 call is null (a cleaned-up session): anything less
+                 is rejected, so a stale watcher can never end a
+                 newer session. */
               if(goneDone || scr.ending) return;
-              if(scr.call && scr.call !== call) return; /* a newer call owns the session now */
+              if(scr.peer !== peer || scr.call !== call || scr.gen !== sgen) return;
               goneDone = true;
               screenCleanup("The person stopped watching. Your screen is no longer being shown.");
               speak("The person stopped watching. Your screen is no longer being shown.", "en-US");
@@ -3727,7 +3990,7 @@
               /* The session counts as WATCHED only when the accepted
                  media connection itself reaches connected/completed. */
               call.on("iceStateChanged", function(state){
-                if(scr.call !== call) return; /* media events from an obsolete call */
+                if(scr.peer !== peer || scr.call !== call) return; /* media events from an obsolete call */
                 if(state === "connected" || state === "completed") screenSetWatching();
                 else if(state === "disconnected" || state === "failed" || state === "closed") watcherGone();
               });
@@ -3738,7 +4001,7 @@
               var pc = call.peerConnection;
               if(pc && pc.addEventListener){
                 pc.addEventListener("iceconnectionstatechange", function(){
-                  if(scr.call !== call) return; /* media events from an obsolete call */
+                  if(scr.peer !== peer || scr.call !== call) return; /* media events from an obsolete call */
                   var st = pc.iceConnectionState;
                   if(st === "connected" || st === "completed") screenSetWatching();
                   else if(st === "disconnected" || st === "failed" || st === "closed") watcherGone();
@@ -3794,14 +4057,27 @@
       });
 
       /* ---------------- Viewer mode: watch Dad's screen (?watch=CODE) ---------------- */
-      var view = { peer:null, call:null, data:null };
+      /* The viewer's media state is EXPLICIT and tied to the
+         CURRENT media call (view.mediaLive / view.mediaCall) — it
+         is never derived from the LIVE badge's visibility. Only the
+         actual current media session's own end or error clears it. */
+      var view = { peer:null, call:null, data:null, mediaLive:false, mediaCall:null, attempt:null };
       function viewerSetStatus(t){ var el = $("viewerStatus"); if(el) el.textContent = t; }
       function viewerCleanup(){
+        view.mediaLive = false; view.mediaCall = null; view.attempt = null;
         if(view.call){ try{ view.call.close(); }catch(e){} view.call = null; }
         if(view.data){ try{ view.data.close(); }catch(e){} view.data = null; }
         if(view.peer){ try{ view.peer.destroy(); }catch(e){} view.peer = null; }
         var v = $("viewerVideo"); if(v){ try{ v.srcObject = null; }catch(e){} }
         var lb = $("viewerLive"); if(lb) lb.style.display = "none";
+      }
+      /* The CURRENT media session ended or errored: LIVE clears and
+         viewing is honestly reported stopped. Signalling events
+         never come through here — they cannot clear LIVE. */
+      function viewerMediaEnded(msg){
+        view.mediaLive = false; view.mediaCall = null;
+        var lb = $("viewerLive"); if(lb) lb.style.display = "none";
+        viewerSetStatus(msg);
       }
       function viewerFail(){
         $("viewerLive").style.display = "none";
@@ -3823,8 +4099,18 @@
         try{ peer = new Peer(); }catch(e){ peer = null; }
         if(!peer){ viewerFail(); return; }
         view.peer = peer;
+        /* ONE viewing attempt: the initial media call and the data
+           connection are created ONCE for this attempt. PeerJS fires
+           "open" again after a signalling reconnect — that re-open
+           must never create a second media call or replace the data
+           connection. */
+        var att = {};
+        view.attempt = att;
+        view.mediaLive = false; view.mediaCall = null;
         peer.on("open", function(){
-          if(view.peer !== peer) return; /* obsolete attempt — stay silent */
+          if(view.peer !== peer || view.attempt !== att) return; /* obsolete attempt — stay silent */
+          if(att.called) return; /* signalling re-open — this attempt's call already exists */
+          att.called = true;
           /* The watcher sends no picture of their own — a blank canvas
              stream simply carries the connection so Dad's screen can
              flow back. There are no controls: watching only. */
@@ -3839,29 +4125,36 @@
           view.call = call;
           call.on("stream", function(rs){
             if(view.call !== call) return; /* a stream from an obsolete attempt */
+            /* Explicit media state, tied to THIS media call. */
+            view.mediaLive = true; view.mediaCall = call;
             var v = $("viewerVideo");
             v.srcObject = rs;
             var p = v.play(); if(p && p.catch) p.catch(function(){});
             $("viewerLive").style.display = "";
             viewerSetStatus("You are watching. You can see the screen, but you cannot click or control it.");
           });
-          call.on("error", function(){ if(view.call === call) viewerFail(); });
+          /* Only the CURRENT media session's own error or end clears
+             LIVE and reports viewing stopped. */
+          call.on("error", function(){ if(view.call === call) viewerMediaEnded("Viewing stopped — the connection to Dad's screen ended."); });
           call.on("close", function(){
             if(view.call !== call) return;
-            $("viewerLive").style.display = "none";
-            viewerSetStatus("Dad stopped showing his screen.");
+            viewerMediaEnded("Dad stopped showing his screen.");
           });
           try{ view.data = peer.connect("dadsassistant-" + code, { reliable:true }); }catch(e){}
         });
-        peer.on("error", function(){ if(view.peer === peer) viewerFail(); });
-        peer.on("disconnected", function(){
-          /* Signalling loss is judged by MEDIA state here too: while
-             Dad's stream is live on screen, a signalling drop alone
-             never hides it — the channel is simply re-joined. Before
-             media arrives, it is an honest connection failure. */
+        peer.on("error", function(){
           if(view.peer !== peer) return;
-          var lb = $("viewerLive");
-          if(view.call && lb && lb.style.display !== "none"){ try{ peer.reconnect(); }catch(e){} return; }
+          /* A signalling-only error (PeerJS emits a network error
+             before 'disconnected' on socket loss) PRESERVES a live
+             media session and its honest LIVE status — the explicit
+             media state, never the badge's visibility, is the judge.
+             Before media arrives, it is an honest failure. */
+          if(view.mediaLive){ try{ peer.reconnect(); }catch(e){} return; }
+          viewerFail();
+        });
+        peer.on("disconnected", function(){
+          if(view.peer !== peer) return;
+          if(view.mediaLive){ try{ peer.reconnect(); }catch(e){} return; }
           viewerFail();
         });
       }
